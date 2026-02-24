@@ -84,7 +84,7 @@ export const BlogPreviewSection = () => {
             </Link>
           </div>
         </AnimatedSection>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {blogPosts.slice(0, 3).map((post, i) => (
             <AnimatedSection key={post.slug} delay={i * 0.1}>
               <Link
@@ -96,17 +96,18 @@ export const BlogPreviewSection = () => {
                     src={post.image}
                     alt={post.title}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
                   />
                 </div>
-                <div className="p-5 space-y-3">
+                <div className="p-4 sm:p-5 space-y-2 sm:space-y-3">
                   <span className="inline-block text-xs font-semibold text-secondary bg-secondary/10 rounded-full px-3 py-1">
                     {post.category}
                   </span>
-                  <h3 className="font-semibold text-lg leading-snug group-hover:text-primary transition-colors">
+                  <h3 className="font-semibold text-base sm:text-lg leading-snug group-hover:text-primary transition-colors">
                     {post.title}
                   </h3>
                   <p className="text-sm text-muted-foreground line-clamp-2">{post.excerpt}</p>
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground pt-1">
+                  <div className="flex items-center gap-3 sm:gap-4 text-xs text-muted-foreground pt-1">
                     <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {post.date}</span>
                     <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {post.readTime}</span>
                   </div>

@@ -4,6 +4,10 @@ import { ProductCard } from "@/components/ProductCard";
 import { useShopifyProducts } from "@/hooks/useShopifyProducts";
 import { Truck, Shield, Package, Clock, ArrowRight, Sparkles, Leaf } from "lucide-react";
 import heroImage from "@/assets/hero-cleaning.jpg";
+import { TestimonialsSection } from "@/components/home/TestimonialsSection";
+import { NewsletterSection } from "@/components/home/NewsletterSection";
+import { ServicesSection } from "@/components/home/ServicesSection";
+import { BrandsSection } from "@/components/home/BrandsSection";
 
 import catFloorCare from "@/assets/categories/floor-care.jpg";
 import catBathroom from "@/assets/categories/bathroom.jpg";
@@ -94,6 +98,8 @@ const Index = () => {
         </div>
       </section>
 
+      <BrandsSection />
+
       {/* Categories */}
       <section className="py-16 md:py-24">
         <div className="container">
@@ -164,6 +170,8 @@ const Index = () => {
         </div>
       </section>
 
+      <ServicesSection />
+
       {/* About */}
       <section className="py-16 md:py-24">
         <div className="container">
@@ -200,6 +208,10 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      <TestimonialsSection />
+
+      <NewsletterSection />
 
       {/* CTA */}
       <section className="py-16 md:py-24 bg-secondary">

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Menu, X, User } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Menu, X, User, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CartDrawer } from "@/components/CartDrawer";
 import { cn } from "@/lib/utils";
@@ -15,7 +15,19 @@ const navLinks = [
 
 export const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/shop?q=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchOpen(false);
+      setSearchQuery("");
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
@@ -44,7 +56,11 @@ export const Header = () => {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
+          {/* Search toggle */}
+          <Button variant="ghost" size="icon" onClick={() => setSearchOpen(!searchOpen)} aria-label="Search">
+            <Search className="h-5 w-5" />
+          </Button>
           <Link to="/sign-in">
             <Button variant="ghost" size="icon" aria-label="Sign in">
               <User className="h-5 w-5" />
@@ -56,6 +72,26 @@ export const Header = () => {
           </Button>
         </div>
       </div>
+
+      {/* Search bar dropdown */}
+      {searchOpen && (
+        <div className="border-t bg-card p-3 animate-in slide-in-from-top-2 duration-200">
+          <form onSubmit={handleSearch} className="container flex gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                autoFocus
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search products..."
+                className="w-full bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/40"
+              />
+            </div>
+            <Button type="submit" size="sm">Search</Button>
+            <Button type="button" variant="ghost" size="sm" onClick={() => setSearchOpen(false)}>Cancel</Button>
+          </form>
+        </div>
+      )}
 
       {mobileOpen && (
         <div className="md:hidden border-t bg-card p-4 space-y-1">

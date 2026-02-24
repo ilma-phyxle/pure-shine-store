@@ -23,6 +23,7 @@ export const Footer = () => {
             <ul className="space-y-2 text-sm text-primary-foreground/70">
               <li><Link to="/" className="hover:text-primary-foreground transition-colors">Home</Link></li>
               <li><Link to="/shop" className="hover:text-primary-foreground transition-colors">Shop</Link></li>
+              <li><Link to="/blog" className="hover:text-primary-foreground transition-colors">Blog</Link></li>
               <li><Link to="/about" className="hover:text-primary-foreground transition-colors">About Us</Link></li>
               <li><Link to="/contact" className="hover:text-primary-foreground transition-colors">Contact</Link></li>
             </ul>

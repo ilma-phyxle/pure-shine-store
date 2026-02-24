@@ -8,6 +8,7 @@ import { HeroSlideshow } from "@/components/home/HeroSlideshow";
 import { TestimonialsSection } from "@/components/home/TestimonialsSection";
 import { NewsletterSection } from "@/components/home/NewsletterSection";
 import { ServicesSection } from "@/components/home/ServicesSection";
+import { WhyInvestSection } from "@/components/home/WhyInvestSection";
 import { BrandsSection } from "@/components/home/BrandsSection";
 import { StatsSection } from "@/components/home/StatsSection";
 import { BlogPreviewSection } from "@/components/home/BlogPreviewSection";
@@ -176,6 +177,8 @@ const Index = () => {
       </section>
 
       <ServicesSection />
+
+      <WhyInvestSection />
 
       <StatsSection />
 

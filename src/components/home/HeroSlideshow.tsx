@@ -43,7 +43,7 @@ export const HeroSlideshow = () => {
   const slide = slides[current];
 
   return (
-    <section className="relative overflow-hidden bg-primary min-h-[500px] md:min-h-[600px]">
+    <section className="relative overflow-hidden bg-primary h-[calc(100vh-6rem)]">
       <AnimatePresence mode="wait">
         <motion.div
           key={current}
@@ -56,14 +56,14 @@ export const HeroSlideshow = () => {
           <img
             src={slide.image}
             alt="Cleaning supplies"
-            className="w-full h-full object-cover opacity-25"
+            className="w-full h-full object-cover opacity-50"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/95 to-primary/60" />
+          <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-primary/30" />
         </motion.div>
       </AnimatePresence>
 
-      <div className="container relative py-20 md:py-32 flex items-center min-h-[500px] md:min-h-[600px]">
-        <div className="max-w-2xl space-y-6">
+      <div className="container relative h-full flex items-center justify-center text-center">
+        <div className="max-w-3xl space-y-6">
           <AnimatePresence mode="wait">
             <motion.div
               key={`content-${current}`}
@@ -76,13 +76,13 @@ export const HeroSlideshow = () => {
               <div className="inline-flex items-center gap-2 bg-secondary/20 text-secondary-foreground rounded-full px-4 py-1.5 text-sm font-medium border border-secondary/30">
                 <Sparkles className="h-4 w-4" /> {slide.badge}
               </div>
-              <h1 className="text-4xl md:text-6xl font-extrabold text-primary-foreground leading-tight tracking-tight">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-primary-foreground leading-tight tracking-tight">
                 {slide.title}
               </h1>
-              <p className="text-lg text-primary-foreground/80 max-w-lg leading-relaxed">
+              <p className="text-lg md:text-xl text-primary-foreground/85 max-w-2xl mx-auto leading-relaxed">
                 {slide.subtitle}
               </p>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-3 justify-center">
                 <Button asChild size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground rounded-full px-8">
                   <Link to="/shop">Shop Now <ArrowRight className="ml-2 h-4 w-4" /></Link>
                 </Button>

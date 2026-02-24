@@ -78,25 +78,27 @@ const Index = () => {
       <BrandsSection />
 
       {/* Categories */}
-      <section className="py-16 md:py-24">
+      <section className="py-16 md:py-24 bg-gradient-to-b from-background to-muted/30">
         <div className="container">
           <AnimatedSection>
             <div className="text-center mb-12">
+              <span className="inline-block text-xs font-bold uppercase tracking-widest text-secondary mb-3">Browse Our Range</span>
               <h2 className="text-3xl md:text-4xl font-bold mb-3">Shop by Category</h2>
               <p className="text-muted-foreground max-w-xl mx-auto">Everything you need to keep your space spotless, organized by department.</p>
             </div>
           </AnimatedSection>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
             {categories.map((cat, i) => (
               <AnimatedSection key={cat.name} delay={i * 0.05}>
                 <Link
                   to="/shop"
-                  className="group flex flex-col items-center gap-3 p-4 rounded-xl border bg-card hover:border-primary/30 hover:shadow-md transition-all duration-300"
+                  className="group relative flex flex-col items-center gap-3 p-5 rounded-2xl bg-card border border-border/60 hover:border-secondary/40 hover:shadow-lg hover:shadow-secondary/5 transition-all duration-300 hover:-translate-y-1"
                 >
-                  <div className="w-20 h-20 rounded-xl overflow-hidden bg-muted">
-                    <img src={cat.image} alt={cat.name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
+                  <div className="w-20 h-20 rounded-2xl overflow-hidden ring-2 ring-muted group-hover:ring-secondary/30 transition-all duration-300">
+                    <img src={cat.image} alt={cat.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                   </div>
-                  <span className="text-sm font-medium text-center">{cat.name}</span>
+                  <span className="text-sm font-semibold text-center group-hover:text-secondary transition-colors duration-300">{cat.name}</span>
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                 </Link>
               </AnimatedSection>
             ))}

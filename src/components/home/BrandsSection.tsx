@@ -41,7 +41,7 @@ export const BrandsSection = () => {
               key={`${brand.name}-${i}`}
               src={brand.logo}
               alt={brand.name}
-              className="h-16 md:h-20 lg:h-24 w-auto object-contain flex-shrink-0 opacity-70 hover:opacity-100 transition-opacity grayscale hover:grayscale-0"
+              className="h-16 md:h-20 lg:h-24 w-auto object-contain flex-shrink-0 hover:scale-105 transition-transform"
             />
           ))}
         </motion.div>

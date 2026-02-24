@@ -1,5 +1,6 @@
+import { useState, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Calendar, Clock } from "lucide-react";
+import { ArrowRight, Calendar, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { AnimatedSection } from "@/components/AnimatedSection";
 
 import blogOffice from "@/assets/blog/office-cleaning.jpg";
@@ -66,7 +67,48 @@ export const blogPosts = [
   },
 ];
 
+const BlogCard = ({ post }: { post: typeof blogPosts[0] }) => (
+  <Link
+    to={`/blog/${post.slug}`}
+    className="group flex flex-col rounded-xl border bg-card overflow-hidden hover:shadow-lg transition-all duration-300 h-full"
+  >
+    <div className="aspect-[3/2] overflow-hidden">
+      <img
+        src={post.image}
+        alt={post.title}
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        loading="lazy"
+      />
+    </div>
+    <div className="p-4 sm:p-5 space-y-2 sm:space-y-3 flex flex-col flex-1">
+      <span className="inline-block self-start text-xs font-semibold text-secondary bg-secondary/10 rounded-full px-3 py-1">
+        {post.category}
+      </span>
+      <h3 className="font-semibold text-base sm:text-lg leading-snug group-hover:text-primary transition-colors line-clamp-2">
+        {post.title}
+      </h3>
+      <p className="text-sm text-muted-foreground line-clamp-2 flex-1">{post.excerpt}</p>
+      <div className="flex items-center gap-3 sm:gap-4 text-xs text-muted-foreground pt-1">
+        <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {post.date}</span>
+        <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {post.readTime}</span>
+      </div>
+    </div>
+  </Link>
+);
+
 export const BlogPreviewSection = () => {
+  const [current, setCurrent] = useState(0);
+  const displayPosts = blogPosts.slice(0, 6);
+  const maxIndex = displayPosts.length - 1;
+
+  const next = useCallback(() => setCurrent((c) => (c >= maxIndex ? 0 : c + 1)), [maxIndex]);
+  const prev = useCallback(() => setCurrent((c) => (c <= 0 ? maxIndex : c - 1)), [maxIndex]);
+
+  useEffect(() => {
+    const timer = setInterval(next, 5000);
+    return () => clearInterval(timer);
+  }, [next]);
+
   return (
     <section className="py-16 md:py-24">
       <div className="container">
@@ -84,38 +126,64 @@ export const BlogPreviewSection = () => {
             </Link>
           </div>
         </AnimatedSection>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {blogPosts.slice(0, 3).map((post, i) => (
+
+        {/* Desktop: grid */}
+        <div className="hidden sm:grid grid-cols-2 lg:grid-cols-3 gap-6">
+          {displayPosts.slice(0, 3).map((post, i) => (
             <AnimatedSection key={post.slug} delay={i * 0.1}>
-              <Link
-                to={`/blog/${post.slug}`}
-                className="group flex flex-col rounded-xl border bg-card overflow-hidden hover:shadow-lg transition-all duration-300 h-full"
-              >
-                <div className="aspect-[3/2] overflow-hidden">
-                  <img
-                    src={post.image}
-                    alt={post.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="p-4 sm:p-5 space-y-2 sm:space-y-3 flex flex-col flex-1">
-                  <span className="inline-block self-start text-xs font-semibold text-secondary bg-secondary/10 rounded-full px-3 py-1">
-                    {post.category}
-                  </span>
-                  <h3 className="font-semibold text-base sm:text-lg leading-snug group-hover:text-primary transition-colors line-clamp-2">
-                    {post.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2 flex-1">{post.excerpt}</p>
-                  <div className="flex items-center gap-3 sm:gap-4 text-xs text-muted-foreground pt-1">
-                    <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {post.date}</span>
-                    <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {post.readTime}</span>
-                  </div>
-                </div>
-              </Link>
+              <BlogCard post={post} />
             </AnimatedSection>
           ))}
         </div>
+
+        {/* Mobile: slideshow */}
+        <div className="sm:hidden relative">
+          <div className="overflow-hidden">
+            <div
+              className="flex transition-transform duration-400 ease-out"
+              style={{ transform: `translateX(-${current * 100}%)` }}
+            >
+              {displayPosts.map((post) => (
+                <div key={post.slug} className="w-full flex-shrink-0 px-1">
+                  <BlogCard post={post} />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Navigation */}
+          <div className="flex items-center justify-between mt-4">
+            <div className="flex gap-1.5">
+              {displayPosts.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrent(i)}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    i === current ? "w-6 bg-primary" : "w-2 bg-border hover:bg-muted-foreground/30"
+                  }`}
+                  aria-label={`Go to article ${i + 1}`}
+                />
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={prev}
+                className="h-9 w-9 rounded-full border bg-card flex items-center justify-center hover:bg-muted transition-colors"
+                aria-label="Previous article"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <button
+                onClick={next}
+                className="h-9 w-9 rounded-full border bg-card flex items-center justify-center hover:bg-muted transition-colors"
+                aria-label="Next article"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div className="md:hidden mt-8 text-center">
           <Link
             to="/blog"

@@ -105,19 +105,18 @@ const Index = () => {
               <p className="text-muted-foreground max-w-xl mx-auto">Everything you need to keep your space spotless, organized by department.</p>
             </div>
           </AnimatedSection>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
             {categories.map((cat, i) => (
               <AnimatedSection key={cat.name} delay={i * 0.05}>
                 <Link
                   to="/shop"
-                  className="group relative rounded-2xl overflow-hidden border border-border/60 hover:border-secondary/40 hover:shadow-xl hover:shadow-secondary/10 transition-all duration-300 hover:-translate-y-1"
+                  className="group block rounded-2xl overflow-hidden border border-border/60 bg-card hover:border-secondary/40 hover:shadow-xl hover:shadow-secondary/10 transition-all duration-300 hover:-translate-y-1"
                 >
-                  <div className="aspect-[4/3] overflow-hidden">
-                    <img src={cat.image} alt={cat.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/40 to-transparent" />
+                  <div className="aspect-square overflow-hidden bg-muted/30 p-4 flex items-center justify-center">
+                    <img src={cat.image} alt={cat.name} className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110" />
                   </div>
-                  <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
-                    <span className="text-base md:text-lg font-bold text-primary-foreground drop-shadow-lg">{cat.name}</span>
+                  <div className="px-4 py-3 border-t border-border/40 bg-card">
+                    <span className="text-sm md:text-base font-semibold text-foreground group-hover:text-primary transition-colors">{cat.name}</span>
                   </div>
                 </Link>
               </AnimatedSection>

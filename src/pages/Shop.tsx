@@ -144,7 +144,7 @@ const Shop = () => {
 
         {/* Product grid */}
         {isLoading ? (
-          <div className={cn("grid gap-6", gridCols === 3 ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4")}>
+          <div className={cn("grid gap-4 sm:gap-6", gridCols === 3 ? "grid-cols-2 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4")}>
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="rounded-xl border bg-card animate-pulse">
                 <div className="aspect-square bg-muted" />
@@ -157,7 +157,7 @@ const Shop = () => {
             ))}
           </div>
         ) : filtered.length > 0 ? (
-          <div className={cn("grid gap-6", gridCols === 3 ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4")}>
+          <div className={cn("grid gap-4 sm:gap-6", gridCols === 3 ? "grid-cols-2 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4")}>
             {filtered.map((product: ShopifyProduct) => (
               <ProductCard key={product.node.id} product={product} />
             ))}

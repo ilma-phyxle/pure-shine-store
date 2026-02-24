@@ -15,6 +15,7 @@ import Contact from "./pages/Contact";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import NotFound from "./pages/NotFound";
+import { ChatbotWidget } from "@/components/ChatbotWidget";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const AppContent = () => {
         </Routes>
       </div>
       <Footer />
+      <ChatbotWidget />
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CartDrawer } from "@/components/CartDrawer";
 import { cn } from "@/lib/utils";
@@ -45,6 +45,11 @@ export const Header = () => {
         </nav>
 
         <div className="flex items-center gap-2">
+          <Link to="/sign-in">
+            <Button variant="ghost" size="icon" aria-label="Sign in">
+              <User className="h-5 w-5" />
+            </Button>
+          </Link>
           <CartDrawer />
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}

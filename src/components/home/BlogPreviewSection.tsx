@@ -73,7 +73,7 @@ export const BlogPreviewSection = () => {
         <AnimatedSection>
           <div className="flex items-end justify-between mb-10">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-3">Cleaning Tips & Guides</h2>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-primary">Cleaning Tips & Guides</h2>
               <p className="text-muted-foreground">Expert advice to keep your space spotless.</p>
             </div>
             <Link

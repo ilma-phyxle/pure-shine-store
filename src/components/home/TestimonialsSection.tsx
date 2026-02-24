@@ -92,7 +92,7 @@ export const TestimonialsSection = () => {
             </svg>
             <span className="text-lg font-semibold text-muted-foreground">Google Reviews</span>
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold mb-3">What Our Customers Say</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-3 text-primary">What Our Customers Say</h2>
           <div className="flex items-center justify-center gap-2 mb-1">
             <div className="flex gap-0.5">
               {Array.from({ length: 5 }).map((_, i) => (

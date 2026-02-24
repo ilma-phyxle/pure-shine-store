@@ -39,7 +39,7 @@ export const ServicesSection = () => {
     <section className="py-16 md:py-24">
       <div className="container">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-3">Our Product Range</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-3 text-primary">Our Product Range</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             From industrial-strength cleaners to eco-friendly solutions — we supply everything you need for a spotless space.
           </p>

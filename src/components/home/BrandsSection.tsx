@@ -24,13 +24,13 @@ const doubled = [...brands, ...brands];
 
 export const BrandsSection = () => {
   return (
-    <section className="py-14 md:py-20 border-b bg-card overflow-hidden">
-      <h2 className="text-center text-lg md:text-2xl font-bold mb-10 uppercase tracking-wide text-foreground">
+    <section className="py-14 md:py-20 border-b bg-transparent overflow-hidden">
+      <h2 className="text-center text-lg md:text-2xl font-bold mb-10 uppercase tracking-wide text-secondary">
         Trusted Brands We Stock
       </h2>
       <div className="relative">
-        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-card to-transparent z-10" />
-        <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-card to-transparent z-10" />
+        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-background to-transparent z-10" />
+        <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-background to-transparent z-10" />
         <motion.div
           className="flex gap-20 md:gap-28 items-center whitespace-nowrap"
           animate={{ x: [0, -1600] }}

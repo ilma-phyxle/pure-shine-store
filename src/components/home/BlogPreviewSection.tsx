@@ -89,7 +89,7 @@ export const BlogPreviewSection = () => {
             <AnimatedSection key={post.slug} delay={i * 0.1}>
               <Link
                 to={`/blog/${post.slug}`}
-                className="group block rounded-xl border bg-card overflow-hidden hover:shadow-lg transition-all duration-300"
+                className="group flex flex-col rounded-xl border bg-card overflow-hidden hover:shadow-lg transition-all duration-300 h-full"
               >
                 <div className="aspect-[3/2] overflow-hidden">
                   <img
@@ -99,14 +99,14 @@ export const BlogPreviewSection = () => {
                     loading="lazy"
                   />
                 </div>
-                <div className="p-4 sm:p-5 space-y-2 sm:space-y-3">
-                  <span className="inline-block text-xs font-semibold text-secondary bg-secondary/10 rounded-full px-3 py-1">
+                <div className="p-4 sm:p-5 space-y-2 sm:space-y-3 flex flex-col flex-1">
+                  <span className="inline-block self-start text-xs font-semibold text-secondary bg-secondary/10 rounded-full px-3 py-1">
                     {post.category}
                   </span>
-                  <h3 className="font-semibold text-base sm:text-lg leading-snug group-hover:text-primary transition-colors">
+                  <h3 className="font-semibold text-base sm:text-lg leading-snug group-hover:text-primary transition-colors line-clamp-2">
                     {post.title}
                   </h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2">{post.excerpt}</p>
+                  <p className="text-sm text-muted-foreground line-clamp-2 flex-1">{post.excerpt}</p>
                   <div className="flex items-center gap-3 sm:gap-4 text-xs text-muted-foreground pt-1">
                     <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {post.date}</span>
                     <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {post.readTime}</span>

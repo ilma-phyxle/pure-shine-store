@@ -87,18 +87,20 @@ const Index = () => {
               <p className="text-muted-foreground max-w-xl mx-auto">Everything you need to keep your space spotless, organized by department.</p>
             </div>
           </AnimatedSection>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
             {categories.map((cat, i) => (
               <AnimatedSection key={cat.name} delay={i * 0.05}>
                 <Link
                   to="/shop"
-                  className="group relative flex flex-col items-center gap-3 p-5 rounded-2xl bg-card border border-border/60 hover:border-secondary/40 hover:shadow-lg hover:shadow-secondary/5 transition-all duration-300 hover:-translate-y-1"
+                  className="group relative rounded-2xl overflow-hidden border border-border/60 hover:border-secondary/40 hover:shadow-xl hover:shadow-secondary/10 transition-all duration-300 hover:-translate-y-1"
                 >
-                  <div className="w-20 h-20 rounded-2xl overflow-hidden ring-2 ring-muted group-hover:ring-secondary/30 transition-all duration-300">
+                  <div className="aspect-[4/3] overflow-hidden">
                     <img src={cat.image} alt={cat.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent" />
                   </div>
-                  <span className="text-sm font-semibold text-center group-hover:text-secondary transition-colors duration-300">{cat.name}</span>
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <span className="text-sm md:text-base font-bold text-primary-foreground drop-shadow-md">{cat.name}</span>
+                  </div>
                 </Link>
               </AnimatedSection>
             ))}

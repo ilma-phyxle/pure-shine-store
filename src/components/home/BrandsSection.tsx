@@ -24,24 +24,24 @@ const doubled = [...brands, ...brands];
 
 export const BrandsSection = () => {
   return (
-    <section className="py-10 border-b bg-card overflow-hidden">
-      <p className="text-center text-xs text-muted-foreground font-medium mb-6 uppercase tracking-widest">
+    <section className="py-14 md:py-20 border-b bg-card overflow-hidden">
+      <h2 className="text-center text-lg md:text-2xl font-bold mb-10 uppercase tracking-wide text-foreground">
         Trusted Brands We Stock
-      </p>
+      </h2>
       <div className="relative">
-        <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-card to-transparent z-10" />
-        <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-card to-transparent z-10" />
+        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-card to-transparent z-10" />
+        <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-card to-transparent z-10" />
         <motion.div
-          className="flex gap-16 items-center whitespace-nowrap"
-          animate={{ x: [0, -1200] }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+          className="flex gap-20 md:gap-28 items-center whitespace-nowrap"
+          animate={{ x: [0, -1600] }}
+          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
         >
           {doubled.map((brand, i) => (
             <img
               key={`${brand.name}-${i}`}
               src={brand.logo}
               alt={brand.name}
-              className="h-12 md:h-14 w-auto object-contain flex-shrink-0 opacity-70 hover:opacity-100 transition-opacity grayscale hover:grayscale-0"
+              className="h-16 md:h-20 lg:h-24 w-auto object-contain flex-shrink-0 opacity-70 hover:opacity-100 transition-opacity grayscale hover:grayscale-0"
             />
           ))}
         </motion.div>

@@ -75,6 +75,24 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Ad Banner */}
+      <section className="bg-gradient-to-r from-primary via-primary to-secondary py-6 md:py-8">
+        <div className="container">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-primary-foreground">
+            <div className="flex items-center gap-3 text-center md:text-left">
+              <span className="text-2xl md:text-3xl">🎉</span>
+              <div>
+                <p className="font-bold text-lg md:text-xl">Summer Sale — Up to 30% Off Bulk Orders!</p>
+                <p className="text-sm text-primary-foreground/80">Use code <span className="font-mono font-bold bg-primary-foreground/20 px-2 py-0.5 rounded">CLEAN30</span> at checkout. Limited time only.</p>
+              </div>
+            </div>
+            <Button asChild size="lg" className="bg-card text-foreground hover:bg-card/90 rounded-full px-8 font-bold whitespace-nowrap">
+              <Link to="/shop">Shop the Sale <ArrowRight className="ml-2 h-4 w-4" /></Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
       <BrandsSection />
 
       {/* Categories */}
@@ -87,7 +105,7 @@ const Index = () => {
               <p className="text-muted-foreground max-w-xl mx-auto">Everything you need to keep your space spotless, organized by department.</p>
             </div>
           </AnimatedSection>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {categories.map((cat, i) => (
               <AnimatedSection key={cat.name} delay={i * 0.05}>
                 <Link
@@ -96,10 +114,10 @@ const Index = () => {
                 >
                   <div className="aspect-[4/3] overflow-hidden">
                     <img src={cat.image} alt={cat.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/40 to-transparent" />
                   </div>
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <span className="text-sm md:text-base font-bold text-primary-foreground drop-shadow-md">{cat.name}</span>
+                  <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
+                    <span className="text-base md:text-lg font-bold text-primary-foreground drop-shadow-lg">{cat.name}</span>
                   </div>
                 </Link>
               </AnimatedSection>

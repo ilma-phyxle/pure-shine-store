@@ -101,7 +101,7 @@ const Index = () => {
           <AnimatedSection>
             <div className="text-center mb-12">
               <span className="inline-block text-xs font-bold uppercase tracking-widest text-secondary mb-3">Browse Our Range</span>
-              <h2 className="text-3xl md:text-4xl font-bold mb-3">Shop by Category</h2>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3 text-primary">Shop by Category</h2>
               <p className="text-muted-foreground max-w-xl mx-auto">Everything you need to keep your space spotless, organized by department.</p>
             </div>
           </AnimatedSection>
@@ -132,7 +132,7 @@ const Index = () => {
           <AnimatedSection>
             <div className="flex items-end justify-between mb-10">
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold mb-3">Our Products</h2>
+                <h2 className="text-3xl md:text-4xl font-bold mb-3 text-primary">Our Products</h2>
                 <p className="text-muted-foreground">Browse our range of professional cleaning supplies.</p>
               </div>
               <Button asChild variant="outline" className="hidden md:flex">
@@ -186,7 +186,7 @@ const Index = () => {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <AnimatedSection>
               <div className="space-y-6">
-                <h2 className="text-3xl md:text-4xl font-bold">Why Choose GRAPC?</h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-primary">Why Choose GRAPC?</h2>
                 <p className="text-muted-foreground leading-relaxed">
                   With years of experience in the cleaning supply industry, we understand what professionals need. From hospitals to hotels, offices to homes — we supply the products that deliver results.
                 </p>

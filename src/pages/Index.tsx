@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/ProductCard";
 import { useShopifyProducts } from "@/hooks/useShopifyProducts";
-import { Truck, Shield, Package, Clock, ArrowRight, Leaf } from "lucide-react";
+import { Truck, Shield, Package, Clock, ArrowRight, Leaf, MoveRight } from "lucide-react";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { HeroSlideshow } from "@/components/home/HeroSlideshow";
 import { TestimonialsSection } from "@/components/home/TestimonialsSection";
@@ -113,11 +113,17 @@ const Index = () => {
                   to="/shop"
                   className="group block rounded-2xl overflow-hidden border border-border/60 bg-card hover:border-secondary/40 hover:shadow-xl hover:shadow-secondary/10 transition-all duration-300 hover:-translate-y-1"
                 >
-                  <div className="aspect-square overflow-hidden bg-muted/30 p-4 flex items-center justify-center">
+                  <div className="aspect-square overflow-hidden bg-muted/30 p-4 flex items-center justify-center relative">
                     <img src={cat.image} alt={cat.name} className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110" />
+                    <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors duration-300 flex items-center justify-center">
+                      <div className="h-10 w-10 rounded-full bg-primary/90 text-primary-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 scale-75 group-hover:scale-100 transition-all duration-300">
+                        <MoveRight className="h-5 w-5" />
+                      </div>
+                    </div>
                   </div>
-                  <div className="px-4 py-3 border-t border-border/40 bg-card">
+                  <div className="px-4 py-3 border-t border-border/40 bg-card flex items-center justify-between">
                     <span className="text-sm md:text-base font-semibold text-foreground group-hover:text-primary transition-colors">{cat.name}</span>
+                    <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
                   </div>
                 </Link>
               </AnimatedSection>

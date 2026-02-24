@@ -2,22 +2,35 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/ProductCard";
 import { useShopifyProducts } from "@/hooks/useShopifyProducts";
-import { Truck, Shield, Package, Clock, ArrowRight, Sparkles, Building2, Droplets, Waves, Trash2, HandMetal, Shirt, GlassWater, Wind, Leaf, FlaskConical, SprayCan } from "lucide-react";
+import { Truck, Shield, Package, Clock, ArrowRight, Sparkles, Leaf } from "lucide-react";
 import heroImage from "@/assets/hero-cleaning.jpg";
 
+import catFloorCare from "@/assets/categories/floor-care.jpg";
+import catBathroom from "@/assets/categories/bathroom.jpg";
+import catKitchen from "@/assets/categories/kitchen.jpg";
+import catDisinfectants from "@/assets/categories/disinfectants.jpg";
+import catPaperProducts from "@/assets/categories/paper-products.jpg";
+import catJanitorial from "@/assets/categories/janitorial.jpg";
+import catHandHygiene from "@/assets/categories/hand-hygiene.jpg";
+import catLaundry from "@/assets/categories/laundry.jpg";
+import catGlassSurface from "@/assets/categories/glass-surface.jpg";
+import catWaste from "@/assets/categories/waste-management.jpg";
+import catOutdoor from "@/assets/categories/outdoor.jpg";
+import catSpecialty from "@/assets/categories/specialty-chemicals.jpg";
+
 const categories = [
-  { name: "Floor Care", icon: Waves },
-  { name: "Bathroom", icon: Droplets },
-  { name: "Kitchen", icon: SprayCan },
-  { name: "Disinfectants", icon: Shield },
-  { name: "Paper Products", icon: Package },
-  { name: "Janitorial Equipment", icon: Building2 },
-  { name: "Hand Hygiene", icon: HandMetal },
-  { name: "Laundry", icon: Shirt },
-  { name: "Glass & Surface", icon: GlassWater },
-  { name: "Waste Management", icon: Trash2 },
-  { name: "Outdoor", icon: Wind },
-  { name: "Specialty Chemicals", icon: FlaskConical },
+  { name: "Floor Care", image: catFloorCare },
+  { name: "Bathroom", image: catBathroom },
+  { name: "Kitchen", image: catKitchen },
+  { name: "Disinfectants", image: catDisinfectants },
+  { name: "Paper Products", image: catPaperProducts },
+  { name: "Janitorial Equipment", image: catJanitorial },
+  { name: "Hand Hygiene", image: catHandHygiene },
+  { name: "Laundry", image: catLaundry },
+  { name: "Glass & Surface", image: catGlassSurface },
+  { name: "Waste Management", image: catWaste },
+  { name: "Outdoor", image: catOutdoor },
+  { name: "Specialty Chemicals", image: catSpecialty },
 ];
 
 const trustBadges = [
@@ -93,10 +106,10 @@ const Index = () => {
               <Link
                 key={cat.name}
                 to="/shop"
-                className="group flex flex-col items-center gap-3 p-5 rounded-xl border bg-card hover:border-primary/30 hover:shadow-md transition-all duration-300"
+                className="group flex flex-col items-center gap-3 p-4 rounded-xl border bg-card hover:border-primary/30 hover:shadow-md transition-all duration-300"
               >
-                <div className="h-14 w-14 rounded-xl bg-primary/5 group-hover:bg-primary/10 flex items-center justify-center transition-colors">
-                  <cat.icon className="h-7 w-7 text-primary" />
+                <div className="w-20 h-20 rounded-xl overflow-hidden bg-muted">
+                  <img src={cat.image} alt={cat.name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
                 </div>
                 <span className="text-sm font-medium text-center">{cat.name}</span>
               </Link>

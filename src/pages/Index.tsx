@@ -12,36 +12,9 @@ import { WhyInvestSection } from "@/components/home/WhyInvestSection";
 import { BrandsSection } from "@/components/home/BrandsSection";
 import { StatsSection } from "@/components/home/StatsSection";
 import { BlogPreviewSection } from "@/components/home/BlogPreviewSection";
-
-import catFloorCare from "@/assets/categories/floor-care.jpg";
-import catBathroom from "@/assets/categories/bathroom.jpg";
-import catKitchen from "@/assets/categories/kitchen.jpg";
-import catDisinfectants from "@/assets/categories/disinfectants.jpg";
-import catPaperProducts from "@/assets/categories/paper-products.jpg";
-import catJanitorial from "@/assets/categories/janitorial.jpg";
-import catHandHygiene from "@/assets/categories/hand-hygiene.jpg";
-import catLaundry from "@/assets/categories/laundry.jpg";
-import catGlassSurface from "@/assets/categories/glass-surface.jpg";
-import catWaste from "@/assets/categories/waste-management.jpg";
-import catOutdoor from "@/assets/categories/outdoor.jpg";
-import catSpecialty from "@/assets/categories/specialty-chemicals.jpg";
+import { useCatalogStore } from "@/stores/catalogStore";
 
 import heroSlide2 from "@/assets/hero-slide-2.jpg";
-
-const categories = [
-  { name: "Floor Care", image: catFloorCare },
-  { name: "Bathroom", image: catBathroom },
-  { name: "Kitchen", image: catKitchen },
-  { name: "Disinfectants", image: catDisinfectants },
-  { name: "Paper Products", image: catPaperProducts },
-  { name: "Janitorial Equipment", image: catJanitorial },
-  { name: "Hand Hygiene", image: catHandHygiene },
-  { name: "Laundry", image: catLaundry },
-  { name: "Glass & Surface", image: catGlassSurface },
-  { name: "Waste Management", image: catWaste },
-  { name: "Outdoor", image: catOutdoor },
-  { name: "Specialty Chemicals", image: catSpecialty },
-];
 
 const trustBadges = [
   { icon: Truck, label: "Free Shipping", sub: "Orders over $150" },
@@ -52,6 +25,7 @@ const trustBadges = [
 
 const Index = () => {
   const { data: products, isLoading } = useShopifyProducts(8);
+  const catalogCategories = useCatalogStore((s) => s.categories);
 
   return (
     <main>
@@ -81,10 +55,8 @@ const Index = () => {
         <div className="container">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-primary-foreground">
             <div className="flex items-center gap-3 text-center md:text-left">
-              <span className="text-2xl md:text-3xl">🎉</span>
               <div>
-                <p className="font-bold text-lg md:text-xl">Summer Sale — Up to 30% Off Bulk Orders!</p>
-                <p className="text-sm text-primary-foreground/80">Use code <span className="font-mono font-bold bg-primary-foreground/20 px-2 py-0.5 rounded">CLEAN30</span> at checkout. Limited time only.</p>
+                <p className="font-bold text-lg md:text-xl">View Our New Collection !</p>
               </div>
             </div>
             <Button asChild size="lg" className="bg-card text-foreground hover:bg-card/90 rounded-full px-8 font-bold whitespace-nowrap">
@@ -106,24 +78,18 @@ const Index = () => {
               <p className="text-muted-foreground max-w-xl mx-auto">Everything you need to keep your space spotless, organized by department.</p>
             </div>
           </AnimatedSection>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
-            {categories.map((cat, i) => (
-              <AnimatedSection key={cat.name} delay={i * 0.05}>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            {catalogCategories.map((cat, i) => (
+              <AnimatedSection key={cat.id} delay={i * 0.05}>
                 <Link
-                  to="/shop"
-                  className="group block rounded-2xl overflow-hidden border border-border/60 bg-card hover:border-secondary/40 hover:shadow-xl hover:shadow-secondary/10 transition-all duration-300 hover:-translate-y-1 h-full"
+                  to={`/shop?cat=${encodeURIComponent(cat.slug)}`}
+                  className="group block p-6 rounded-2xl border border-border/80 bg-white hover:border-primary/40 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-1 text-center"
                 >
-                  <div className="aspect-square overflow-hidden bg-muted/30 p-3 sm:p-4 flex items-center justify-center relative">
-                    <img src={cat.image} alt={cat.name} className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110" />
-                    <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/5 transition-colors duration-300 flex items-center justify-center">
-                      <div className="h-10 w-10 rounded-full bg-primary/90 text-primary-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 scale-75 group-hover:scale-100 transition-all duration-300">
-                        <MoveRight className="h-5 w-5" />
-                      </div>
-                    </div>
+                  <div className="text-sm sm:text-base font-bold text-slate-800 group-hover:text-primary transition-colors">
+                    {cat.name}
                   </div>
-                  <div className="px-3 sm:px-4 py-2.5 sm:py-3 border-t border-border/40 bg-card flex items-center justify-between min-h-[2.75rem] sm:min-h-[3rem]">
-                    <span className="text-xs sm:text-sm md:text-base font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-1">{cat.name}</span>
-                    <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 shrink-0 ml-1" />
+                  <div className="mt-2 text-[10px] text-slate-400 font-medium uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                    View Catalog <ArrowRight className="inline h-3 w-3 ml-1" />
                   </div>
                 </Link>
               </AnimatedSection>

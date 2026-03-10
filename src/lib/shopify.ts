@@ -46,6 +46,7 @@ export interface ShopifyProduct {
       name: string;
       values: string[];
     }>;
+    tags: string[];
   };
 }
 
@@ -121,6 +122,7 @@ export const PRODUCTS_QUERY = `
             name
             values
           }
+          tags
         }
       }
     }
@@ -170,6 +172,7 @@ export const PRODUCT_BY_HANDLE_QUERY = `
         name
         values
       }
+      tags
     }
   }
 `;

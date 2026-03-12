@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an Axios instance configured for the Laravel API
 export const api = axios.create({
-    baseURL: 'http://127.0.0.1:8000/api',
+    baseURL: 'https://oeh.phyxle.com.au/api',
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

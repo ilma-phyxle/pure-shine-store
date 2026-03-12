@@ -120,7 +120,8 @@ const AdminCatalogPro = () => {
             await deleteCategory(id);
             setCategories(prev => prev.filter(c => c.id !== id));
             setProducts(prev => prev.filter(p => p.category_id !== id));
-            setActiveCategoryId(categories.find(c => c.id !== id)?.id ?? null);
+            const nextCat = categories.find(c => c.id !== id);
+            setActiveCategoryId(nextCat ? nextCat.id : null);
             toast.success("Category deleted");
         } catch {
             toast.error("Failed to delete category");
@@ -324,7 +325,7 @@ const AdminCatalogPro = () => {
                     </div>
 
                     {/* Category Detail & Products */}
-                    <div className="space-y-8" key={activeCategory.id}>
+                    <div className="space-y-8" key={activeCategory ? activeCategory.id : "no-category"}>
                         {activeCategory ? (
                             <>
                                 {/* Category Details Card */}

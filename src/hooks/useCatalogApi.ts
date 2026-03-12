@@ -27,8 +27,8 @@ export const useCatalogApi = (): CatalogData => {
     });
 
     return {
-        categories: categoriesQuery.data || [],
-        products: productsQuery.data || [],
+        categories: Array.isArray(categoriesQuery.data) ? categoriesQuery.data : [],
+        products: Array.isArray(productsQuery.data) ? productsQuery.data : [],
         isLoading: categoriesQuery.isLoading || productsQuery.isLoading,
         error: (categoriesQuery.error as Error)?.message || (productsQuery.error as Error)?.message || null,
         refetch: () => {

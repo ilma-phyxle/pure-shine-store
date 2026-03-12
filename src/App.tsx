@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import { TopBar } from "@/components/TopBar";
 import { Header } from "@/components/Header";
@@ -26,6 +26,7 @@ import AdminProducts from "./pages/AdminProducts";
 import AdminOrders from "./pages/AdminOrders";
 import AdminCustomers from "./pages/AdminCustomers";
 import AdminInventory from "./pages/AdminInventory";
+import AdminLogin from "./pages/AdminLogin";
 import { ChatbotWidget } from "@/components/ChatbotWidget";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { RouteLoading } from "@/components/RouteLoading";
@@ -36,6 +37,7 @@ const AppContent = () => {
   useCartSync();
   const location = useLocation();
   const isAdminPath = location.pathname.startsWith("/admin");
+  const isAuthed = localStorage.getItem("admin_authed") === "true";
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
@@ -48,6 +50,7 @@ const AppContent = () => {
       {!isAdminPath && <Header />}
       <div className="flex-1">
         <Routes>
+          <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="/" element={<Index />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/product/:handle" element={<ProductDetail />} />
@@ -58,13 +61,13 @@ const AppContent = () => {
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/admin" element={<AdminCatalogPro />} />
-          <Route path="/admin/catalog" element={<AdminCatalog />} />
-          <Route path="/admin/catalog-pro" element={<AdminCatalogPro />} />
-          <Route path="/admin/products" element={<AdminProducts />} />
-          <Route path="/admin/orders" element={<AdminOrders />} />
-          <Route path="/admin/customers" element={<AdminCustomers />} />
-          <Route path="/admin/inventory" element={<AdminInventory />} />
+          <Route path="/admin" element={isAuthed ? <AdminCatalogPro /> : <Navigate to="/admin-login" state={{ from: "/admin" }} replace />} />
+          <Route path="/admin/catalog" element={isAuthed ? <AdminCatalog /> : <Navigate to="/admin-login" state={{ from: "/admin/catalog" }} replace />} />
+          <Route path="/admin/catalog-pro" element={isAuthed ? <AdminCatalogPro /> : <Navigate to="/admin-login" state={{ from: "/admin/catalog-pro" }} replace />} />
+          <Route path="/admin/products" element={isAuthed ? <AdminProducts /> : <Navigate to="/admin-login" state={{ from: "/admin/products" }} replace />} />
+          <Route path="/admin/orders" element={isAuthed ? <AdminOrders /> : <Navigate to="/admin-login" state={{ from: "/admin/orders" }} replace />} />
+          <Route path="/admin/customers" element={isAuthed ? <AdminCustomers /> : <Navigate to="/admin-login" state={{ from: "/admin/customers" }} replace />} />
+          <Route path="/admin/inventory" element={isAuthed ? <AdminInventory /> : <Navigate to="/admin-login" state={{ from: "/admin/inventory" }} replace />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>

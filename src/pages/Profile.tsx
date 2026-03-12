@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { User } from "lucide-react";
 import { Link } from "react-router-dom";
-import authBg from "@/assets/auth-bg.jpg";
+
+const authBg = "/assets/auth-bg.jpg";
 
 const Profile = () => {
   return (

@@ -1,6 +1,4 @@
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
-import catalogData from "../cleaners_outlet_catalog.json";
 
 export interface StoreInfo {
   name: string;
@@ -94,100 +92,100 @@ const slugify = (value: string) =>
 const makeId = () => (typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${now()}_${Math.random().toString(16).slice(2)}`);
 
 const DEFAULT_CATALOG: CatalogState = {
-  store: catalogData.store,
-  navigation: catalogData.navigation.map((n, i) => ({ ...n, id: `nav-${i}` })),
-  categories: catalogData.categories as FullCategory[],
+  store: {
+    name: "CleanyGlow Cleaning Supplies",
+    tagline: "Your destination for cleaning supplies",
+    website: "https://pureshine.com",
+    currency: "LKR",
+    location: "Global",
+    logo_url: ""
+  },
+  navigation: [],
+  categories: [],
   lastUpdatedAt: now(),
 };
 
 export const useCatalogStore = create<CatalogStore>()(
-  persist(
-    (set, get) => ({
-      ...DEFAULT_CATALOG,
-      updateStore: (patch) => set((s) => ({ store: { ...s.store, ...patch }, lastUpdatedAt: now() })),
-      addNavItem: (item) => set((s) => ({ navigation: [...s.navigation, { ...item, id: makeId() }], lastUpdatedAt: now() })),
-      updateNavItem: (id, patch) =>
-        set((s) => ({
-          navigation: s.navigation.map((n) => (n.id === id ? { ...n, ...patch } : n)),
-          lastUpdatedAt: now(),
-        })),
-      removeNavItem: (id) => set((s) => ({ navigation: s.navigation.filter((n) => n.id !== id), lastUpdatedAt: now() })),
-      addCategory: (cat) => {
-        const id = makeId();
-        const slug = cat.slug?.trim() ? slugify(cat.slug) : slugify(cat.name);
-        set((s) => ({
-          categories: [...s.categories, { ...cat, id, slug, products: [] }],
-          lastUpdatedAt: now(),
-        }));
-        return id;
-      },
-      updateCategory: (id, patch) => {
-        set((s) => ({
-          categories: s.categories.map((c) =>
-            c.id === id
-              ? {
-                ...c,
-                ...patch,
-                slug: patch.slug ? slugify(patch.slug) : c.slug,
-              }
-              : c
-          ),
-          lastUpdatedAt: now(),
-        }));
-      },
-      removeCategory: (id) => set((s) => ({ categories: s.categories.filter((c) => c.id !== id), lastUpdatedAt: now() })),
-      addProduct: (categoryId, prod) => {
-        const id = makeId();
-        const slug = prod.slug?.trim() ? slugify(prod.slug) : slugify(prod.name);
-        set((s) => ({
-          categories: s.categories.map((c) =>
-            c.id === categoryId
-              ? {
-                ...c,
-                products: [...c.products, { ...prod, id, slug, currency: prod.currency || s.store.currency }],
-              }
-              : c
-          ),
-          lastUpdatedAt: now(),
-        }));
-        return id;
-      },
-      updateProduct: (categoryId, productId, patch) => {
-        set((s) => ({
-          categories: s.categories.map((c) =>
-            c.id === categoryId
-              ? {
-                ...c,
-                products: c.products.map((p) =>
-                  p.id === productId
-                    ? {
-                      ...p,
-                      ...patch,
-                      slug: patch.slug ? slugify(patch.slug) : p.slug,
-                    }
-                    : p
-                ),
-              }
-              : c
-          ),
-          lastUpdatedAt: now(),
-        }));
-      },
-      removeProduct: (categoryId, productId) => {
-        set((s) => ({
-          categories: s.categories.map((c) =>
-            c.id === categoryId ? { ...c, products: c.products.filter((p) => p.id !== productId) } : c
-          ),
-          lastUpdatedAt: now(),
-        }));
-      },
-      replaceAll: (state) => set({ ...state, lastUpdatedAt: now() }),
-      exportJson: () => JSON.stringify({ store: get().store, navigation: get().navigation.map(({ id, ...n }) => n), categories: get().categories, lastUpdatedAt: get().lastUpdatedAt }, null, 2),
-    }),
-    {
-      name: "catalog-admin-pro",
-      storage: createJSONStorage(() => localStorage),
-      version: 1,
-    }
-  )
+  (set, get) => ({
+    ...DEFAULT_CATALOG,
+    updateStore: (patch) => set((s) => ({ store: { ...s.store, ...patch }, lastUpdatedAt: now() })),
+    addNavItem: (item) => set((s) => ({ navigation: [...s.navigation, { ...item, id: makeId() }], lastUpdatedAt: now() })),
+    updateNavItem: (id, patch) =>
+      set((s) => ({
+        navigation: s.navigation.map((n) => (n.id === id ? { ...n, ...patch } : n)),
+        lastUpdatedAt: now(),
+      })),
+    removeNavItem: (id) => set((s) => ({ navigation: s.navigation.filter((n) => n.id !== id), lastUpdatedAt: now() })),
+    addCategory: (cat) => {
+      const id = makeId();
+      const slug = cat.slug?.trim() ? slugify(cat.slug) : slugify(cat.name);
+      set((s) => ({
+        categories: [...s.categories, { ...cat, id, slug, products: [] }],
+        lastUpdatedAt: now(),
+      }));
+      return id;
+    },
+    updateCategory: (id, patch) => {
+      set((s) => ({
+        categories: s.categories.map((c) =>
+          c.id === id
+            ? {
+              ...c,
+              ...patch,
+              slug: patch.slug ? slugify(patch.slug) : c.slug,
+            }
+            : c
+        ),
+        lastUpdatedAt: now(),
+      }));
+    },
+    removeCategory: (id) => set((s) => ({ categories: s.categories.filter((c) => c.id !== id), lastUpdatedAt: now() })),
+    addProduct: (categoryId, prod) => {
+      const id = makeId();
+      const slug = prod.slug?.trim() ? slugify(prod.slug) : slugify(prod.name);
+      set((s) => ({
+        categories: s.categories.map((c) =>
+          c.id === categoryId
+            ? {
+              ...c,
+              products: [...c.products, { ...prod, id, slug, currency: prod.currency || s.store.currency }],
+            }
+            : c
+        ),
+        lastUpdatedAt: now(),
+      }));
+      return id;
+    },
+    updateProduct: (categoryId, productId, patch) => {
+      set((s) => ({
+        categories: s.categories.map((c) =>
+          c.id === categoryId
+            ? {
+              ...c,
+              products: c.products.map((p) =>
+                p.id === productId
+                  ? {
+                    ...p,
+                    ...patch,
+                    slug: patch.slug ? slugify(patch.slug) : p.slug,
+                  }
+                  : p
+              ),
+            }
+            : c
+        ),
+        lastUpdatedAt: now(),
+      }));
+    },
+    removeProduct: (categoryId, productId) => {
+      set((s) => ({
+        categories: s.categories.map((c) =>
+          c.id === categoryId ? { ...c, products: c.products.filter((p) => p.id !== productId) } : c
+        ),
+        lastUpdatedAt: now(),
+      }));
+    },
+    replaceAll: (state) => set({ ...state, lastUpdatedAt: now() }),
+    exportJson: () => JSON.stringify({ store: get().store, navigation: get().navigation.map(({ id, ...n }) => n), categories: get().categories, lastUpdatedAt: get().lastUpdatedAt }, null, 2),
+  })
 );

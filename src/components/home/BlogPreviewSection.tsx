@@ -3,12 +3,12 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Calendar, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { AnimatedSection } from "@/components/AnimatedSection";
 
-import blogOffice from "@/assets/blog/office-cleaning.jpg";
-import blogEco from "@/assets/blog/eco-cleaning.jpg";
-import blogFloor from "@/assets/blog/floor-care-guide.jpg";
-import blogKitchen from "@/assets/blog/kitchen-hygiene.jpg";
-import blogHand from "@/assets/blog/hand-hygiene.jpg";
-import blogSupplies from "@/assets/blog/supplies-guide.jpg";
+const blogOffice = "/assets/blog/office-cleaning.jpg";
+const blogEco = "/assets/blog/eco-cleaning.jpg";
+const blogFloor = "/assets/blog/floor-care-guide.jpg";
+const blogKitchen = "/assets/blog/kitchen-hygiene.jpg";
+const blogHand = "/assets/blog/hand-hygiene.jpg";
+const blogSupplies = "/assets/blog/supplies-guide.jpg";
 
 export const blogPosts = [
   {

@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ShoppingCart, Minus, Plus, Loader2, Package, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { useCatalogStore } from "@/stores/catalogStore";
+import { useCatalogApi } from "@/hooks/useCatalogApi";
 import {
     Dialog,
     DialogContent,
@@ -14,25 +14,28 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import type { ShopifyProduct } from "@/stores/cartStore";
+import type { ApiProduct } from "@/lib/api";
 
 interface ProductQuickViewProps {
     handle: string;
     children: React.ReactNode;
+    initialProduct?: ShopifyProduct;
+    initialCatalogProduct?: ApiProduct;
 }
 
-export const ProductQuickView = ({ handle, children }: ProductQuickViewProps) => {
+export const ProductQuickView = ({ handle, children, initialProduct, initialCatalogProduct }: ProductQuickViewProps) => {
     const [isOpen, setIsOpen] = useState(false);
-    const { data: shopifyProduct, isLoading: shopifyLoading } = useShopifyProduct(handle || "");
-    const categories = useCatalogStore(s => s.categories);
+    const { data: fetchedShopifyProduct, isLoading: shopifyLoading } = useShopifyProduct(handle && !initialProduct && !initialCatalogProduct ? handle : "");
+    const { products } = useCatalogApi();
+
+    const shopifyProduct = initialProduct || fetchedShopifyProduct;
 
     const catalogProduct = useMemo(() => {
+        if (initialCatalogProduct) return initialCatalogProduct;
         if (shopifyProduct) return null;
-        for (const cat of categories) {
-            const found = cat.products.find(p => p.slug === handle || p.id === handle);
-            if (found) return found;
-        }
-        return null;
-    }, [categories, handle, shopifyProduct]);
+        return products.find(p => p.slug === handle || String(p.id) === handle) ?? null;
+    }, [products, handle, shopifyProduct, initialCatalogProduct]);
 
     const addItem = useCartStore(state => state.addItem);
     const cartLoading = useCartStore(state => state.isLoading);
@@ -44,33 +47,40 @@ export const ProductQuickView = ({ handle, children }: ProductQuickViewProps) =>
     const isShopify = !!shopifyProduct;
 
     // Normalize data
-    const title = isShopify ? (product as any).title : (product as any)?.name || "Product";
-    const description = isShopify ? (product as any).description : (product as any)?.description;
-    const images = isShopify ? (product as any).images.edges : [];
-    const gallery = isShopify ? images.map((img: any) => img.node.url) : [(product as any)?.image_url, ...((product as any)?.gallery || [])].filter(Boolean);
-    const variants = isShopify ? (product as any).variants.edges : [];
+    // Important: if it's from useShopifyProduct, it's a direct node. 
+    // If it's from useShopifyProducts (edge), it has .node.
+    const getShopifyNode = (p: ShopifyProduct | (ShopifyProduct['node'] & { node?: never })) => 
+        'node' in p ? p.node : p;
+    
+    const node = isShopify ? getShopifyNode(product as ShopifyProduct | (ShopifyProduct['node'] & { node?: never })) : null;
+    const title = isShopify ? node?.title : (product as ApiProduct)?.name || "Product";
+    const description = isShopify ? node?.description : (product as ApiProduct)?.description;
+    const images = isShopify ? node?.images?.edges || [] : [];
+    const gallery = isShopify ? (images as Array<{ node: { url: string } }>).map((img) => img.node.url) : [(product as ApiProduct)?.image_url, ...((product as ApiProduct)?.image_url_2 ? [(product as ApiProduct)?.image_url_2] : []), ...((product as ApiProduct)?.image_url_3 ? [(product as ApiProduct)?.image_url_3] : [])].filter(Boolean) as string[];
+    const variants = isShopify ? node?.variants?.edges || [] : [];
     const selectedVariant = isShopify ? variants[selectedVariantIdx]?.node : null;
-    const price = isShopify ? selectedVariant?.price : { amount: (product as any)?.price, currencyCode: (product as any)?.currency || "AUD" };
+    const price = isShopify ? selectedVariant?.price : { amount: String((product as ApiProduct)?.price || 0), currencyCode: "LKR" };
 
     const handleAddToCart = async () => {
         if (!product) return;
         if (isShopify) {
-            if (!selectedVariant) return;
+            if (!selectedVariant || !node) return;
             await addItem({
                 type: 'shopify',
-                productId: (product as any).id,
+                productId: node.id,
                 name: title,
                 image: gallery[0],
                 price: selectedVariant.price,
                 quantity,
                 shopifyVariantId: selectedVariant.id,
-                shopifyData: { node: product } as any,
+                shopifyData: { node } as unknown as ShopifyProduct, // Wrap node back for cart store expectation
                 selectedOptions: selectedVariant.selectedOptions || [],
             });
         } else {
+            const apiProd = product as ApiProduct;
             await addItem({
                 type: 'catalog',
-                productId: (product as any).id,
+                productId: String(apiProd.id),
                 name: title,
                 image: gallery[0],
                 price: price,
@@ -85,12 +95,22 @@ export const ProductQuickView = ({ handle, children }: ProductQuickViewProps) =>
         setIsOpen(false);
     };
 
+    if (shopifyLoading && !initialProduct && !initialCatalogProduct) {
+        return <div className="hidden">{children}</div>;
+    }
+
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
                 {children}
             </DialogTrigger>
-            <DialogContent className="max-w-4xl p-0 overflow-hidden rounded-[2rem] border-none shadow-2xl sm:max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-w-4xl p-0 overflow-hidden rounded-[2.5rem] border-none shadow-2xl sm:max-h-[90vh] overflow-y-auto relative">
+                <button 
+                  onClick={() => setIsOpen(false)}
+                  className="absolute top-4 right-4 z-50 p-2 rounded-full bg-white/80 backdrop-blur-md border border-slate-100 text-slate-900 hover:bg-slate-900 hover:text-white transition-all duration-300 shadow-sm"
+                >
+                  <X className="h-5 w-5" />
+                </button>
                 <div className="grid md:grid-cols-2 gap-0">
                     {/* Left: Gallery */}
                     <div className="bg-slate-50 p-6 flex flex-col gap-4">
@@ -128,7 +148,7 @@ export const ProductQuickView = ({ handle, children }: ProductQuickViewProps) =>
                     <div className="p-8 flex flex-col gap-6">
                         <div className="space-y-4">
                             <Badge variant="secondary" className="bg-slate-100 text-slate-600 border-none px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider w-fit">
-                                {isShopify ? 'In Stock' : (product as any)?.subcategory || 'Catalog Item'}
+                                {isShopify ? 'In Stock' : (product as ApiProduct)?.category?.name || 'Catalog Item'}
                             </Badge>
                             <DialogTitle className="text-3xl font-display font-black text-slate-900 leading-tight">
                                 {title}

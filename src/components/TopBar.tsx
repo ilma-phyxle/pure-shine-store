@@ -26,8 +26,8 @@ export const TopBar = () => {
           <a href="tel:1300472722" className="flex items-center gap-1.5 hover:text-secondary transition-colors">
             <Phone className="h-3 w-3" /> 1300 GRAPC
           </a>
-          <a href="mailto:info@grapc.com.au" className="hidden sm:flex items-center gap-1.5 hover:text-secondary transition-colors">
-            <Mail className="h-3 w-3" /> info@grapc.com.au
+          <a href="mailto:infor@cleanyglow.lk" className="hidden sm:flex items-center gap-1.5 hover:text-secondary transition-colors">
+            <Mail className="h-3 w-3" /> infor@cleanyglow.lk
           </a>
         </div>
         <p className="hidden md:block font-medium tracking-wide uppercase">

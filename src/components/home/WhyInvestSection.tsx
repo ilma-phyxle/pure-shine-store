@@ -1,5 +1,5 @@
 import { AnimatedSection } from "@/components/AnimatedSection";
-import whyInvestBg from "@/assets/why-invest-bg.jpg";
+const whyInvestBg = "/assets/why-invest-bg.jpg";
 
 export const WhyInvestSection = () => {
   return (

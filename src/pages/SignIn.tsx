@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { LogIn } from "lucide-react";
-import authBg from "@/assets/auth-bg.jpg";
+
+const authBg = "/assets/auth-bg.jpg";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");

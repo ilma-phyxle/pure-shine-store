@@ -16,10 +16,16 @@ const Contact = () => {
 
   return (
     <main>
-      <section className="py-16 md:py-24 bg-primary text-primary-foreground">
-        <div className="container text-center max-w-3xl">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Contact Us</h1>
-          <p className="text-lg text-primary-foreground/80">Have a question or need a quote? We're here to help.</p>
+      <section className="bg-primary py-16 lg:py-24 border-b border-white/5">
+        <div className="container px-4">
+          <div className="max-w-3xl mx-auto text-center space-y-6">
+            <h1 className="text-3xl md:text-5xl font-display font-bold text-primary-foreground tracking-tight">
+              Contact Us
+            </h1>
+            <p className="text-primary-foreground/70 text-sm md:text-base max-w-xl mx-auto">
+              Have a question or need a quote? We're here to help.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -34,7 +40,7 @@ const Contact = () => {
               <div className="space-y-6">
                 {[
                   { icon: Phone, label: "Phone", value: "1300 GRAPC" },
-                  { icon: Mail, label: "Email", value: "info@grapc.com.au" },
+                  { icon: Mail, label: "Email", value: "infor@cleanyglow.lk" },
                   { icon: MapPin, label: "Address", value: "Sydney, NSW, Australia" },
                 ].map((item) => (
                   <div key={item.label} className="flex items-center gap-4">

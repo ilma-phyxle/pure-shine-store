@@ -11,10 +11,10 @@ const FAQ: { keywords: string[]; answer: string }[] = [
   { keywords: ["return", "refund", "exchange"], answer: "We accept returns within **30 days** of purchase for unopened products. Please contact our support team to arrange a return." },
   { keywords: ["payment", "pay", "card", "credit"], answer: "We accept **Visa, Mastercard, AMEX**, and bank transfers for bulk orders." },
   { keywords: ["hours", "open", "time", "available"], answer: "Our office hours are **Mon–Fri 8am–5pm AEST**. You can browse and order online 24/7." },
-  { keywords: ["contact", "phone", "email", "reach"], answer: "📞 **1300 123 456**\n📧 sales@grapc.com.au\nOr visit our [Contact page](/contact)." },
+  { keywords: ["contact", "phone", "email", "reach"], answer: "📞 **1300 123 456**\n📧 infor@cleanyglow.lk\nOr visit our [Contact page](/contact)." },
   { keywords: ["product", "range", "sell", "stock", "category"], answer: "We stock **floor care, bathroom, kitchen, disinfectants, paper products, janitorial equipment, hand hygiene, laundry, glass & surface, waste management, outdoor**, and **specialty chemicals**. Browse our [Shop](/shop)!" },
   { keywords: ["eco", "green", "sustainable", "environment"], answer: "We carry a range of **eco-friendly cleaning products** that are biodegradable and sustainably sourced. Look for the 🌿 eco badge in our shop." },
-  { keywords: ["quote", "custom"], answer: "For custom quotes on large orders, please visit our [Contact page](/contact) or email **sales@grapc.com.au** with your requirements." },
+  { keywords: ["quote", "custom"], answer: "For custom quotes on large orders, please visit our [Contact page](/contact) or email **infor@cleanyglow.lk** with your requirements." },
 ];
 
 const GREETING = "👋 Hi! I'm the GRAPC assistant. Ask me about our products, shipping, bulk pricing, or anything else!";

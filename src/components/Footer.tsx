@@ -43,7 +43,7 @@ export const Footer = () => {
             <h4 className="font-semibold mb-4">Contact</h4>
             <ul className="space-y-3 text-sm text-primary-foreground/70">
               <li className="flex items-center gap-2"><Phone className="h-4 w-4" /> 1300 GRAPC</li>
-              <li className="flex items-center gap-2"><Mail className="h-4 w-4" /> info@grapc.com.au</li>
+              <li className="flex items-center gap-2"><Mail className="h-4 w-4" /> infor@cleanyglow.lk</li>
               <li className="flex items-start gap-2"><MapPin className="h-4 w-4 mt-0.5" /> Sydney, Australia</li>
             </ul>
           </div>

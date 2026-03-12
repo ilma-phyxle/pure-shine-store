@@ -1,48 +1,49 @@
-import { useMemo, useState } from "react";
-import { useLocalProductsStore, type LocalProduct } from "@/stores/localProductsStore";
+import { useEffect, useMemo, useState } from "react";
+import { getProducts, createProduct, updateProduct, deleteProduct, ApiProduct, getCategories, ApiCategory } from "@/lib/api";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/use-toast";
-import {
-  Package,
-  Search,
-  Download,
-  Plus,
-  Trash2,
-  Edit2,
-  Save,
-  Upload,
-  Copy,
-  ExternalLink,
-  DollarSign,
-  ArrowLeft
-} from "lucide-react";
-import { Link } from "react-router-dom";
+import { Package, Plus, Trash2, Download, Upload, Copy } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
-import { cn } from "@/lib/utils";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const AdminProducts = () => {
-  const products = useLocalProductsStore((s) => s.products);
-  const lastUpdatedAt = useLocalProductsStore((s) => s.lastUpdatedAt);
-  const addProduct = useLocalProductsStore((s) => s.addProduct);
-  const updateProduct = useLocalProductsStore((s) => s.updateProduct);
-  const removeProduct = useLocalProductsStore((s) => s.removeProduct);
-  const replaceAll = useLocalProductsStore((s) => s.replaceAll);
-  const exportJson = useLocalProductsStore((s) => s.exportJson);
+  const [products, setProducts] = useState<ApiProduct[]>([]);
+  const [categories, setCategories] = useState<ApiCategory[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [newName, setNewName] = useState("");
   const [newDescription, setNewDescription] = useState("");
-  const [newPriceAmount, setNewPriceAmount] = useState<string>("");
-  const [newCurrencyCode, setNewCurrencyCode] = useState("USD");
+  const [newPrice, setNewPrice] = useState<string>("");
+  const [newCategoryId, setNewCategoryId] = useState<string>("");
   const [newImageUrl, setNewImageUrl] = useState("");
-  const [newUrl, setNewUrl] = useState("");
+  const [newImageUrl2, setNewImageUrl2] = useState("");
+  const [newImageUrl3, setNewImageUrl3] = useState("");
   const [search, setSearch] = useState("");
 
-  const [importText, setImportText] = useState("");
+  const fetchInitialData = async () => {
+    try {
+      setLoading(true);
+      const [fetchedProducts, fetchedCategories] = await Promise.all([
+        getProducts(),
+        getCategories(),
+      ]);
+      setProducts(fetchedProducts);
+      setCategories(fetchedCategories);
+    } catch (error) {
+      toast({ title: "Failed to load data", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchInitialData();
+  }, []);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -50,79 +51,68 @@ const AdminProducts = () => {
     return products.filter((p) => p.name.toLowerCase().includes(q) || (p.description?.toLowerCase().includes(q) ?? false));
   }, [products, search]);
 
-  const parsePrice = (raw: string) => {
-    const trimmed = raw.trim();
-    if (!trimmed) return undefined;
-    const n = Number(trimmed);
-    if (!Number.isFinite(n) || n < 0) return undefined;
-    return n;
-  };
+  const doAdd = async () => {
+    if (!newName.trim() || !newCategoryId) {
+      toast({ title: "Name and Category are required", variant: "destructive" });
+      return;
+    }
 
-  const doAdd = () => {
-    if (!newName.trim()) return;
-    addProduct({
-      name: newName.trim(),
-      description: newDescription.trim() || undefined,
-      priceAmount: parsePrice(newPriceAmount),
-      currencyCode: newCurrencyCode.trim() || undefined,
-      imageUrl: newImageUrl.trim() || undefined,
-      url: newUrl.trim() || undefined,
-      active: true,
-    });
-    setNewName("");
-    setNewDescription("");
-    setNewPriceAmount("");
-    setNewImageUrl("");
-    setNewUrl("");
-    toast({ title: "Product added" });
-  };
-
-  const doExportCopy = async () => {
-    const json = exportJson();
-    await navigator.clipboard.writeText(json);
-    toast({ title: "Copied export JSON" });
-  };
-
-  const doExportDownload = () => {
-    const json = exportJson();
-    const blob = new Blob([json], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `local-products-${new Date(lastUpdatedAt).toISOString().slice(0, 10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const doImport = () => {
     try {
-      const parsed = JSON.parse(importText);
-      if (!parsed || !Array.isArray(parsed.products)) throw new Error("Invalid JSON");
-      replaceAll(parsed);
-      setImportText("");
-      toast({ title: "Imported products data" });
-    } catch {
-      toast({ title: "Import failed", description: "Paste valid JSON exported from this page.", variant: "destructive" });
+      const added = await createProduct({
+        name: newName.trim(),
+        category_id: parseInt(newCategoryId),
+        description: newDescription.trim() || undefined,
+        price: parseFloat(newPrice) || 0,
+        image_url: newImageUrl.trim() || undefined,
+        image_url_2: newImageUrl2.trim() || undefined,
+        image_url_3: newImageUrl3.trim() || undefined,
+      });
+      setProducts(prev => [...prev, added]);
+      setNewName("");
+      setNewDescription("");
+      setNewPrice("");
+      setNewImageUrl("");
+      setNewImageUrl2("");
+      setNewImageUrl3("");
+      setNewCategoryId("");
+      toast({ title: "Product added" });
+    } catch (error) {
+      toast({ title: "Failed to add product", variant: "destructive" });
     }
   };
 
-  const renderRow = (p: LocalProduct) => {
-    const currency = p.currencyCode || "USD";
-    const priceText = typeof p.priceAmount === "number" ? `${currency} ${p.priceAmount.toFixed(2)}` : "—";
+  const removeProduct = async (id: number) => {
+    try {
+      await deleteProduct(id);
+      setProducts(prev => prev.filter(p => p.id !== id));
+      toast({ title: "Product removed" });
+    } catch (error) {
+      toast({ title: "Failed to delete product", variant: "destructive" });
+    }
+  };
+
+  const handleUpdate = async (id: number, patch: Partial<ApiProduct>) => {
+    try {
+      const updated = await updateProduct(id, patch);
+      setProducts(prev => prev.map(p => p.id === id ? updated : p));
+      toast({ title: "Product updated" });
+    } catch (error) {
+      toast({ title: "Failed to update product", variant: "destructive" });
+    }
+  };
+
+  const renderRow = (p: ApiProduct) => {
     return (
       <Card key={p.id} className="p-4 space-y-3">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="font-semibold leading-snug truncate">{p.name}</p>
-            <p className="text-xs text-muted-foreground">Updated: {new Date(p.updatedAt).toLocaleString()}</p>
+            <p className="text-xs text-muted-foreground">Category: {p.category?.name || 'None'}</p>
           </div>
           <Button
             variant="destructive"
             size="sm"
-            onClick={() => {
-              removeProduct(p.id);
-              toast({ title: "Product removed" });
-            }}
+            onClick={() => removeProduct(p.id)}
           >
             <Trash2 className="h-4 w-4 mr-2" />
             Delete
@@ -132,32 +122,64 @@ const AdminProducts = () => {
         <div className="grid gap-3 md:grid-cols-2">
           <div className="space-y-1">
             <Label>Name</Label>
-            <Input value={p.name} onChange={(e) => updateProduct(p.id, { name: e.target.value })} />
+            <Input defaultValue={p.name} onBlur={(e) => { if (e.target.value !== p.name) handleUpdate(p.id, { name: e.target.value }) }} />
           </div>
           <div className="space-y-1">
             <Label>Price</Label>
             <Input
               inputMode="decimal"
-              placeholder={priceText}
-              value={typeof p.priceAmount === "number" ? p.priceAmount.toString() : ""}
-              onChange={(e) => updateProduct(p.id, { priceAmount: parsePrice(e.target.value) })}
+              defaultValue={p.price?.toString()}
+              onBlur={(e) => {
+                const val = parseFloat(e.target.value);
+                if (!isNaN(val) && val !== p.price) handleUpdate(p.id, { price: val });
+              }}
             />
           </div>
-          <div className="space-y-1">
-            <Label>Currency</Label>
-            <Input value={currency} onChange={(e) => updateProduct(p.id, { currencyCode: e.target.value })} placeholder="USD" />
-          </div>
-          <div className="space-y-1">
-            <Label>URL (optional)</Label>
-            <Input value={p.url ?? ""} onChange={(e) => updateProduct(p.id, { url: e.target.value })} placeholder="https://..." />
+          <div className="space-y-1 md:col-span-2">
+            <Label>Image URL (Primary)</Label>
+            <div className="flex gap-2">
+              <Input type="file" accept="image/*" onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onloadend = () => handleUpdate(p.id, { image_url: reader.result as string });
+                  reader.readAsDataURL(file);
+                }
+              }} />
+              <Input defaultValue={p.image_url ?? ""} onBlur={(e) => { if (e.target.value !== p.image_url) handleUpdate(p.id, { image_url: e.target.value }) }} placeholder="URL or Base64" />
+            </div>
           </div>
           <div className="space-y-1 md:col-span-2">
-            <Label>Image URL (optional)</Label>
-            <Input value={p.imageUrl ?? ""} onChange={(e) => updateProduct(p.id, { imageUrl: e.target.value })} placeholder="https://..." />
+            <Label>Image URL 2 (Optional)</Label>
+            <div className="flex gap-2">
+              <Input type="file" accept="image/*" onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onloadend = () => handleUpdate(p.id, { image_url_2: reader.result as string });
+                  reader.readAsDataURL(file);
+                }
+              }} />
+              <Input defaultValue={p.image_url_2 ?? ""} onBlur={(e) => { if (e.target.value !== p.image_url_2) handleUpdate(p.id, { image_url_2: e.target.value }) }} placeholder="URL or Base64" />
+            </div>
+          </div>
+          <div className="space-y-1 md:col-span-2">
+            <Label>Image URL 3 (Optional)</Label>
+            <div className="flex gap-2">
+              <Input type="file" accept="image/*" onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onloadend = () => handleUpdate(p.id, { image_url_3: reader.result as string });
+                  reader.readAsDataURL(file);
+                }
+              }} />
+              <Input defaultValue={p.image_url_3 ?? ""} onBlur={(e) => { if (e.target.value !== p.image_url_3) handleUpdate(p.id, { image_url_3: e.target.value }) }} placeholder="URL or Base64" />
+            </div>
           </div>
           <div className="space-y-1 md:col-span-2">
             <Label>Description (optional)</Label>
-            <Textarea value={p.description ?? ""} onChange={(e) => updateProduct(p.id, { description: e.target.value })} />
+            <Textarea defaultValue={p.description ?? ""} onBlur={(e) => { if (e.target.value !== p.description) handleUpdate(p.id, { description: e.target.value }) }} />
           </div>
         </div>
       </Card>
@@ -169,23 +191,13 @@ const AdminProducts = () => {
       <div className="space-y-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-display font-bold tracking-tight text-slate-100">Product List</h1>
-            <p className="text-slate-500">Manage your local product inventory and catalog items.</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => toast({ title: "Exporting..." })} className="gap-2 border-slate-800 bg-slate-900 text-slate-200">
-              <Download className="h-4 w-4" />
-              Export
-            </Button>
-            <Button size="sm" className="gap-2 bg-primary text-primary-foreground shadow-lg shadow-primary/20" onClick={() => toast({ title: "Auto-saving is enabled" })}>
-              <Plus className="h-4 w-4" />
-              Add Product
-            </Button>
+            <h1 className="text-3xl font-display font-bold tracking-tight text-slate-100">Product API List</h1>
+            <p className="text-slate-500">Manage your product catalog items on the remote database.</p>
           </div>
         </div>
 
         <Tabs defaultValue="list" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 lg:w-[600px] bg-slate-900 border-slate-800">
+          <TabsList className="grid w-full grid-cols-2 lg:w-[400px] bg-slate-900 border-slate-800">
             <TabsTrigger value="list" className="gap-2 data-[state=active]:bg-primary transition-all">
               <Package className="h-4 w-4" />
               Products
@@ -193,10 +205,6 @@ const AdminProducts = () => {
             <TabsTrigger value="add" className="gap-2 data-[state=active]:bg-primary transition-all">
               <Plus className="h-4 w-4" />
               Add New
-            </TabsTrigger>
-            <TabsTrigger value="import" className="gap-2 data-[state=active]:bg-primary transition-all">
-              <Upload className="h-4 w-4" />
-              Import / Export
             </TabsTrigger>
           </TabsList>
 
@@ -210,7 +218,11 @@ const AdminProducts = () => {
               </p>
             </div>
 
-            {filtered.length === 0 ? (
+            {loading ? (
+              <div className="text-center py-16 rounded-xl border bg-card">
+                <p className="font-semibold text-lg mb-2">Loading products...</p>
+              </div>
+            ) : filtered.length === 0 ? (
               <div className="text-center py-16 rounded-xl border bg-card">
                 <p className="font-semibold text-lg mb-2">No products yet</p>
                 <p className="text-muted-foreground">Add your first product above.</p>
@@ -222,84 +234,81 @@ const AdminProducts = () => {
 
           <TabsContent value="add" className="mt-6 space-y-6">
             <Card className="p-4 space-y-4">
-              <div className="flex items-center justify-between gap-4 flex-wrap">
-                <p className="font-semibold">Add product</p>
-                <p className="text-xs text-muted-foreground">Last updated: {new Date(lastUpdatedAt).toLocaleString()}</p>
-              </div>
+              <p className="font-semibold">Add product</p>
               <div className="grid gap-3 md:grid-cols-2">
                 <div className="space-y-1">
                   <Label>Name</Label>
                   <Input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="e.g., Bleach 1L" />
                 </div>
                 <div className="space-y-1">
-                  <Label>Price</Label>
-                  <Input inputMode="decimal" value={newPriceAmount} onChange={(e) => setNewPriceAmount(e.target.value)} placeholder="e.g., 9.99" />
-                </div>
-                <div className="space-y-1">
-                  <Label>Currency</Label>
-                  <Input value={newCurrencyCode} onChange={(e) => setNewCurrencyCode(e.target.value)} placeholder="USD" />
-                </div>
-                <div className="space-y-1">
-                  <Label>URL (optional)</Label>
-                  <Input value={newUrl} onChange={(e) => setNewUrl(e.target.value)} placeholder="https://..." />
+                  <Label>Category</Label>
+                  <Select value={newCategoryId} onValueChange={setNewCategoryId}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map(c => (
+                        <SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-1 md:col-span-2">
-                  <Label>Image URL (optional)</Label>
-                  <Input value={newImageUrl} onChange={(e) => setNewImageUrl(e.target.value)} placeholder="https://..." />
+                  <Label>Price</Label>
+                  <Input inputMode="decimal" value={newPrice} onChange={(e) => setNewPrice(e.target.value)} placeholder="e.g., 9.99" />
+                </div>
+                <div className="space-y-1 md:col-span-2">
+                  <Label>Image URL (Primary)</Label>
+                  <div className="flex gap-2">
+                    <Input type="file" accept="image/*" onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onloadend = () => setNewImageUrl(reader.result as string);
+                        reader.readAsDataURL(file);
+                      }
+                    }} />
+                    <Input value={newImageUrl} onChange={(e) => setNewImageUrl(e.target.value)} placeholder="URL or Base64" />
+                  </div>
+                </div>
+                <div className="space-y-1 md:col-span-2">
+                  <Label>Image URL 2 (Optional)</Label>
+                  <div className="flex gap-2">
+                    <Input type="file" accept="image/*" onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onloadend = () => setNewImageUrl2(reader.result as string);
+                        reader.readAsDataURL(file);
+                      }
+                    }} />
+                    <Input value={newImageUrl2} onChange={(e) => setNewImageUrl2(e.target.value)} placeholder="URL or Base64" />
+                  </div>
+                </div>
+                <div className="space-y-1 md:col-span-2">
+                  <Label>Image URL 3 (Optional)</Label>
+                  <div className="flex gap-2">
+                    <Input type="file" accept="image/*" onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onloadend = () => setNewImageUrl3(reader.result as string);
+                        reader.readAsDataURL(file);
+                      }
+                    }} />
+                    <Input value={newImageUrl3} onChange={(e) => setNewImageUrl3(e.target.value)} placeholder="URL or Base64" />
+                  </div>
                 </div>
                 <div className="space-y-1 md:col-span-2">
                   <Label>Description (optional)</Label>
                   <Textarea value={newDescription} onChange={(e) => setNewDescription(e.target.value)} placeholder="Short description…" />
                 </div>
                 <div className="md:col-span-2">
-                  <Button onClick={doAdd} disabled={!newName.trim()}>
-                    Add
+                  <Button onClick={doAdd} disabled={!newName.trim() || !newCategoryId}>
+                    Add Product
                   </Button>
                 </div>
               </div>
-            </Card>
-
-            <div className="flex items-center justify-between gap-3 flex-wrap">
-              <div className="min-w-[220px] flex-1 max-w-lg">
-                <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search products…" />
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Showing <span className="font-medium text-foreground">{filtered.length}</span> product{filtered.length !== 1 ? "s" : ""}
-              </p>
-            </div>
-
-            {filtered.length === 0 ? (
-              <div className="text-center py-16 rounded-xl border bg-card">
-                <p className="font-semibold text-lg mb-2">No products yet</p>
-                <p className="text-muted-foreground">Add your first product above.</p>
-              </div>
-            ) : (
-              <div className="space-y-4">{filtered.map(renderRow)}</div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="import" className="mt-6 space-y-4">
-            <Card className="p-4 space-y-3">
-              <p className="font-semibold">Export</p>
-              <div className="flex gap-2 flex-wrap">
-                <Button variant="outline" onClick={doExportCopy}>
-                  <Copy className="h-4 w-4 mr-2" />
-                  Copy JSON
-                </Button>
-                <Button variant="outline" onClick={doExportDownload}>
-                  <Download className="h-4 w-4 mr-2" />
-                  Download JSON
-                </Button>
-              </div>
-            </Card>
-
-            <Card className="p-4 space-y-3">
-              <p className="font-semibold">Import</p>
-              <Textarea value={importText} onChange={(e) => setImportText(e.target.value)} placeholder="Paste JSON exported from this page…" className="min-h-40" />
-              <Button onClick={doImport} disabled={!importText.trim()}>
-                <Upload className="h-4 w-4 mr-2" />
-                Import (replace all)
-              </Button>
             </Card>
           </TabsContent>
         </Tabs>

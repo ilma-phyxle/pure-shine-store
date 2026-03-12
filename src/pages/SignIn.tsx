@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { LogIn } from "lucide-react";
 
-const authBg = "/assets/auth-bg.jpg";
+import authBg from "@/assets/auth-bg.jpg";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -29,7 +29,7 @@ const SignIn = () => {
             <LogIn className="h-6 w-6 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-white">Welcome Back</h1>
-          <p className="text-sm text-white/70 mt-1">Sign in to your GRAPC account</p>
+          <p className="text-sm text-white/70 mt-1">Sign in to your   account</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">

@@ -22,7 +22,7 @@ import type { ShopifyProduct } from "@/stores/cartStore";
 import type { ApiProduct } from "@/lib/api";
 import type { EmblaCarouselType } from "embla-carousel";
 
-const heroSlide2 = "/assets/hero-slide-2.jpg";
+import heroSlide2 from "@/assets/hero-slide-2.jpg";
 
 const trustBadges = [
   { icon: Truck, label: "Free Shipping", sub: "Orders over $150" },
@@ -489,7 +489,7 @@ const Index = () => {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <AnimatedSection>
               <div className="space-y-6">
-                <h2 className="text-3xl md:text-4xl font-bold text-primary">Why Choose GRAPC?</h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-primary">Why Choose  ?</h2>
                 <p className="text-muted-foreground leading-relaxed">
                   With years of experience in the cleaning supply industry, we understand what professionals need. From hospitals to hotels, offices to homes — we supply the products that deliver results.
                 </p>

@@ -1,5 +1,5 @@
 
-# GRAPC CLEANING SUPPLIES — E-Commerce Website
+#   CLEANING SUPPLIES — E-Commerce Website
 
 ## Brand & Design System
 - **Color palette**: Deep blue (trust/professionalism), fresh green (clean/eco), white (cleanliness), with soft grays for backgrounds

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 export const Footer = () => {
   return (
@@ -8,10 +9,8 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <div className="h-9 w-9 rounded-lg bg-primary-foreground/20 flex items-center justify-center">
-                <span className="font-bold text-sm">G</span>
-              </div>
-              <span className="font-display font-bold text-lg">GRAPC</span>
+              <img src={logo} alt=" " className="h-9 w-9 rounded-lg object-contain bg-primary-foreground/10 p-1" />
+              <span className="font-display font-bold text-lg"> </span>
             </div>
             <p className="text-sm text-primary-foreground/70 leading-relaxed">
               Your trusted partner for commercial and residential cleaning supplies. Quality products, competitive prices.
@@ -42,15 +41,15 @@ export const Footer = () => {
           <div>
             <h4 className="font-semibold mb-4">Contact</h4>
             <ul className="space-y-3 text-sm text-primary-foreground/70">
-              <li className="flex items-center gap-2"><Phone className="h-4 w-4" /> 1300 GRAPC</li>
-              <li className="flex items-center gap-2"><Mail className="h-4 w-4" /> infor@cleanyglow.lk</li>
+              <li className="flex items-center gap-2"><Phone className="h-4 w-4" />  +61 416 163 126  </li>
+              <li className="flex items-center gap-2"><Mail className="h-4 w-4" /> info@cleanyglow.lk</li>
               <li className="flex items-start gap-2"><MapPin className="h-4 w-4 mt-0.5" /> Sydney, Australia</li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-primary-foreground/20 mt-12 pt-8 text-center text-sm text-primary-foreground/50">
-          © {new Date().getFullYear()} GRAPC Cleaning Supplies. All rights reserved.
+          © {new Date().getFullYear()}   Cleaning Supplies. All rights reserved.
         </div>
       </div>
     </footer>

@@ -14,9 +14,9 @@ const About = () => {
     <main>
       <section className="py-16 md:py-24 bg-primary text-primary-foreground">
         <div className="container text-center max-w-3xl">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">About GRAPC</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">About  </h1>
           <p className="text-lg text-primary-foreground/80 leading-relaxed">
-            GRAPC Cleaning Supplies is your trusted partner for commercial and residential cleaning products.
+              Cleaning Supplies is your trusted partner for commercial and residential cleaning products.
             We're an Australian-owned business dedicated to providing premium quality supplies at competitive prices.
           </p>
         </div>
@@ -28,7 +28,7 @@ const About = () => {
             <h2 className="text-3xl font-bold">Our Story</h2>
             <p className="text-muted-foreground leading-relaxed">
               Founded with a mission to make professional-grade cleaning supplies accessible to everyone,
-              GRAPC has grown to serve thousands of satisfied customers across Australia. From small businesses
+                has grown to serve thousands of satisfied customers across Australia. From small businesses
               to large facilities, we provide the cleaning solutions that keep spaces hygienic and welcoming.
             </p>
             <p className="text-muted-foreground leading-relaxed">

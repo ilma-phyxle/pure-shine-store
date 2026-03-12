@@ -1,13 +1,13 @@
 import { motion } from "framer-motion";
 
-const logoJasol = "/assets/brands/jasol.png";
-const logoAdvance = "/assets/brands/advance.png";
-const logoChemtec = "/assets/brands/chemtec.png";
-const logoRegal = "/assets/brands/regal.png";
-const logoEcoClean = "/assets/brands/ecoclean.png";
-const logoProShine = "/assets/brands/proshine.png";
-const logoAustraClean = "/assets/brands/austraclean.png";
-const logoCleanForce = "/assets/brands/cleanforce.png";
+import logoJasol from "@/assets/brands/jasol.png";
+import logoAdvance from "@/assets/brands/advance.png";
+import logoChemtec from "@/assets/brands/chemtec.png";
+import logoRegal from "@/assets/brands/regal.png";
+import logoEcoClean from "@/assets/brands/ecoclean.png";
+import logoProShine from "@/assets/brands/proshine.png";
+import logoAustraClean from "@/assets/brands/austraclean.png";
+import logoCleanForce from "@/assets/brands/cleanforce.png";
 
 const brands = [
   { name: "Jasol", logo: logoJasol },

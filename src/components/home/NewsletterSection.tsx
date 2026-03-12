@@ -21,7 +21,7 @@ export const NewsletterSection = () => {
           <div className="h-14 w-14 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto">
             <Mail className="h-7 w-7 text-secondary" />
           </div>
-          <h2 className="text-2xl md:text-3xl font-bold">Stay Updated with GRAPC</h2>
+          <h2 className="text-2xl md:text-3xl font-bold">Stay Updated with  </h2>
           <p className="text-muted-foreground">
             Subscribe to our newsletter for exclusive deals, new products, and cleaning tips delivered to your inbox.
           </p>

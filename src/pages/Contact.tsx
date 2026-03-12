@@ -39,8 +39,8 @@ const Contact = () => {
               </div>
               <div className="space-y-6">
                 {[
-                  { icon: Phone, label: "Phone", value: "1300 GRAPC" },
-                  { icon: Mail, label: "Email", value: "infor@cleanyglow.lk" },
+                  { icon: Phone, label: "Phone", value: " +61 416 163 126  " },
+                  { icon: Mail, label: "Email", value: "info@cleanyglow.lk" },
                   { icon: MapPin, label: "Address", value: "Sydney, NSW, Australia" },
                 ].map((item) => (
                   <div key={item.label} className="flex items-center gap-4">
@@ -83,7 +83,7 @@ const Contact = () => {
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              title="GRAPC Location - Sydney, Australia"
+              title="  Location - Sydney, Australia"
             />
           </div>
         </div>

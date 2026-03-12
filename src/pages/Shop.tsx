@@ -164,7 +164,7 @@ const Shop = () => {
         <div className="container px-4">
           <div className="grid gap-10 lg:grid-cols-[250px_1fr]">
             {/* Cleaner Sidebar Navigation */}
-            <aside className="space-y-8">
+            <aside className="space-y-8 hidden lg:block">
               <div className="space-y-4">
                 <div className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em] pb-2 border-b border-border">
                   Categories
@@ -246,6 +246,64 @@ const Shop = () => {
 
             {/* Main Content Area */}
             <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-700">
+              {/* Mobile Filters */}
+              <div className="lg:hidden bg-card p-4 rounded-2xl shadow-sm border border-border space-y-3">
+                <div className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em]">
+                  Filters
+                </div>
+                <div className="grid grid-cols-1 gap-3">
+                  <Select
+                    value={activeCategoryId ? String(activeCategoryId) : ""}
+                    onValueChange={(val) => {
+                      const nextId = Number(val);
+                      if (!Number.isNaN(nextId)) {
+                        setActiveCategoryId(nextId);
+                        setActiveSubcategoryId("");
+                      }
+                    }}
+                  >
+                    <SelectTrigger className="w-full bg-muted/50 border-none rounded-xl h-11">
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((c) => (
+                        <SelectItem key={c.id} value={String(c.id)}>
+                          {c.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  {subcategories.length > 0 && (
+                    <Select value={activeSubcategoryId} onValueChange={setActiveSubcategoryId}>
+                      <SelectTrigger className="w-full bg-muted/50 border-none rounded-xl h-11">
+                        <SelectValue placeholder={`All ${activeCategory?.name || "categories"}`} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">All {activeCategory?.name}</SelectItem>
+                        {subcategories.map((s) => (
+                          <SelectItem key={s.id} value={s.id}>
+                            {s.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+
+                  <Select value={priceRange} onValueChange={setPriceRange}>
+                    <SelectTrigger className="w-full bg-muted/50 border-none rounded-xl h-11">
+                      <SelectValue placeholder="Price range" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PRICE_RANGES.map((r) => (
+                        <SelectItem key={r.value} value={r.value}>
+                          {r.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
               {/* Toolbar */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-card p-4 rounded-2xl shadow-sm border border-border mb-8">
                 <div className="flex items-center gap-3">

@@ -1,11 +1,16 @@
 import axios from 'axios';
 
+// Detect if we are running locally or on the production server
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const BASE_URL = isLocal ? 'http://127.0.0.1:8000/api/' : '/api/';
+
 // Create an Axios instance configured for the Laravel API
 export const api = axios.create({
-    baseURL: 'https://oeh.phyxle.com.au/api',
+    baseURL: BASE_URL,
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
     },
 });
 
@@ -45,20 +50,20 @@ export interface ApiContactMessage {
 }
 
 // Category Services
-export const getCategories = () => api.get<ApiCategory[]>('/categories').then(res => res.data);
-export const createCategory = (data: Partial<ApiCategory>) => api.post<ApiCategory>('/categories', data).then(res => res.data);
-export const updateCategory = (id: number, data: Partial<ApiCategory>) => api.put<ApiCategory>(`/categories/${id}`, data).then(res => res.data);
-export const deleteCategory = (id: number) => api.delete(`/categories/${id}`);
+export const getCategories = () => api.get<ApiCategory[]>('categories').then(res => res.data);
+export const createCategory = (data: Partial<ApiCategory>) => api.post<ApiCategory>('categories', data).then(res => res.data);
+export const updateCategory = (id: number, data: Partial<ApiCategory>) => api.put<ApiCategory>(`categories/${id}`, data).then(res => res.data);
+export const deleteCategory = (id: number) => api.delete(`categories/${id}`);
 
 // Product Services
-export const getProducts = () => api.get<ApiProduct[]>('/products').then(res => res.data);
-export const createProduct = (data: Partial<ApiProduct>) => api.post<ApiProduct>('/products', data).then(res => res.data);
-export const updateProduct = (id: number, data: Partial<ApiProduct>) => api.put<ApiProduct>(`/products/${id}`, data).then(res => res.data);
-export const deleteProduct = (id: number) => api.delete(`/products/${id}`);
+export const getProducts = () => api.get<ApiProduct[]>('products').then(res => res.data);
+export const createProduct = (data: Partial<ApiProduct>) => api.post<ApiProduct>('products', data).then(res => res.data);
+export const updateProduct = (id: number, data: Partial<ApiProduct>) => api.put<ApiProduct>(`products/${id}`, data).then(res => res.data);
+export const deleteProduct = (id: number) => api.delete(`products/${id}`);
 
 // Contact Message Services
-export const getContactMessages = () => api.get<ApiContactMessage[]>('/contact-messages').then(res => res.data);
-export const deleteContactMessage = (id: number) => api.delete(`/contact-messages/${id}`);
+export const getContactMessages = () => api.get<ApiContactMessage[]>('contact-messages').then(res => res.data);
+export const deleteContactMessage = (id: number) => api.delete(`contact-messages/${id}`);
 
 export interface ApiOrderItem {
     id: string;
@@ -83,10 +88,10 @@ export interface ApiOrder {
 }
 
 // Order Services
-export const getOrders = () => api.get<ApiOrder[]>('/orders').then(res => res.data);
-export const createOrder = (data: Partial<ApiOrder>) => api.post<ApiOrder>('/orders', data).then(res => res.data);
-export const updateOrder = (id: number, data: Partial<ApiOrder>) => api.put<ApiOrder>(`/orders/${id}`, data).then(res => res.data);
-export const deleteOrder = (id: number) => api.delete(`/orders/${id}`);
+export const getOrders = () => api.get<ApiOrder[]>('orders').then(res => res.data);
+export const createOrder = (data: Partial<ApiOrder>) => api.post<ApiOrder>('orders', data).then(res => res.data);
+export const updateOrder = (id: number, data: Partial<ApiOrder>) => api.put<ApiOrder>(`orders/${id}`, data).then(res => res.data);
+export const deleteOrder = (id: number) => api.delete(`orders/${id}`);
 
 export interface ApiDashboardStats {
     kpis: {
@@ -98,5 +103,5 @@ export interface ApiDashboardStats {
     recent_orders: ApiOrder[];
 }
 
-export const getDashboardStats = () => api.get<ApiDashboardStats>('/stats/dashboard').then(res => res.data);
+export const getDashboardStats = () => api.get<ApiDashboardStats>('stats/dashboard').then(res => res.data);
 

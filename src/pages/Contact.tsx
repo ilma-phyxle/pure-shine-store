@@ -4,14 +4,25 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
 import { toast } from "sonner";
+import { formatWhatsAppInquiry, WHATSAPP_NUMBER } from "@/lib/whatsapp";
 
 const Contact = () => {
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Message sent!", { description: "We'll get back to you within 24 hours.", position: "top-center" });
-    setFormData({ name: "", email: "", subject: "", message: "" });
+    
+    const message = formatWhatsAppInquiry(formData);
+    
+    toast.success("Redirecting to WhatsApp...", { 
+      description: "Your inquiry has been formatted.", 
+      position: "top-center" 
+    });
+
+    setTimeout(() => {
+      window.open(`https://wa.me/${WHATSAPP_NUMBER.replace('+', '')}?text=${message}`, '_blank');
+      setFormData({ name: "", email: "", subject: "", message: "" });
+    }, 1000);
   };
 
   return (

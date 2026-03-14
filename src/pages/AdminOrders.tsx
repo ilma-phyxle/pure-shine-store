@@ -3,7 +3,7 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import {
     ShoppingBag, Search, MoreHorizontal, Eye, Package,
     Truck, CheckCircle2, XCircle, Download, User, MessageSquare, CreditCard,
-    Phone, Calendar, Hash, MapPin, X
+    Phone, Calendar, Hash, MapPin, X, AlertTriangle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,16 @@ import {
     DropdownMenu, DropdownMenuContent, DropdownMenuItem,
     DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -29,6 +39,7 @@ const AdminOrders = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState("all");
     const [selectedOrder, setSelectedOrder] = useState<ApiOrder | null>(null);
+    const [orderToDelete, setOrderToDelete] = useState<ApiOrder | null>(null);
 
     const fetchOrders = async () => {
         try {
@@ -65,7 +76,6 @@ const AdminOrders = () => {
     };
 
     const handleDelete = async (orderId: number) => {
-        if (!confirm("Delete this order?")) return;
         try {
             await deleteOrder(orderId);
             setOrders(prev => prev.filter(o => o.id !== orderId));
@@ -291,7 +301,7 @@ const AdminOrders = () => {
                                                         <DropdownMenuSeparator className="bg-slate-900" />
                                                         <DropdownMenuItem
                                                             className="flex items-center gap-3 p-3 rounded-xl hover:bg-red-500/10 focus:bg-red-500/10 text-red-500 cursor-pointer"
-                                                            onClick={() => handleDelete(order.id)}
+                                                            onClick={() => setOrderToDelete(order)}
                                                         >
                                                             <XCircle className="h-4 w-4" />
                                                             <span className="font-semibold text-sm">Delete Order</span>
@@ -399,6 +409,32 @@ const AdminOrders = () => {
                     )}
                 </DialogContent>
             </Dialog>
+
+            <AlertDialog open={!!orderToDelete} onOpenChange={(open) => !open && setOrderToDelete(null)}>
+                <AlertDialogContent className="bg-slate-950 border-slate-900 text-slate-100 max-w-md rounded-[2rem]">
+                    <AlertDialogHeader>
+                        <div className="h-12 w-12 rounded-2xl bg-red-500/10 flex items-center justify-center mb-4">
+                            <AlertTriangle className="h-6 w-6 text-red-500" />
+                        </div>
+                        <AlertDialogTitle className="text-xl font-display font-black">Delete Order?</AlertDialogTitle>
+                        <AlertDialogDescription className="text-slate-500 text-sm leading-relaxed">
+                            Are you sure you want to delete order <span className="text-white font-bold">#{orderToDelete?.id}</span>? 
+                            This will permanently remove the order record from the database. This action cannot be undone.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="mt-6 gap-3">
+                        <AlertDialogCancel className="bg-slate-900 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-white h-11 px-6 rounded-xl font-bold">
+                            Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction 
+                            onClick={() => orderToDelete && handleDelete(orderToDelete.id)}
+                            className="bg-red-500 hover:bg-red-600 text-white border-none h-11 px-6 rounded-xl font-bold shadow-lg shadow-red-500/20"
+                        >
+                            Delete Order
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </AdminLayout>
     );
 };

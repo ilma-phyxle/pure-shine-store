@@ -1,18 +1,20 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useShopifyProduct } from "@/hooks/useShopifyProducts";
 import { useCartStore } from "@/stores/cartStore";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ShoppingCart, Minus, Plus, Loader2, Package, X } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Loader2, Package, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { useCatalogApi } from "@/hooks/useCatalogApi";
+import { cn } from "@/lib/utils";
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
+    DialogDescription,
 } from "@/components/ui/dialog";
 import type { ShopifyProduct } from "@/stores/cartStore";
 import type { ApiProduct } from "@/lib/api";
@@ -46,17 +48,33 @@ export const ProductQuickView = ({ handle, children, initialProduct, initialCata
     const product = shopifyProduct || catalogProduct;
     const isShopify = !!shopifyProduct;
 
-    // Normalize data
-    // Important: if it's from useShopifyProduct, it's a direct node. 
-    // If it's from useShopifyProducts (edge), it has .node.
+    // Normalize images and gallery first so we can use them in the effect
     const getShopifyNode = (p: ShopifyProduct | (ShopifyProduct['node'] & { node?: never })) => 
         'node' in p ? p.node : p;
     
     const node = isShopify ? getShopifyNode(product as ShopifyProduct | (ShopifyProduct['node'] & { node?: never })) : null;
+    const images = isShopify ? node?.images?.edges || [] : [];
+    const gallery = isShopify 
+        ? (images as Array<{ node: { url: string } }>).map((img) => img.node.url) 
+        : [(product as ApiProduct)?.image_url, ...((product as ApiProduct)?.image_url_2 ? [(product as ApiProduct)?.image_url_2] : []), ...((product as ApiProduct)?.image_url_3 ? [(product as ApiProduct)?.image_url_3] : [])].filter(Boolean) as string[];
+
+    // Keyboard navigation
+    useEffect(() => {
+        if (!isOpen) return;
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (gallery.length <= 1) return;
+            if (e.key === "ArrowLeft") {
+                setSelectedImage(prev => (prev === 0 ? gallery.length - 1 : prev - 1));
+            } else if (e.key === "ArrowRight") {
+                setSelectedImage(prev => (prev === gallery.length - 1 ? 0 : prev + 1));
+            }
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [isOpen, gallery.length]);
+
     const title = isShopify ? node?.title : (product as ApiProduct)?.name || "Product";
     const description = isShopify ? node?.description : (product as ApiProduct)?.description;
-    const images = isShopify ? node?.images?.edges || [] : [];
-    const gallery = isShopify ? (images as Array<{ node: { url: string } }>).map((img) => img.node.url) : [(product as ApiProduct)?.image_url, ...((product as ApiProduct)?.image_url_2 ? [(product as ApiProduct)?.image_url_2] : []), ...((product as ApiProduct)?.image_url_3 ? [(product as ApiProduct)?.image_url_3] : [])].filter(Boolean) as string[];
     const variants = isShopify ? node?.variants?.edges || [] : [];
     const selectedVariant = isShopify ? variants[selectedVariantIdx]?.node : null;
     const price = isShopify ? selectedVariant?.price : { amount: String((product as ApiProduct)?.price || 0), currencyCode: "LKR" };
@@ -95,7 +113,8 @@ export const ProductQuickView = ({ handle, children, initialProduct, initialCata
         setIsOpen(false);
     };
 
-    if (shopifyLoading && !initialProduct && !initialCatalogProduct) {
+    // If we have no data and we are loading, then we hide or show a skeleton
+    if (shopifyLoading && !product) {
         return <div className="hidden">{children}</div>;
     }
 
@@ -104,23 +123,66 @@ export const ProductQuickView = ({ handle, children, initialProduct, initialCata
             <DialogTrigger asChild>
                 {children}
             </DialogTrigger>
-            <DialogContent className="max-w-4xl p-0 overflow-hidden rounded-[2.5rem] border-none shadow-2xl sm:max-h-[90vh] overflow-y-auto relative">
+            <DialogContent className="max-w-4xl p-0 overflow-hidden rounded-[2.5rem] border-none shadow-2xl !fixed">
                 <button 
                   onClick={() => setIsOpen(false)}
-                  className="absolute top-4 right-4 z-50 p-2 rounded-full bg-white/80 backdrop-blur-md border border-slate-100 text-slate-900 hover:bg-slate-900 hover:text-white transition-all duration-300 shadow-sm"
+                  className="absolute top-6 right-6 z-50 p-2.5 rounded-full bg-white/90 backdrop-blur-md border border-slate-100 text-slate-900 hover:bg-slate-900 hover:text-white transition-all duration-300 shadow-xl active:scale-95"
                 >
                   <X className="h-5 w-5" />
                 </button>
-                <div className="grid md:grid-cols-2 gap-0">
-                    {/* Left: Gallery */}
-                    <div className="bg-slate-50 p-6 flex flex-col gap-4">
+                <DialogHeader className="sr-only">
+                    <DialogTitle>{title}</DialogTitle>
+                    <DialogDescription>
+                        Details and ordering options for {title}.
+                    </DialogDescription>
+                </DialogHeader>
+                
+                <div className="md:max-h-[90vh] overflow-y-auto overflow-x-hidden bg-white min-h-[400px] flex flex-col justify-center">
+                    {!product ? (
+                        <div className="flex flex-col items-center justify-center p-20 text-center animate-in fade-in duration-500">
+                             <Loader2 className="h-12 w-12 text-primary animate-spin mb-4" />
+                             <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Fetching Details...</p>
+                        </div>
+                    ) : (
+                        <div className="grid md:grid-cols-2 gap-0">
+                            {/* Left: Gallery */}
+                            <div className="bg-slate-50 p-6 flex flex-col gap-4">
                         <div className="aspect-square rounded-2xl overflow-hidden border border-slate-100 bg-white relative group">
                             {gallery[selectedImage] ? (
-                                <img
-                                    src={gallery[selectedImage]}
-                                    alt={title}
-                                    className="w-full h-full object-cover"
-                                />
+                                <>
+                                    <img
+                                        src={gallery[selectedImage]}
+                                        alt={title}
+                                        className="w-full h-full object-cover animate-in fade-in zoom-in-95 duration-500"
+                                    />
+                                    {gallery.length > 1 && (
+                                        <>
+                                            <button 
+                                                onClick={(e) => { e.stopPropagation(); setSelectedImage(prev => (prev === 0 ? gallery.length - 1 : prev - 1)); }}
+                                                className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-2xl bg-white/80 backdrop-blur-md border border-slate-100 text-slate-900 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-slate-900 hover:text-white shadow-xl translate-x-[-10px] group-hover:translate-x-0"
+                                            >
+                                                <ChevronLeft className="h-5 w-5" />
+                                            </button>
+                                            <button 
+                                                onClick={(e) => { e.stopPropagation(); setSelectedImage(prev => (prev === gallery.length - 1 ? 0 : prev + 1)); }}
+                                                className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-2xl bg-white/80 backdrop-blur-md border border-slate-100 text-slate-900 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-slate-900 hover:text-white shadow-xl translate-x-[10px] group-hover:translate-x-0"
+                                            >
+                                                <ChevronRight className="h-5 w-5" />
+                                            </button>
+                                            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 p-1.5 rounded-full bg-black/10 backdrop-blur-md">
+                                                {gallery.map((_, i) => (
+                                                    <div 
+                                                        key={i} 
+                                                        className={cn(
+                                                            "h-1.5 rounded-full transition-all duration-300",
+                                                            i === selectedImage ? "w-4 bg-white" : "w-1.5 bg-white/40"
+                                                        )}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </>
+                                    )}
+                                </>
                             ) : (
                                 <div className="w-full h-full flex flex-col items-center justify-center text-slate-200">
                                     <Package className="h-20 w-20 mb-4 opacity-20" />
@@ -205,6 +267,8 @@ export const ProductQuickView = ({ handle, children, initialProduct, initialCata
                         </div>
                     </div>
                 </div>
+            )}
+        </div>
             </DialogContent>
         </Dialog>
     );

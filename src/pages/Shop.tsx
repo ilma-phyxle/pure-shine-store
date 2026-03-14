@@ -15,10 +15,10 @@ import { ApiCategory, ApiProduct } from "@/lib/api";
 
 const PRICE_RANGES = [
   { label: "All Prices", value: "all" },
-  { label: "Under $25", value: "0-25" },
-  { label: "$25 – $50", value: "25-50" },
-  { label: "$50 – $100", value: "50-100" },
-  { label: "Over $100", value: "100+" },
+  { label: "Under LKR 25", value: "0-25" },
+  { label: "LKR 25 – 50", value: "25-50" },
+  { label: "LKR 50 – 100", value: "50-100" },
+  { label: "Over LKR 100", value: "100+" },
 ];
 
 const Shop = () => {
@@ -26,6 +26,7 @@ const Shop = () => {
   const [search, setSearch] = useState(searchParams.get("q") || "");
   const [sort, setSort] = useState("name-asc");
   const [priceRange, setPriceRange] = useState("all");
+  const [view, setView] = useState<"grid" | "list">("grid");
   const [gridCols, setGridCols] = useState<3 | 4>(4);
 
   const { categories, products: allProducts, isLoading: catalogLoading } = useCatalogApi();
@@ -330,18 +331,18 @@ const Shop = () => {
 
                   <div className="hidden md:flex items-center gap-1 bg-muted/50 p-1 rounded-xl">
                     <Button
-                      variant={gridCols === 3 ? "default" : "ghost"}
+                      variant={view === "list" ? "default" : "ghost"}
                       size="icon"
-                      className={cn("h-9 w-9 rounded-lg transition-all", gridCols === 3 ? "shadow-sm" : "")}
-                      onClick={() => setGridCols(3)}
+                      className={cn("h-9 w-9 rounded-lg transition-all", view === "list" ? "shadow-sm" : "")}
+                      onClick={() => setView("list")}
                     >
                       <List className="h-4 w-4" />
                     </Button>
                     <Button
-                      variant={gridCols === 4 ? "default" : "ghost"}
+                      variant={view === "grid" ? "default" : "ghost"}
                       size="icon"
-                      className={cn("h-9 w-9 rounded-lg transition-all", gridCols === 4 ? "shadow-sm" : "")}
-                      onClick={() => setGridCols(4)}
+                      className={cn("h-9 w-9 rounded-lg transition-all", view === "grid" ? "shadow-sm" : "")}
+                      onClick={() => setView("grid")}
                     >
                       <LayoutGrid className="h-4 w-4" />
                     </Button>
@@ -371,28 +372,54 @@ const Shop = () => {
                 </div>
               )}
 
-              {/* Unified Grid */}
-              {isLoading ? (
-                <div className={cn("grid gap-6", gridCols === 3 ? "grid-cols-2 lg:grid-cols-3" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4")}>
-                  {Array.from({ length: 8 }).map((_, i) => (
-                    <div key={i} className="rounded-2xl border border-border bg-card p-4 space-y-4 animate-pulse">
-                      <div className="aspect-[4/5] bg-muted rounded-xl" />
-                      <div className="space-y-2">
-                        <div className="h-4 bg-muted rounded w-3/4" />
-                        <div className="h-3 bg-muted rounded w-1/2" />
-                      </div>
-                      <div className="flex justify-between items-center pt-2">
-                        <div className="h-6 bg-muted rounded w-1/4" />
-                        <div className="h-9 w-9 bg-muted rounded-lg" />
-                      </div>
+              {/* Unified Grid/List View */}
+              {(isLoading || catalogLoading) ? (
+                <div className="space-y-12">
+                  <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in zoom-in duration-700">
+                    <div className="relative mb-8">
+                       <div className="h-24 w-24 rounded-full border-t-2 border-r-2 border-primary animate-spin" />
+                       <div className="absolute inset-0 flex items-center justify-center">
+                          <Package className="h-10 w-10 text-primary opacity-50" />
+                       </div>
                     </div>
-                  ))}
+                    <h2 className="text-2xl font-display font-black text-slate-900 tracking-tight animate-pulse mb-2">
+                        Loading Premium Catalog
+                    </h2>
+                    <p className="text-slate-400 text-sm font-medium tracking-wide uppercase">
+                        Preparing your cleaning solutions...
+                    </p>
+                  </div>
+
+                  <div className={cn(
+                    "grid gap-6 sm:gap-8 opacity-40", 
+                    view === "list" ? "grid-cols-1" : 
+                    gridCols === 3 ? "grid-cols-2 lg:grid-cols-3" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                  )}>
+                    {Array.from({ length: 8 }).map((_, i) => (
+                      <div key={i} className="rounded-[2rem] border border-slate-100 bg-white p-5 space-y-6 animate-pulse" style={{ animationDelay: `${i * 100}ms` }}>
+                        <div className="aspect-square bg-slate-50 rounded-2xl" />
+                        <div className="space-y-3">
+                          <div className="h-5 bg-slate-50 rounded-lg w-3/4" />
+                          <div className="h-3 bg-slate-50 rounded w-full" />
+                        </div>
+                        <div className="flex justify-between items-center pt-2">
+                          <div className="h-7 bg-slate-50 rounded-lg w-1/3" />
+                          <div className="h-10 w-40 bg-slate-50 rounded-xl" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ) : unifiedItems.length > 0 ? (
-                <div className={cn("grid gap-6 sm:gap-8", gridCols === 3 ? "grid-cols-2 lg:grid-cols-3" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4")}>
+                <div className={cn(
+                  "grid gap-6 sm:gap-8", 
+                  view === "list" ? "grid-cols-1" : 
+                  gridCols === 3 ? "grid-cols-2 lg:grid-cols-3" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                )}>
                   {unifiedItems.map((item) => (
                     <ProductCard
                       key={item.id}
+                      variant={view}
                       product={item.type === 'shopify' ? item.data : undefined}
                       catalogItem={item.type === 'catalog' ? item.data : undefined}
                     />

@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
     LayoutDashboard,
     ShoppingBag,
@@ -59,6 +59,12 @@ const sidebarItems = [
 
 export const AdminLayout = ({ children }: AdminLayoutProps) => {
     const location = useLocation();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        localStorage.removeItem("admin_authed");
+        navigate("/admin-login", { replace: true });
+    };
 
     return (
         <SidebarProvider defaultOpen={true}>
@@ -132,7 +138,12 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
                                     <DropdownMenuSeparator className="bg-slate-800" />
                                     <DropdownMenuItem className="hover:bg-slate-800 focus:bg-slate-800">Profile</DropdownMenuItem>
                                     <DropdownMenuSeparator className="bg-slate-800" />
-                                    <DropdownMenuItem className="text-red-400 hover:bg-red-950/30 focus:bg-red-950/30">Log out</DropdownMenuItem>
+                                    <DropdownMenuItem 
+                                        className="text-red-400 hover:bg-red-950/30 focus:bg-red-950/30 cursor-pointer"
+                                        onClick={handleLogout}
+                                    >
+                                        Log out
+                                    </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>

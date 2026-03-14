@@ -23,7 +23,17 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { Loader2 } from "lucide-react";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Loader2, AlertTriangle } from "lucide-react";
 
 const CURRENCIES = [
     { code: "AUD", symbol: "$" },
@@ -44,6 +54,7 @@ const AdminCatalogPro = () => {
     const [isAddingCategory, setIsAddingCategory] = useState(false);
     const [isAddingProduct, setIsAddingProduct] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState<{ id: number, type: 'category' | 'product', name: string } | null>(null);
 
     // Form States
     const [newCategory, setNewCategory] = useState({ name: "", slug: "", description: "", image_url: "" });
@@ -115,7 +126,7 @@ const AdminCatalogPro = () => {
     };
 
     const handleDeleteCategory = async (id: number) => {
-        if (!confirm("Delete this category and all its products?")) return;
+
         try {
             await deleteCategory(id);
             setCategories(prev => prev.filter(c => c.id !== id));
@@ -355,7 +366,7 @@ const AdminCatalogPro = () => {
                                                 )}
                                             </Button>
                                         </div>
-                                        <Button variant="ghost" size="sm" onClick={() => handleDeleteCategory(activeCategory.id)} className="text-red-500 hover:bg-red-500/10 hover:text-red-400 font-bold text-xs uppercase tracking-wider h-10 px-4 rounded-xl">
+                                        <Button variant="ghost" size="sm" onClick={() => setItemToDelete({ id: activeCategory.id, type: 'category', name: activeCategory.name })} className="text-red-500 hover:bg-red-500/10 hover:text-red-400 font-bold text-xs uppercase tracking-wider h-10 px-4 rounded-xl">
                                             <Trash2 className="h-4 w-4 mr-2" /> Delete
                                         </Button>
                                     </div>
@@ -592,7 +603,7 @@ const AdminCatalogPro = () => {
                                                     key={p.id}
                                                     product={p}
                                                     onUpdate={(patch) => handleUpdateProduct(p.id, patch)}
-                                                    onRemove={() => handleDeleteProduct(p.id)}
+                                                    onRemove={() => setItemToDelete({ id: p.id, type: 'product', name: p.name })}
                                                     handleImageSelect={handleImageSelect}
                                                     storeCurrency={storeCurrency}
                                                 />
@@ -611,7 +622,55 @@ const AdminCatalogPro = () => {
                     </div>
                 </div>
             </div>
+                <DeleteConfirmDialog 
+                    item={itemToDelete} 
+                    onOpenChange={(open) => !open && setItemToDelete(null)}
+                    onConfirm={(id, type) => {
+                        if (type === 'category') handleDeleteCategory(id);
+                        else handleDeleteProduct(id);
+                        setItemToDelete(null);
+                    }}
+                />
         </AdminLayout>
+    );
+};
+
+const DeleteConfirmDialog = ({ 
+    item, 
+    onOpenChange, 
+    onConfirm 
+}: { 
+    item: { id: number, type: 'category' | 'product', name: string } | null, 
+    onOpenChange: (open: boolean) => void, 
+    onConfirm: (id: number, type: 'category' | 'product') => void 
+}) => {
+    return (
+        <AlertDialog open={!!item} onOpenChange={onOpenChange}>
+            <AlertDialogContent className="bg-slate-950 border-slate-900 text-slate-100 max-w-md rounded-[2rem]">
+                <AlertDialogHeader>
+                    <div className="h-12 w-12 rounded-2xl bg-red-500/10 flex items-center justify-center mb-4">
+                        <AlertTriangle className="h-6 w-6 text-red-500" />
+                    </div>
+                    <AlertDialogTitle className="text-xl font-display font-black">Confirm Deletion</AlertDialogTitle>
+                    <AlertDialogDescription className="text-slate-500 text-sm leading-relaxed">
+                        Are you sure you want to delete <span className="text-white font-bold">"{item?.name}"</span>? 
+                        {item?.type === 'category' && " This will also permanently remove all products in this category."} 
+                        This action cannot be undone.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter className="mt-6 gap-3">
+                    <AlertDialogCancel className="bg-slate-900 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-white h-11 px-6 rounded-xl font-bold">
+                        Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction 
+                        onClick={() => item && onConfirm(item.id, item.type)}
+                        className="bg-red-500 hover:bg-red-600 text-white border-none h-11 px-6 rounded-xl font-bold shadow-lg shadow-red-500/20"
+                    >
+                        Delete Permanently
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
     );
 };
 

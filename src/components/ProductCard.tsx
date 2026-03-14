@@ -8,19 +8,22 @@ import { ApiProduct } from "@/lib/api";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { CustomerInfoDialog, CustomerInfo } from "@/components/CustomerInfoDialog";
+import { formatWhatsAppOrder, WHATSAPP_NUMBER } from "@/lib/whatsapp";
+import { createOrder } from "@/lib/api";
 
 interface ProductCardProps {
   product?: ShopifyProduct;
   catalogItem?: ApiProduct;
+  variant?: "grid" | "list";
 }
 
-export const ProductCard = ({ product, catalogItem }: ProductCardProps) => {
+export const ProductCard = ({ product, catalogItem, variant = "grid" }: ProductCardProps) => {
   const addItem = useCartStore(state => state.addItem);
   const isLoading = useCartStore(state => state.isLoading);
 
   // If we have a Shopify product
   const p = product?.node;
-  const variant = p?.variants?.edges[0]?.node;
+  const variant_shopify = p?.variants?.edges[0]?.node;
   const image = p?.images?.edges[0]?.node;
   const price = p?.priceRange?.minVariantPrice;
 
@@ -47,17 +50,17 @@ export const ProductCard = ({ product, catalogItem }: ProductCardProps) => {
       return;
     }
 
-    if (!product || !variant) return;
+    if (!product || !variant_shopify) return;
     await addItem({
       type: 'shopify',
       productId: p.id,
       name: p.title,
-      price: variant.price,
+      price: variant_shopify.price,
       quantity: quantity,
       image: image?.url,
-      shopifyVariantId: variant.id,
+      shopifyVariantId: variant_shopify.id,
       shopifyData: product,
-      selectedOptions: variant.selectedOptions || [],
+      selectedOptions: variant_shopify.selectedOptions || [],
     });
     toast.success("Added to cart", { description: `${quantity}x ${p.title}`, position: "top-center" });
   };
@@ -66,9 +69,7 @@ export const ProductCard = ({ product, catalogItem }: ProductCardProps) => {
   const title = p?.title || c?.name || "Untitled Item";
   const description = p?.description || c?.description || "";
   const handleForQuickView = p?.handle || c?.slug || String(c?.id) || "";
-  const link = isCatalog && c?.slug ? `/product/${c.slug}` : `/product/${handleForQuickView}`;
-  const isExternal = false; // Never hide buttons
-
+  
   const handleBuyNow = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -78,8 +79,6 @@ export const ProductCard = ({ product, catalogItem }: ProductCardProps) => {
   const handleConfirmBuyNow = async (customerInfo: CustomerInfo) => {
     const priceAmount = parseFloat(price?.amount || String(c?.price ?? 0) || "0");
     const currencyCode = price?.currencyCode || 'LKR';
-
-    const { formatWhatsAppOrder, WHATSAPP_NUMBER } = await import("@/lib/whatsapp");
 
     const orderData = {
       customer: customerInfo.name,
@@ -99,7 +98,6 @@ export const ProductCard = ({ product, catalogItem }: ProductCardProps) => {
     };
 
     // 1. Save order to DB in background (fire-and-forget)
-    const { createOrder } = await import("@/lib/api");
     createOrder(orderData)
       .then(result => console.log("Buy Now order saved to DB:", result?.id))
       .catch(err => console.error("DB order save failed (WhatsApp still sent):", err));
@@ -123,10 +121,110 @@ export const ProductCard = ({ product, catalogItem }: ProductCardProps) => {
     }, 800);
   };
 
-  const cardContent = (
-    <div className="h-full flex flex-col rounded-[2rem] border border-slate-100 bg-white overflow-hidden transition-all duration-500 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] hover:-translate-y-2 group cursor-pointer">
-      {/* Clickable Image & Info Area - Triggers Popup */}
-      <ProductQuickView handle={handleForQuickView}>
+  if (variant === "list") {
+    return (
+      <div className="group relative bg-white rounded-3xl border border-slate-100 hover:border-primary/20 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.08)] transition-all duration-500 overflow-hidden flex flex-col md:flex-row gap-8 p-6 sm:p-8">
+        <ProductQuickView handle={handleForQuickView} initialProduct={product} initialCatalogProduct={catalogItem}>
+          <div className="w-full md:w-64 aspect-square rounded-2xl overflow-hidden bg-slate-50 flex-shrink-0 relative">
+            {(image || c?.image_url) ? (
+              <img
+                src={image?.url || c?.image_url}
+                alt={image?.altText || title}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-slate-200">
+                <Package className="h-12 w-12 opacity-20" />
+              </div>
+            )}
+            {isCatalog && c?.category?.name && (
+              <div className="absolute top-4 left-4">
+                <span className="px-3 py-1 bg-white/90 backdrop-blur-md rounded-full text-[10px] font-black text-slate-900 uppercase tracking-widest shadow-sm">
+                  {c.category.name}
+                </span>
+              </div>
+            )}
+          </div>
+        </ProductQuickView>
+
+        <div className="flex-1 flex flex-col justify-between py-1">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <ProductQuickView handle={handleForQuickView} initialProduct={product} initialCatalogProduct={catalogItem}>
+                <h3 className="font-display font-black text-2xl text-slate-900 group-hover:text-primary transition-colors cursor-pointer leading-tight">
+                  {title}
+                </h3>
+              </ProductQuickView>
+              <div className="flex items-center gap-3">
+                <div className="flex items-baseline">
+                  <span className="text-xs font-bold text-slate-400 mr-1">{price?.currencyCode || 'LKR'}</span>
+                  <span className="font-display font-black text-2xl text-primary">
+                    {parseFloat(price?.amount || String(c?.price ?? 0) || "0").toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+                <div className="w-px h-4 bg-slate-100" />
+                <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">In Stock</span>
+              </div>
+            </div>
+            
+            <p className="text-sm text-slate-500 leading-relaxed font-medium line-clamp-3 md:line-clamp-none max-w-2xl">
+              {description}
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-6 mt-8 pt-6 border-t border-slate-50">
+            <div className="flex items-center gap-3 bg-slate-50 p-1.5 rounded-xl border border-slate-100">
+              <button
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-white transition-all text-slate-400 hover:text-slate-900 shadow-sm shadow-transparent hover:shadow-slate-200"
+              >
+                <Minus className="h-4 w-4" />
+              </button>
+              <span className="w-8 text-center font-display font-black text-sm text-slate-900">{quantity}</span>
+              <button
+                onClick={() => setQuantity(quantity + 1)}
+                className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-white transition-all text-slate-400 hover:text-slate-900 shadow-sm shadow-transparent hover:shadow-slate-200"
+              >
+                <Plus className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="flex flex-1 items-center gap-3">
+              <Button
+                variant="outline"
+                className="flex-1 h-12 rounded-2xl border-slate-200 hover:border-slate-900 bg-white hover:bg-slate-900 hover:text-white transition-all duration-300 font-black text-[10px] uppercase tracking-[0.15em]"
+                onClick={handleAddToCart}
+                disabled={isLoading || (product && !variant_shopify?.availableForSale)}
+              >
+                {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <ShoppingCart className="h-4 w-4 mr-2" />}
+                Add to Bag
+              </Button>
+              <Button
+                variant="default"
+                className="flex-1 h-12 rounded-2xl bg-primary hover:bg-primary/90 text-white shadow-xl shadow-primary/10 transition-all duration-300 font-black text-[10px] uppercase tracking-[0.15em]"
+                onClick={handleBuyNow}
+                disabled={isLoading || (product && !variant_shopify?.availableForSale)}
+              >
+                Buy Now
+              </Button>
+            </div>
+          </div>
+        </div>
+        
+        <CustomerInfoDialog
+          open={showBuyNowDialog}
+          onOpenChange={setShowBuyNowDialog}
+          onConfirm={handleConfirmBuyNow}
+          title="Quick Order Details"
+          description={`You're ordering: ${title}.`}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="h-full flex flex-col rounded-[2rem] border border-slate-100 bg-white overflow-hidden transition-all duration-500 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] hover:-translate-y-2 group cursor-pointer relative">
+      <ProductQuickView handle={handleForQuickView} initialProduct={product} initialCatalogProduct={catalogItem}>
         <div className="flex-1 flex flex-col">
           <div className="relative aspect-square bg-slate-50 overflow-hidden">
             {(image || c?.image_url) ? (
@@ -136,15 +234,14 @@ export const ProductCard = ({ product, catalogItem }: ProductCardProps) => {
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-slate-200 bg-slate-50 flex-col gap-2">
-                <Package className="h-10 w-10 opacity-20" />
-                <span className="text-[10px] font-bold uppercase tracking-widest opacity-40">No Image</span>
+              <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 text-slate-300">
+                <div className="p-4 rounded-full bg-white/50 backdrop-blur-sm mb-3">
+                  <Package className="h-8 w-8 opacity-40" />
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Catalog Image</span>
               </div>
             )}
-
-            {/* Subtle overlay */}
             <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
             {isCatalog && c?.category?.name && (
               <div className="absolute top-4 left-4">
                 <span className="px-3 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-white text-[10px] font-black text-slate-900 uppercase tracking-widest shadow-sm">
@@ -167,7 +264,6 @@ export const ProductCard = ({ product, catalogItem }: ProductCardProps) => {
         </div>
       </ProductQuickView>
 
-      {/* Footer Area - Not inside Link */}
       <div className="p-4 sm:p-6 pt-0 space-y-4">
         <div className="flex flex-wrap items-end justify-between gap-4 border-t border-slate-50 pt-4">
           <div className="flex flex-col min-w-[100px]">
@@ -205,10 +301,8 @@ export const ProductCard = ({ product, catalogItem }: ProductCardProps) => {
             <Button
               variant="outline"
               className="h-10 sm:h-12 rounded-xl sm:rounded-2xl border-slate-200 hover:border-slate-900 bg-white hover:bg-slate-900 hover:text-white transition-all duration-300 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.1em] sm:tracking-[0.15em] w-full shadow-sm px-2"
-              onClick={(e) => {
-                handleAddToCart(e);
-              }}
-              disabled={isLoading || (product && !variant.availableForSale)}
+              onClick={handleAddToCart}
+              disabled={isLoading || (product && !variant_shopify?.availableForSale)}
             >
               {isLoading ? (
                 <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin mr-1.5" />
@@ -222,17 +316,13 @@ export const ProductCard = ({ product, catalogItem }: ProductCardProps) => {
               variant="default"
               className="h-10 sm:h-12 rounded-xl sm:rounded-2xl bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/10 transition-all duration-300 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.1em] sm:tracking-[0.15em] w-full px-2"
               onClick={handleBuyNow}
-              disabled={isLoading || (product && !variant.availableForSale)}
+              disabled={isLoading || (product && !variant_shopify?.availableForSale)}
             >
               Buy Now
             </Button>
           </div>
 
-          <ProductQuickView 
-            handle={handleForQuickView} 
-            initialProduct={product} 
-            initialCatalogProduct={catalogItem}
-          >
+          <ProductQuickView handle={handleForQuickView} initialProduct={product} initialCatalogProduct={catalogItem}>
             <Button
               variant="secondary"
               className="h-9 sm:h-10 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-900 transition-all duration-300 border-none font-black text-[8px] sm:text-[9px] uppercase tracking-[0.1em] sm:tracking-[0.15em] w-full"
@@ -247,11 +337,9 @@ export const ProductCard = ({ product, catalogItem }: ProductCardProps) => {
         onOpenChange={setShowBuyNowDialog}
         onConfirm={handleConfirmBuyNow}
         title="Quick Order Details"
-        description={`You're ordering: ${title}. Please fill in your delivery details.`}
+        description={`You're ordering: ${title}.`}
       />
     </div>
   );
-
-  return cardContent;
 };
 

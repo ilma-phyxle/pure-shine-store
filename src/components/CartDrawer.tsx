@@ -8,6 +8,7 @@ import { useOrderStore } from "@/stores/orderStore";
 import { createOrder } from "@/lib/api";
 import { toast } from "sonner";
 import { CustomerInfoDialog, CustomerInfo } from "@/components/CustomerInfoDialog";
+import { formatWhatsAppOrder, WHATSAPP_NUMBER } from "@/lib/whatsapp";
 
 export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,8 +24,6 @@ export const CartDrawer = () => {
 
   const handleConfirmOrder = async (customerInfo: CustomerInfo) => {
     if (items.length === 0) return;
-
-    const { formatWhatsAppOrder, WHATSAPP_NUMBER } = await import("@/lib/whatsapp");
 
     const orderData = {
       customer: customerInfo.name,

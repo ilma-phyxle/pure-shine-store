@@ -26,3 +26,21 @@ export const formatWhatsAppOrder = (orderData: {
 };
 
 export const WHATSAPP_NUMBER = "+61416163126";
+
+export const formatWhatsAppInquiry = (data: {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}) => {
+  const message = `*NEW INQUIRY: ${data.subject.toUpperCase()}*\n\n` +
+    `Hello CleanyGlow Cleaning Supplies team,\n` +
+    `I have a question/inquiry regarding your services.\n\n` +
+    `*👤 Name:* ${data.name}\n` +
+    `*📧 Email:* ${data.email}\n` +
+    `*📝 Subject:* ${data.subject}\n\n` +
+    `*💬 Message:* \n${data.message}\n\n` +
+    `Please get back to me. Thank you!`;
+
+  return encodeURIComponent(message);
+};

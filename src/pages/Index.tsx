@@ -382,17 +382,36 @@ const Index = () => {
           </AnimatedSection>
 
           {(isProductsLoading || isCatalogLoading) ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="rounded-xl border bg-card animate-pulse">
-                  <div className="aspect-square bg-muted" />
-                  <div className="p-3 sm:p-4 space-y-2 sm:space-y-3">
-                    <div className="h-4 bg-muted rounded w-3/4" />
-                    <div className="h-3 bg-muted rounded w-1/2" />
-                    <div className="h-5 bg-muted rounded w-1/3" />
-                  </div>
+            <div className="space-y-12">
+              <div className="flex flex-col items-center justify-center py-24 text-center animate-in fade-in zoom-in duration-1000">
+                <div className="relative mb-10">
+                   <div className="h-32 w-32 rounded-full border-t-2 border-r-2 border-primary animate-spin" />
+                   <div className="absolute inset-0 flex items-center justify-center">
+                      <Package className="h-12 w-12 text-primary opacity-40" />
+                   </div>
                 </div>
-              ))}
+                <h2 className="text-3xl font-display font-black text-slate-900 tracking-tight animate-pulse mb-3">
+                    Loading Premium Catalog
+                </h2>
+                <div className="h-1 w-48 bg-slate-100 rounded-full overflow-hidden mx-auto">
+                   <div className="h-full bg-primary w-1/3 animate-[loading_2s_ease-in-out_infinite]" />
+                </div>
+                <p className="text-slate-400 text-[10px] font-black tracking-[0.3em] uppercase mt-6">
+                    Curating your selection
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 opacity-30">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="rounded-[2rem] border border-slate-100 bg-white p-6 space-y-6 animate-pulse" style={{ animationDelay: `${i * 150}ms` }}>
+                    <div className="aspect-square bg-slate-50 rounded-2xl" />
+                    <div className="space-y-3">
+                      <div className="h-4 bg-slate-50 rounded-lg w-3/4" />
+                      <div className="h-3 bg-slate-50 rounded w-full" />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
@@ -523,13 +542,13 @@ const Index = () => {
         </div>
       </section>
 
-      <TestimonialsSection />
+   {/*     <TestimonialsSection /> */}
 
       <BlogPreviewSection />
 
-      <NewsletterSection />
+     {/*   <NewsletterSection />*/}
 
-      {/* CTA */}
+      
       <section className="py-16 md:py-24 bg-secondary">
         <div className="container text-center">
           <AnimatedSection>

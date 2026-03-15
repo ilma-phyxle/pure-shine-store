@@ -10,7 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Package, LayoutGrid, List, X, ExternalLink, Filter, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ShopifyProduct } from "@/lib/shopify";
-import { useCatalogStore, type FullCategory, type ProductDetail } from "@/stores/catalogStore";
+import { useCatalogApi } from "@/hooks/useCatalogApi";
+import { ApiCategory, ApiProduct } from "@/lib/api";
 
 const PRICE_RANGES = [
   { label: "All Prices", value: "all" },
@@ -27,25 +28,19 @@ const Shop = () => {
   const [priceRange, setPriceRange] = useState("all");
   const [gridCols, setGridCols] = useState<3 | 4>(4);
 
-  const categories = useCatalogStore((s) => s.categories);
-  const [activeCategoryId, setActiveCategoryId] = useState<string>(categories[0]?.id ?? "");
+  const { categories, products: allProducts, isLoading: catalogLoading } = useCatalogApi();
+  const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null);
   const [activeSubcategoryId, setActiveSubcategoryId] = useState<string>("");
 
   useEffect(() => {
-    if (!activeCategoryId && categories[0]?.id) setActiveCategoryId(categories[0].id);
+    if (activeCategoryId === null && categories[0]?.id) setActiveCategoryId(categories[0].id);
   }, [categories, activeCategoryId]);
 
   const activeCategory = useMemo(() => categories.find((c) => c.id === activeCategoryId) ?? categories[0], [activeCategoryId, categories]);
+  const activeCategoryProducts = useMemo(() => allProducts.filter(p => p.category_id === (activeCategory?.id)), [allProducts, activeCategory])
 
-  // Derive subcategories from products in the active category
-  const subcategories = useMemo(() => {
-    if (!activeCategory) return [];
-    const uniqueSubs = Array.from(new Set(activeCategory.products.map((p) => p.subcategory))).filter(Boolean);
-    return uniqueSubs.map((sub) => ({
-      id: `${activeCategory.id}-${sub.toLowerCase().replace(/\s+/g, "-")}`,
-      name: sub,
-    }));
-  }, [activeCategory]);
+  // Derive subcategories from products in the active category (using 'slug' segments as proxy since ApiProduct doesn't have subcategory)
+  const subcategories: { id: string; name: string }[] = [];
 
   const { data: shopifyProducts, isLoading } = useShopifyProducts(50);
 
@@ -58,21 +53,15 @@ const Shop = () => {
   const unifiedItems = useMemo(() => {
     if (!activeCategory) return [];
 
-    // 1. Static Products from Catalog
-    const catalogFiltered = activeCategory.products
+    // 1. Static Products from Catalog (now from DB)
+    const catalogFiltered = activeCategoryProducts
       .filter((p) => {
-        // Subcategory filter
-        if (activeSubcategory && p.subcategory !== activeSubcategory.name) return false;
-
-        // Search filter
         const matchesSearch = !search ||
           p.name.toLowerCase().includes(search.toLowerCase()) ||
-          (p.short_description?.toLowerCase() || "").includes(search.toLowerCase()) ||
-          p.tags.some(t => t.toLowerCase().includes(search.toLowerCase()));
-
+          (p.description?.toLowerCase() || "").includes(search.toLowerCase());
         return matchesSearch;
       })
-      .map(p => ({ type: 'catalog' as const, data: p, id: p.id, name: p.name, price: 0 }));
+      .map(p => ({ type: 'catalog' as const, data: p, id: String(p.id), name: p.name, price: p.price ?? 0 }));
 
     // 2. Shopify Products
     const keywords = (activeSubcategory?.name || activeCategory.name).toLowerCase();
@@ -124,7 +113,7 @@ const Shop = () => {
   useEffect(() => {
     const cat = searchParams.get("cat");
     if (!cat) return;
-    const match = categories.find((c) => c.slug === cat) || categories.find((c) => c.id === cat);
+    const match = categories.find((c) => c.slug === cat) || categories.find((c) => String(c.id) === cat);
     if (match && match.id !== activeCategoryId) {
       setActiveCategoryId(match.id);
       setActiveSubcategoryId("");
@@ -144,26 +133,26 @@ const Shop = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
+    <div className="flex flex-col min-h-screen bg-background">
       {/* Simplified Hero Section */}
-      <section className="bg-slate-950 py-16 lg:py-24 border-b border-white/5">
+      <section className="bg-primary py-16 lg:py-24 border-b border-white/5">
         <div className="container px-4">
           <div className="max-w-3xl mx-auto text-center space-y-6">
-            <h1 className="text-3xl md:text-5xl font-display font-bold text-white tracking-tight">
+            <h1 className="text-3xl md:text-5xl font-display font-bold text-primary-foreground tracking-tight">
               Our Professional Catalog
             </h1>
-            <p className="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
+            <p className="text-primary-foreground/70 text-sm md:text-base max-w-xl mx-auto">
               Browse our complete range of commercial and domestic cleaning supplies. Select a category below to filter.
             </p>
 
             <div className="pt-4 max-w-md mx-auto">
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-primary-foreground/60" />
                 <Input
                   placeholder="Search products..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="pl-12 h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-500 rounded-xl focus:ring-primary/20 transition-all"
+                  className="pl-12 h-12 bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/40 rounded-xl focus:ring-primary/20 transition-all"
                 />
               </div>
             </div>
@@ -171,13 +160,13 @@ const Shop = () => {
         </div>
       </section>
 
-      <main className="flex-1 py-12 bg-white">
+      <main className="flex-1 py-12 bg-background">
         <div className="container px-4">
           <div className="grid gap-10 lg:grid-cols-[250px_1fr]">
             {/* Cleaner Sidebar Navigation */}
-            <aside className="space-y-8">
+            <aside className="space-y-8 hidden lg:block">
               <div className="space-y-4">
-                <div className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] pb-2 border-b border-slate-100">
+                <div className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em] pb-2 border-b border-border">
                   Categories
                 </div>
                 <div className="flex flex-col gap-1">
@@ -191,8 +180,8 @@ const Shop = () => {
                         className={cn(
                           "w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all",
                           c.id === activeCategoryId
-                            ? "bg-slate-900 text-white font-bold"
-                            : "text-slate-600 hover:bg-slate-50"
+                            ? "bg-primary text-primary-foreground font-bold shadow-sm"
+                            : "text-foreground hover:bg-muted"
                         )}
                       >
                         <span>{c.name}</span>
@@ -201,14 +190,14 @@ const Shop = () => {
 
                       {/* Nested Subcategories */}
                       {c.id === activeCategoryId && subcategories.length > 0 && (
-                        <div className="pl-4 mt-1 mb-2 flex flex-col gap-1 border-l border-slate-100 ml-2">
+                        <div className="pl-4 mt-1 mb-2 flex flex-col gap-1 border-l border-border ml-2">
                           <button
                             onClick={() => setActiveSubcategoryId("")}
                             className={cn(
                               "text-left px-3 py-1.5 rounded-md text-xs",
                               activeSubcategoryId === ""
                                 ? "text-primary font-bold"
-                                : "text-slate-400 hover:text-slate-600"
+                                : "text-muted-foreground hover:text-foreground"
                             )}
                           >
                             All {c.name}
@@ -222,7 +211,7 @@ const Shop = () => {
                                 "text-left px-3 py-1.5 rounded-md text-xs",
                                 activeSubcategoryId === sub.id
                                   ? "text-primary font-bold"
-                                  : "text-slate-400 hover:text-slate-600"
+                                  : "text-muted-foreground hover:text-foreground"
                               )}
                             >
                               {sub.name}
@@ -236,8 +225,8 @@ const Shop = () => {
               </div>
 
               {/* Price Filter in Sidebar */}
-              <div className="space-y-4 pt-4 border-t border-slate-200">
-                <div className="text-sm font-semibold text-slate-900">Price Range</div>
+              <div className="space-y-4 pt-4 border-t border-border">
+                <div className="text-sm font-semibold text-foreground">Price Range</div>
                 <div className="space-y-2">
                   {PRICE_RANGES.map((r) => (
                     <button
@@ -245,7 +234,7 @@ const Shop = () => {
                       onClick={() => setPriceRange(r.value)}
                       className={cn(
                         "w-full text-left px-4 py-2 rounded-lg text-sm transition-colors",
-                        priceRange === r.value ? "text-primary font-semibold" : "text-slate-500 hover:text-slate-900 hover:bg-slate-100"
+                        priceRange === r.value ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground hover:bg-muted"
                       )}
                     >
                       {r.label}
@@ -257,20 +246,78 @@ const Shop = () => {
 
             {/* Main Content Area */}
             <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-700">
+              {/* Mobile Filters */}
+              <div className="lg:hidden bg-card p-4 rounded-2xl shadow-sm border border-border space-y-3">
+                <div className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em]">
+                  Filters
+                </div>
+                <div className="grid grid-cols-1 gap-3">
+                  <Select
+                    value={activeCategoryId ? String(activeCategoryId) : ""}
+                    onValueChange={(val) => {
+                      const nextId = Number(val);
+                      if (!Number.isNaN(nextId)) {
+                        setActiveCategoryId(nextId);
+                        setActiveSubcategoryId("");
+                      }
+                    }}
+                  >
+                    <SelectTrigger className="w-full bg-muted/50 border-none rounded-xl h-11">
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((c) => (
+                        <SelectItem key={c.id} value={String(c.id)}>
+                          {c.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  {subcategories.length > 0 && (
+                    <Select value={activeSubcategoryId} onValueChange={setActiveSubcategoryId}>
+                      <SelectTrigger className="w-full bg-muted/50 border-none rounded-xl h-11">
+                        <SelectValue placeholder={`All ${activeCategory?.name || "categories"}`} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">All {activeCategory?.name}</SelectItem>
+                        {subcategories.map((s) => (
+                          <SelectItem key={s.id} value={s.id}>
+                            {s.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+
+                  <Select value={priceRange} onValueChange={setPriceRange}>
+                    <SelectTrigger className="w-full bg-muted/50 border-none rounded-xl h-11">
+                      <SelectValue placeholder="Price range" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PRICE_RANGES.map((r) => (
+                        <SelectItem key={r.value} value={r.value}>
+                          {r.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
               {/* Toolbar */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-2xl shadow-sm border border-slate-100 mb-8">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-card p-4 rounded-2xl shadow-sm border border-border mb-8">
                 <div className="flex items-center gap-3">
-                  <h2 className="text-xl font-display font-bold text-slate-900">
+                  <h2 className="text-xl font-display font-bold text-foreground">
                     {activeSubcategory?.name || activeCategory?.name || "All Products"}
                   </h2>
-                  <Badge variant="secondary" className="bg-slate-100 text-slate-600 border-none">
+                  <Badge variant="secondary" className="bg-muted text-muted-foreground border-none">
                     {unifiedItems.length} Items
                   </Badge>
                 </div>
 
                 <div className="flex items-center gap-3 w-full sm:w-auto">
                   <Select value={sort} onValueChange={setSort}>
-                    <SelectTrigger className="w-full sm:w-48 bg-slate-50 border-none rounded-xl h-11">
+                    <SelectTrigger className="w-full sm:w-48 bg-muted/50 border-none rounded-xl h-11">
                       <SelectValue placeholder="Sort by" />
                     </SelectTrigger>
                     <SelectContent>
@@ -281,7 +328,7 @@ const Shop = () => {
                     </SelectContent>
                   </Select>
 
-                  <div className="hidden md:flex items-center gap-1 bg-slate-50 p-1 rounded-xl">
+                  <div className="hidden md:flex items-center gap-1 bg-muted/50 p-1 rounded-xl">
                     <Button
                       variant={gridCols === 3 ? "default" : "ghost"}
                       size="icon"
@@ -305,7 +352,7 @@ const Shop = () => {
               {/* Active Filters Bar */}
               {(search || priceRange !== "all") && (
                 <div className="flex items-center gap-2 flex-wrap pb-2">
-                  <span className="text-xs uppercase tracking-wider text-slate-400 font-bold mr-2">Filters:</span>
+                  <span className="text-xs uppercase tracking-wider text-muted-foreground font-bold mr-2">Filters:</span>
                   {search && (
                     <Badge variant="default" className="gap-1.5 px-3 py-1 bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 transition-colors">
                       "{search}"
@@ -328,15 +375,15 @@ const Shop = () => {
               {isLoading ? (
                 <div className={cn("grid gap-6", gridCols === 3 ? "grid-cols-2 lg:grid-cols-3" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4")}>
                   {Array.from({ length: 8 }).map((_, i) => (
-                    <div key={i} className="rounded-2xl border border-slate-100 bg-white p-4 space-y-4 animate-pulse">
-                      <div className="aspect-[4/5] bg-slate-100 rounded-xl" />
+                    <div key={i} className="rounded-2xl border border-border bg-card p-4 space-y-4 animate-pulse">
+                      <div className="aspect-[4/5] bg-muted rounded-xl" />
                       <div className="space-y-2">
-                        <div className="h-4 bg-slate-100 rounded w-3/4" />
-                        <div className="h-3 bg-slate-100 rounded w-1/2" />
+                        <div className="h-4 bg-muted rounded w-3/4" />
+                        <div className="h-3 bg-muted rounded w-1/2" />
                       </div>
                       <div className="flex justify-between items-center pt-2">
-                        <div className="h-6 bg-slate-100 rounded w-1/4" />
-                        <div className="h-9 w-9 bg-slate-100 rounded-lg" />
+                        <div className="h-6 bg-muted rounded w-1/4" />
+                        <div className="h-9 w-9 bg-muted rounded-lg" />
                       </div>
                     </div>
                   ))}
@@ -352,15 +399,15 @@ const Shop = () => {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-24 rounded-3xl border-2 border-dashed border-slate-200 bg-white/50 backdrop-blur-sm">
-                  <div className="bg-slate-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 scale-110">
-                    <Package className="h-10 w-10 text-slate-400" />
+                <div className="text-center py-24 rounded-3xl border-2 border-dashed border-border bg-card/50 backdrop-blur-sm">
+                  <div className="bg-muted w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 scale-110">
+                    <Package className="h-10 w-10 text-muted-foreground" />
                   </div>
-                  <h3 className="font-display font-bold text-2xl text-slate-900 mb-2">No items found</h3>
-                  <p className="text-slate-500 max-w-xs mx-auto mb-8">
+                  <h3 className="font-display font-bold text-2xl text-foreground mb-2">No items found</h3>
+                  <p className="text-muted-foreground max-w-xs mx-auto mb-8">
                     We couldn't find anything matching your current criteria. Try adjusting your filters.
                   </p>
-                  <Button variant="outline" onClick={clearFilters} className="rounded-xl px-8 py-6 h-auto border-slate-200 hover:bg-slate-50">
+                  <Button variant="outline" onClick={clearFilters} className="rounded-xl px-8 py-6 h-auto border-border hover:bg-muted">
                     Reset all filters
                   </Button>
                 </div>

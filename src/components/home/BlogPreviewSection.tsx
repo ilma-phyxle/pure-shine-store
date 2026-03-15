@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Calendar, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { AnimatedSection } from "@/components/AnimatedSection";
-
 import blogOffice from "@/assets/blog/office-cleaning.jpg";
 import blogEco from "@/assets/blog/eco-cleaning.jpg";
 import blogFloor from "@/assets/blog/floor-care-guide.jpg";

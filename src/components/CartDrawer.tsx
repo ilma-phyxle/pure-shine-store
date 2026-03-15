@@ -5,33 +5,34 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { ShoppingCart, Minus, Plus, Trash2, CreditCard, Loader2, Package } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { useOrderStore } from "@/stores/orderStore";
+import { createOrder } from "@/lib/api";
 import { toast } from "sonner";
+import { CustomerInfoDialog, CustomerInfo } from "@/components/CustomerInfoDialog";
 
 export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showInfoDialog, setShowInfoDialog] = useState(false);
   const { items, isLoading, isSyncing, updateQuantity, removeItem, clearCart, syncCart } = useCartStore();
   const { addOrder } = useOrderStore();
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
-  const currency = items[0]?.price.currencyCode || "AUD";
+  const currency = items[0]?.price.currencyCode || "LKR";
 
   useEffect(() => { if (isOpen) syncCart(); }, [isOpen, syncCart]);
 
-  const handlePayNow = async () => {
+  const handleConfirmOrder = async (customerInfo: CustomerInfo) => {
     if (items.length === 0) return;
 
-    // Simulate payment process
-    toast.loading("Processing payment...", { id: "payment" });
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    const { formatWhatsAppOrder, WHATSAPP_NUMBER } = await import("@/lib/whatsapp");
 
-    // Create the order
-    addOrder({
-      customer: "Guest Customer", // In a real app, this would be from a form or auth
-      mobile: "+61 400 000 000",
-      total: `${currency} ${totalPrice.toFixed(2)}`,
+    const orderData = {
+      customer: customerInfo.name,
+      mobile: customerInfo.mobile,
+      total: `${totalPrice.toFixed(2)}`,
+      status: 'Processing' as const,
+      payment: 'Pending' as const,
       info: `${totalItems} item${totalItems !== 1 ? 's' : ''}: ${items.map(i => `${i.quantity}x ${i.name}`).join(', ')}`,
-      payment: "Paid",
       items: items.map(item => ({
         id: item.productId,
         name: item.name,
@@ -40,15 +41,41 @@ export const CartDrawer = () => {
         currency: item.price.currencyCode,
         image: item.image
       }))
+    };
+
+    // 1. Save to DB in background (fire-and-forget)
+    createOrder(orderData)
+      .then(result => {
+        addOrder({
+          ...orderData,
+          total: `${currency} ${totalPrice.toFixed(2)}`,
+          info: orderData.info,
+          items: orderData.items
+        });
+        console.log("Order saved to DB:", result?.id);
+      })
+      .catch(err => console.error("DB order save failed (WhatsApp still sent):", err));
+
+    // 2. Build WhatsApp message with a temporary order ID
+    const tempOrderId = `ORD-${Date.now()}`;
+    const message = formatWhatsAppOrder({
+      orderId: tempOrderId,
+      items: items.map(i => ({ name: i.name, quantity: i.quantity, price: parseFloat(i.price.amount), currency: i.price.currencyCode })),
+      total: `${currency} ${totalPrice.toFixed(2)}`,
+      customer: customerInfo.name,
+      mobile: customerInfo.mobile,
+      address: customerInfo.address,
+      email: customerInfo.email,
     });
 
-    toast.success("Payment Successful!", {
-      id: "payment",
-      description: "Your order has been placed and is being processed."
-    });
-
-    clearCart();
-    setIsOpen(false);
+    // 3. Immediately redirect to WhatsApp
+    toast.success("Order Placed! Redirecting to WhatsApp...", { id: "payment" });
+    setTimeout(() => {
+      window.open(`https://wa.me/${WHATSAPP_NUMBER.replace('+', '')}?text=${message}`, '_blank');
+      clearCart();
+      setIsOpen(false);
+      setShowInfoDialog(false);
+    }, 800);
   };
 
   return (
@@ -151,7 +178,7 @@ export const CartDrawer = () => {
                   </div>
                 </div>
                 <Button
-                  onClick={handlePayNow}
+                  onClick={() => setShowInfoDialog(true)}
                   className="w-full h-14 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white shadow-xl shadow-slate-200 transition-all hover:-translate-y-1 active:translate-y-0"
                   size="lg"
                   disabled={isLoading || isSyncing}
@@ -170,6 +197,13 @@ export const CartDrawer = () => {
           )}
         </div>
       </SheetContent>
+      <CustomerInfoDialog
+        open={showInfoDialog}
+        onOpenChange={setShowInfoDialog}
+        onConfirm={handleConfirmOrder}
+        title="Your Delivery Details"
+        description={`Complete your order of ${totalItems} item${totalItems !== 1 ? 's' : ''} — tell us where to deliver!`}
+      />
     </Sheet>
   );
 };

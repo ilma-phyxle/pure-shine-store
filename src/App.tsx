@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import { TopBar } from "@/components/TopBar";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -27,6 +28,7 @@ import AdminCustomers from "./pages/AdminCustomers";
 import AdminInventory from "./pages/AdminInventory";
 import { ChatbotWidget } from "@/components/ChatbotWidget";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { RouteLoading } from "@/components/RouteLoading";
 
 const queryClient = new QueryClient();
 
@@ -35,8 +37,13 @@ const AppContent = () => {
   const location = useLocation();
   const isAdminPath = location.pathname.startsWith("/admin");
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [location.pathname]);
+
   return (
     <div className="min-h-screen flex flex-col">
+      <RouteLoading pathname={location.pathname} />
       {!isAdminPath && <TopBar />}
       {!isAdminPath && <Header />}
       <div className="flex-1">

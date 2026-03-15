@@ -18,7 +18,7 @@ export const WhyInvestSection = () => {
             Soap and water do an excellent job keeping yourself clean, but they can't thoroughly sanitise your surroundings. Investing in the proper cleaning supplies can go a long way for stubborn messes, too challenging to clean by hand, or require better tools to clean properly.
           </p>
           <p className="text-primary-foreground/85 leading-relaxed">
-            Our staff at GRAPC understand the need for a clean environment and are committed to providing our clients with the best cleaning products and equipment in Australia. Proper cleaning supplies can make your surroundings more presentable, improving your quality of life.
+            Our staff at   understand the need for a clean environment and are committed to providing our clients with the best cleaning products and equipment in Australia. Proper cleaning supplies can make your surroundings more presentable, improving your quality of life.
           </p>
         </AnimatedSection>
       </div>

@@ -7,21 +7,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ShoppingCart, Minus, Plus, Loader2, ArrowLeft, Package } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { useCatalogStore } from "@/stores/catalogStore";
+import { useCatalogApi } from "@/hooks/useCatalogApi";
 
 const ProductDetail = () => {
   const { handle } = useParams<{ handle: string }>();
   const { data: shopifyProduct, isLoading: shopifyLoading } = useShopifyProduct(handle || "");
-  const categories = useCatalogStore(s => s.categories);
+  const { products } = useCatalogApi();
 
   const catalogProduct = useMemo(() => {
     if (shopifyProduct) return null;
-    for (const cat of categories) {
-      const found = cat.products.find(p => p.slug === handle || p.id === handle);
-      if (found) return found;
-    }
-    return null;
-  }, [categories, handle, shopifyProduct]);
+    return products.find(p => p.slug === handle || String(p.id) === handle) ?? null;
+  }, [products, handle, shopifyProduct]);
 
   const addItem = useCartStore(state => state.addItem);
   const cartLoading = useCartStore(state => state.isLoading);
@@ -271,7 +267,7 @@ const ProductDetail = () => {
                   <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
                     <div className="border-b border-slate-50 pb-4">
                       <dt className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Brand</dt>
-                      <dd className="font-bold text-slate-900">{(product as any).brand || "Pure Shine Premium"}</dd>
+                      <dd className="font-bold text-slate-900">{(product as any).brand || "CleanyGlow"}</dd>
                     </div>
                     <div className="border-b border-slate-50 pb-4">
                       <dt className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">SKU</dt>

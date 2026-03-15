@@ -54,6 +54,7 @@ interface AdminLayoutProps {
 
 const sidebarItems = [
     { label: "Catalog Manager", icon: Layers, path: "/admin/catalog-pro", badge: null },
+    { label: "New Arrivals", icon: Package, path: "/admin/new-arrivals", badge: "NEW" },
     { label: "Orders", icon: ShoppingBag, path: "/admin/orders", badge: "New" },
 ];
 

@@ -18,7 +18,7 @@ export const CartDrawer = () => {
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
-  const currency = items[0]?.price.currencyCode || "LKR";
+  const currency = "$";
 
   useEffect(() => { if (isOpen) syncCart(); }, [isOpen, syncCart]);
 
@@ -144,8 +144,8 @@ export const CartDrawer = () => {
                       </div>
                       <div className="flex items-center justify-between mt-auto">
                         <p className="font-display font-black text-primary text-sm">
-                          <span className="text-[10px] font-bold text-slate-400 mr-1">{item.price.currencyCode}</span>
-                          {parseFloat(item.price.amount).toFixed(2)}
+                          <span className="text-[10px] font-bold text-slate-400 mr-1">$</span>
+                          {parseFloat(item.price.amount).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
                         </p>
                         <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-lg border border-slate-100">
                           <Button variant="ghost" size="icon" className="h-6 w-6 rounded-md hover:bg-white hover:shadow-sm" onClick={() => updateQuantity(item.id, item.quantity - 1)}>
@@ -165,7 +165,7 @@ export const CartDrawer = () => {
                 <div className="space-y-2">
                   <div className="flex justify-between items-center text-slate-500 text-sm">
                     <span>Subtotal</span>
-                    <span className="font-medium">{currency} {totalPrice.toFixed(2)}</span>
+                    <span className="font-medium">{currency} {totalPrice.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</span>
                   </div>
                   <div className="flex justify-between items-center text-slate-500 text-sm">
                     <span>Shipping</span>
@@ -173,7 +173,7 @@ export const CartDrawer = () => {
                   </div>
                   <div className="flex justify-between items-center pt-2">
                     <span className="text-lg font-display font-bold text-slate-900">Total</span>
-                    <span className="text-2xl font-display font-black text-primary">{currency} {totalPrice.toFixed(2)}</span>
+                    <span className="text-2xl font-display font-black text-primary">{currency} {totalPrice.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</span>
                   </div>
                 </div>
                 <Button

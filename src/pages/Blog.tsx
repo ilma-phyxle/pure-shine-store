@@ -9,11 +9,11 @@ const Blog = () => {
       {/* Simplified Hero Section */}
       <section className="bg-primary py-16 lg:py-24 border-b border-white/5">
         <div className="container px-4">
-          <div className="max-w-3xl mx-auto text-center space-y-6">
+          <div className="max-w-xl mx-auto text-center space-y-6">
             <h1 className="text-3xl md:text-5xl font-display font-bold text-primary-foreground tracking-tight">
               Cleaning Tips & Guides
             </h1>
-            <p className="text-primary-foreground/70 text-sm md:text-base max-w-xl mx-auto">
+            <p className="text-primary-foreground/70 text-sm md:text-base max-w-md mx-auto">
               Expert advice, industry insights, and practical guides to help you maintain spotless spaces.
             </p>
           </div>

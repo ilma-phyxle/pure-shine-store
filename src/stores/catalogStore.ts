@@ -96,7 +96,7 @@ const DEFAULT_CATALOG: CatalogState = {
     name: "CleanyGlow Cleaning Supplies",
     tagline: "Your destination for cleaning supplies",
     website: "https://pureshine.com",
-    currency: "LKR",
+    currency: "$",
     location: "Global",
     logo_url: ""
   },

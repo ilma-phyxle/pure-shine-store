@@ -34,6 +34,7 @@ export interface ShopifyCartItem extends BaseCartItem {
 
 export interface CatalogCartItem extends BaseCartItem {
   type: 'catalog';
+  variantId?: string;
 }
 
 export type UnifiedCartItem = ShopifyCartItem | CatalogCartItem;
@@ -72,6 +73,9 @@ export const useCartStore = create<CartStore>()(
         const existingItem = items.find(i => {
           if (i.type === 'shopify' && itemData.type === 'shopify') {
             return i.shopifyVariantId === itemData.shopifyVariantId;
+          }
+          if (i.type === 'catalog' && itemData.type === 'catalog') {
+            return i.productId === itemData.productId && i.variantId === itemData.variantId;
           }
           return i.productId === itemData.productId && i.type === itemData.type;
         });

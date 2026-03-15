@@ -20,34 +20,36 @@ const InstagramIcon = () => (
 
 export const TopBar = () => {
   return (
-    <div className="bg-primary text-primary-foreground text-xs py-2 border-b border-primary-foreground/10">
-      <div className="container flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <a href="tel: +61 416 163 126472722" className="flex items-center gap-1.5 hover:text-secondary transition-colors">
-            <Phone className="h-3 w-3" />  +61 416 163 126  
-          </a>
-          <a href="mailto:info@cleanyglow.lk" className="hidden sm:flex items-center gap-1.5 hover:text-secondary transition-colors">
-            <Mail className="h-3 w-3" /> info@cleanyglow.lk
-          </a>
-        </div>
-        <p className="hidden md:block font-medium tracking-wide uppercase">
-          High-Quality Cleaning Supplies
-        </p>
-        <div className="flex items-center gap-3">
-          <p className="text-primary-foreground/70 hidden sm:block">
-            Free shipping on orders over $150
+    <div className="bg-primary text-primary-foreground text-xs py-4 border-b border-primary-foreground/10">
+      <div className="container flex flex-col gap-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <a href="tel: +61 416 163 126472722" className="flex items-center gap-1.5 hover:text-secondary transition-colors">
+              <Phone className="h-3 w-3" />  +61 416 163 126  
+            </a>
+            <a href="mailto:info@cleanyglow.lk" className="hidden sm:flex items-center gap-1.5 hover:text-secondary transition-colors">
+              <Mail className="h-3 w-3" /> info@cleanyglow.lk
+            </a>
+          </div>
+          <p className="hidden md:block font-medium tracking-wide uppercase">
+            Distribution from Tarneit
           </p>
-          <span className="hidden sm:block text-primary-foreground/30">|</span>
-          <div className="flex items-center gap-2.5">
-            <a href="https://wa.me/ +61 416 163 126472722" target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors" aria-label="WhatsApp">
-              <WhatsAppIcon />
-            </a>
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors" aria-label="Facebook">
-              <FacebookIcon />
-            </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors" aria-label="Instagram">
-              <InstagramIcon />
-            </a>
+          <div className="flex items-center gap-3">
+            <p className="text-primary-foreground/70 hidden sm:block">
+              Free shipping over $100 (Delivery only available for Victoria metro and Geelong)
+            </p>
+            <span className="hidden sm:block text-primary-foreground/30">|</span>
+            <div className="flex items-center gap-2.5">
+              <a href="https://wa.me/ +61 416 163 126472722" target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors" aria-label="WhatsApp">
+                <WhatsAppIcon />
+              </a>
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors" aria-label="Facebook">
+                <FacebookIcon />
+              </a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors" aria-label="Instagram">
+                <InstagramIcon />
+              </a>
+            </div>
           </div>
         </div>
       </div>

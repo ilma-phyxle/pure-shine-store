@@ -3,7 +3,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, User, Mail, Phone, MapPin, ShoppingBag } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Loader2, User, Mail, Phone, MapPin, ShoppingBag, CheckCircle2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export interface CustomerInfo {
   name: string;
@@ -30,16 +32,20 @@ export const CustomerInfoDialog = ({
   description = "Please enter your details so we can process your order.",
 }: CustomerInfoDialogProps) => {
   const [form, setForm] = useState<CustomerInfo>(emptyForm);
-  const [errors, setErrors] = useState<Partial<CustomerInfo>>({});
+  const [agreementChecked, setAgreementChecked] = useState(false);
+  const [errors, setErrors] = useState<Partial<CustomerInfo & { agreement: string }>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validate = (): boolean => {
-    const newErrors: Partial<CustomerInfo> = {};
+    const newErrors: Partial<CustomerInfo & { agreement: string }> = {};
     if (!form.name.trim()) newErrors.name = "Name is required";
     if (!form.mobile.trim()) newErrors.mobile = "Mobile number is required";
     if (!form.address.trim()) newErrors.address = "Delivery address is required";
     if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
       newErrors.email = "Please enter a valid email";
+    }
+    if (!agreementChecked) {
+      newErrors.agreement = "You must agree to the delivery terms";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -52,6 +58,7 @@ export const CustomerInfoDialog = ({
     try {
       await onConfirm(form);
       setForm(emptyForm);
+      setAgreementChecked(false);
       setErrors({});
     } finally {
       setIsSubmitting(false);
@@ -64,7 +71,7 @@ export const CustomerInfoDialog = ({
   };
 
   return (
-    <Dialog open={open} onOpenChange={(v) => { if (!isSubmitting) { onOpenChange(v); if (!v) { setForm(emptyForm); setErrors({}); } } }}>
+    <Dialog open={open} onOpenChange={(v) => { if (!isSubmitting) { onOpenChange(v); if (!v) { setForm(emptyForm); setAgreementChecked(false); setErrors({}); } } }}>
       <DialogContent className="max-w-md rounded-[2rem] border-none shadow-2xl p-0 overflow-hidden">
         {/* Header */}
         <div className="px-8 pt-8 pb-6 bg-gradient-to-br from-slate-900 to-slate-800 text-white">
@@ -141,6 +148,35 @@ export const CustomerInfoDialog = ({
               className={`h-11 rounded-xl border-slate-200 focus-visible:ring-primary/30 focus-visible:border-primary bg-slate-50 ${errors.address ? "border-red-400 bg-red-50" : ""}`}
             />
             {errors.address && <p className="text-xs text-red-500 font-medium">{errors.address}</p>}
+          </div>
+
+          {/* Agreement Checkbox */}
+          <div className="pt-2">
+            <div className={cn(
+              "flex items-start gap-3 p-4 rounded-2xl border transition-all",
+              agreementChecked ? "bg-primary/5 border-primary/20" : "bg-slate-50 border-slate-100",
+              errors.agreement ? "border-red-200 bg-red-50" : ""
+            )}>
+              <input 
+                type="checkbox"
+                id="agreement" 
+                checked={agreementChecked} 
+                onChange={(e) => {
+                  setAgreementChecked(e.target.checked);
+                  if (errors.agreement) setErrors(prev => ({ ...prev, agreement: undefined }));
+                }}
+                className="mt-1 h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary cursor-pointer"
+              />
+              <div className="grid gap-1.5 leading-none">
+                <label
+                  htmlFor="agreement"
+                  className="text-[11px] font-bold leading-relaxed text-slate-600 cursor-pointer select-none"
+                >
+                  I hereby declare my shipment should be <span className="text-primary font-black uppercase">Delivery only available for Victoria metro and Geelong</span>
+                </label>
+              </div>
+            </div>
+            {errors.agreement && <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider mt-2 ml-1">{errors.agreement}</p>}
           </div>
 
           {/* Submit */}

@@ -3,8 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProductCard } from "@/components/ProductCard";
-import { useShopifyProducts } from "@/hooks/useShopifyProducts";
-import { Truck, Shield, Package, Clock, ArrowRight, Leaf, MoveRight, ImageIcon, LayoutGrid } from "lucide-react";
+import { Truck, Shield, Package, Clock, ArrowRight, Leaf, MoveRight, ImageIcon, LayoutGrid, Check, Star } from "lucide-react";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { motion, AnimatePresence } from "framer-motion";
 import useEmblaCarousel from "embla-carousel-react";
@@ -13,40 +12,37 @@ import { TestimonialsSection } from "@/components/home/TestimonialsSection";
 import { NewsletterSection } from "@/components/home/NewsletterSection";
 import { ServicesSection } from "@/components/home/ServicesSection";
 import { WhyInvestSection } from "@/components/home/WhyInvestSection";
-import { BrandsSection } from "@/components/home/BrandsSection";
 import { StatsSection } from "@/components/home/StatsSection";
 import { BlogPreviewSection } from "@/components/home/BlogPreviewSection";
 import { useCatalogApi } from "@/hooks/useCatalogApi";
 import { cn } from "@/lib/utils";
-import type { ShopifyProduct } from "@/stores/cartStore";
 import type { ApiProduct } from "@/lib/api";
 import type { EmblaCarouselType } from "embla-carousel";
 
 import heroSlide2 from "@/assets/hero-slide-2.jpg";
 
 const trustBadges = [
-  { icon: Truck, label: "Free Shipping", sub: "Orders over $150" },
+  { icon: Truck, label: "Free Shipping", sub: "Orders over $100 (Delivery only available for Victoria metro and Geelong)" },
   { icon: Shield, label: "Australian Owned", sub: "Local business" },
   { icon: Package, label: "Bulk Pricing", sub: "Volume discounts" },
   { icon: Clock, label: "Fast Delivery", sub: "1-3 business days" },
 ];
 
 const Index = () => {
-  const { data: products, isLoading: isProductsLoading } = useShopifyProducts(8);
-  const { categories: catalogCategories, products: catalogProducts, isLoading: isCatalogLoading, error: catalogError } = useCatalogApi();
+  // Filtering and Sorting state for products section
+  const [activeProductsCategoryId, setActiveProductsCategoryId] = useState<number | 'all'>('all');
+  const [sortBy, setSortBy] = useState("name-asc");
+  const [showOnlyNewArrivals, setShowOnlyNewArrivals] = useState(false);
 
-  useEffect(() => {
-    console.log("Catalog Data Loaded:", { catalogCategories, catalogProducts, isCatalogLoading, catalogError });
-  }, [catalogCategories, catalogProducts, isCatalogLoading, catalogError]);
+  const { categories: catalogCategories, products: catalogProducts, isLoading: isCatalogLoading, error: catalogError } = useCatalogApi({ 
+    limit: 8,
+    category_id: activeProductsCategoryId === 'all' ? null : activeProductsCategoryId,
+    is_new_arrival: showOnlyNewArrivals ? true : undefined
+  });
 
   const [hoveredId, setHoveredId] = useState<string | number | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
-  
-  // Filtering and Sorting state for products section
-  const [activeProductsCategoryId, setActiveProductsCategoryId] = useState<number | 'all'>('all');
-  const [priceRangeFilter, setPriceRangeFilter] = useState("all");
-  const [sortBy, setSortBy] = useState("name-asc");
 
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
     loop: true, 
@@ -90,22 +86,41 @@ const Index = () => {
   return (
     <main>
       <HeroSlideshow />
-
-      {/* Trust Badges */}
-      <section className="border-b bg-card">
-        <div className="container py-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {trustBadges.map((badge) => (
-              <div key={badge.label} className="flex items-center gap-3">
-                <div className="h-12 w-12 rounded-xl bg-secondary/10 flex items-center justify-center flex-shrink-0">
-                  <badge.icon className="h-6 w-6 text-secondary" />
-                </div>
-                <div>
-                  <p className="font-semibold text-sm">{badge.label}</p>
-                  <p className="text-xs text-muted-foreground">{badge.sub}</p>
-                </div>
+      <section className="bg-gradient-to-r from-primary via-primary to-secondary text-primary-foreground border-b border-primary-foreground/10">
+        <div className="container py-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4">
+            {[
+              "Melbourne Based",
+              "Fast Shipping",
+              "Quality Products",
+              "All chemicals and products purchased through authorized distributor",
+            ].map((item) => (
+              <div
+                key={item}
+                className="flex items-center gap-3 rounded-2xl bg-primary-foreground/10 border border-primary-foreground/15 px-4 py-3 backdrop-blur-sm shadow-sm"
+              >
+                <span className="h-8 w-8 rounded-full bg-secondary text-primary flex items-center justify-center">
+                  <Check className="h-4 w-4" />
+                </span>
+                <span className="text-sm font-semibold leading-snug">{item}</span>
               </div>
             ))}
+          </div>
+
+          <div className="mt-8 rounded-3xl bg-card text-foreground border border-border shadow-lg px-6 py-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+              {trustBadges.map((badge) => (
+                <div key={badge.label} className="flex items-center gap-3">
+                  <div className="h-12 w-12 rounded-xl bg-secondary/10 flex items-center justify-center flex-shrink-0">
+                    <badge.icon className="h-6 w-6 text-secondary" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm">{badge.label}</p>
+                    <p className="text-xs text-muted-foreground">{badge.sub}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -125,8 +140,6 @@ const Index = () => {
           </div>
         </div>
       </section>
-
-      <BrandsSection />
 
       {/* Categories Accordion Section (New Aesthetic) */}
       <section className="py-16 md:py-24 overflow-hidden relative">
@@ -296,6 +309,7 @@ const Index = () => {
 
                     <div className="flex flex-col gap-1.5 flex-1 sm:hidden">
                       <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Categories</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Categories</span>
                       <Select 
                         value={activeProductsCategoryId === 'all' ? 'all' : String(activeProductsCategoryId)} 
                         onValueChange={(val) => setActiveProductsCategoryId(val === 'all' ? 'all' : Number(val))}
@@ -338,28 +352,19 @@ const Index = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:items-center gap-4 sm:gap-6">
                   <div className="flex flex-col gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Filter by Price:</span>
-                    <div className="flex bg-slate-100 p-1 rounded-2xl border border-slate-200 shadow-inner w-full sm:w-auto overflow-x-auto no-scrollbar">
-                      {[
-                        { label: "All", value: "all" },
-                        { label: "Under 50", value: "0-50" },
-                        { label: "50-100", value: "50-100" },
-                        { label: "Over 100", value: "100+" }
-                      ].map(r => (
-                        <button
-                          key={r.value}
-                          onClick={() => setPriceRangeFilter(r.value)}
-                          className={cn(
-                            "px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-tighter whitespace-nowrap transition-all flex-1",
-                            priceRangeFilter === r.value 
-                              ? "bg-primary text-white shadow-md" 
-                              : "text-slate-500 hover:text-slate-900"
-                          )}
-                        >
-                          {r.label}
-                        </button>
-                      ))}
-                    </div>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Specials:</span>
+                    <button 
+                      onClick={() => setShowOnlyNewArrivals(!showOnlyNewArrivals)}
+                      className={cn(
+                        "h-11 px-6 rounded-2xl flex items-center gap-2 border transition-all font-display font-black text-[10px] uppercase tracking-widest whitespace-nowrap",
+                        showOnlyNewArrivals 
+                          ? "bg-primary border-primary text-white shadow-lg shadow-primary/20" 
+                          : "bg-slate-100 border-slate-200 text-slate-500 hover:border-primary/30"
+                      )}
+                    >
+                      <Star className={cn("h-3.5 w-3.5", showOnlyNewArrivals ? "fill-white" : "fill-transparent")} />
+                      New Arrivals
+                    </button>
                   </div>
 
                   <div className="flex flex-col gap-2">
@@ -381,7 +386,7 @@ const Index = () => {
             </div>
           </AnimatedSection>
 
-          {(isProductsLoading || isCatalogLoading) ? (
+          {isCatalogLoading ? (
             <div className="space-y-12">
               <div className="flex flex-col items-center justify-center py-24 text-center animate-in fade-in zoom-in duration-1000">
                 <div className="relative mb-10">
@@ -401,7 +406,7 @@ const Index = () => {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 opacity-30">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 opacity-30">
                 {Array.from({ length: 4 }).map((_, i) => (
                   <div key={i} className="rounded-[2rem] border border-slate-100 bg-white p-6 space-y-6 animate-pulse" style={{ animationDelay: `${i * 150}ms` }}>
                     <div className="aspect-square bg-slate-50 rounded-2xl" />
@@ -414,61 +419,32 @@ const Index = () => {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-              {/* Combine and display products */}
-              {[
-                ...(products || []).map(p => ({ 
-                  id: p.node.id, 
-                  type: 'shopify' as const, 
-                  data: p,
-                  price: parseFloat(p.node.priceRange.minVariantPrice.amount),
-                  categoryId: null // Shopify products don't have catalog categories in this simplified view
-                })),
-                ...(catalogProducts || []).map(p => ({ 
-                  id: String(p.id), 
-                  type: 'catalog' as const, 
-                  data: p,
-                  price: p.price ?? 0,
-                  categoryId: p.category_id
-                }))
-              ]
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+              {/* Filter and display products from catalogProducts */}
+              {(catalogProducts || [])
               .filter(item => {
                 // Category Filter
-                const matchesCategory = activeProductsCategoryId === 'all' || item.categoryId === activeProductsCategoryId;
-                
-                // Price Filter
-                let matchesPrice = true;
-                if (priceRangeFilter === "0-50") matchesPrice = item.price >= 0 && item.price <= 50;
-                else if (priceRangeFilter === "50-100") matchesPrice = item.price > 50 && item.price <= 100;
-                else if (priceRangeFilter === "100+") matchesPrice = item.price > 100;
-
-                return matchesCategory && matchesPrice;
+                const matchesCategory = activeProductsCategoryId === 'all' || item.category_id === activeProductsCategoryId;
+                return matchesCategory;
               })
               .sort((a, b) => {
-                const nameA = a.type === 'shopify' ? a.data.node.title : a.data.name;
-                const nameB = b.type === 'shopify' ? b.data.node.title : b.data.name;
+                const nameA = a.name;
+                const nameB = b.name;
                 
                 switch (sortBy) {
                   case "name-desc": return nameB.localeCompare(nameA);
-                  case "price-asc": return a.price - b.price;
-                  case "price-desc": return b.price - a.price;
+                  case "price-asc": return (a.price ?? 0) - (b.price ?? 0);
+                  case "price-desc": return (b.price ?? 0) - (a.price ?? 0);
                   default: return nameA.localeCompare(nameB);
                 }
               })
               .slice(0, 8).map((item, i) => (
                 <AnimatedSection key={item.id} delay={i * 0.05}>
-                  {item.type === 'shopify' ? (
-                    <ProductCard product={item.data as ShopifyProduct} />
-                  ) : (
-                    <ProductCard catalogItem={item.data as ApiProduct} />
-                  )}
+                  <ProductCard catalogItem={item} />
                 </AnimatedSection>
               ))}
               
-              {([
-                ...(products || []),
-                ...(catalogProducts || [])
-              ].length === 0) && (
+              {(catalogProducts.length === 0) && (
                 <div className="col-span-full text-center py-16 rounded-3xl border-2 border-dashed border-slate-200 bg-white/50">
                   <Package className="h-12 w-12 text-slate-300 mx-auto mb-4" />
                   <h3 className="font-display font-black text-xl mb-2 text-slate-900">NO PRODUCTS MATCH</h3>
@@ -477,9 +453,7 @@ const Index = () => {
                     variant="outline" 
                     className="mt-6 rounded-full border-slate-200"
                     onClick={() => {
-                      setActiveProductsCategoryId('all');
-                      setPriceRangeFilter('all');
-                    }}
+                      setActiveProductsCategoryId('all');                    }}
                   >
                     Reset Filters
                   </Button>

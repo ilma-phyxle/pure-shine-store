@@ -1,12 +1,11 @@
 import { useState, useMemo, useEffect } from "react";
-import { useShopifyProduct } from "@/hooks/useShopifyProducts";
 import { useCartStore } from "@/stores/cartStore";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ShoppingCart, Minus, Plus, Loader2, Package, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { useCatalogApi } from "@/hooks/useCatalogApi";
+import { useCatalogProduct } from "@/hooks/useCatalogApi";
 import { cn } from "@/lib/utils";
 import {
     Dialog,
@@ -16,8 +15,8 @@ import {
     DialogTrigger,
     DialogDescription,
 } from "@/components/ui/dialog";
-import type { ShopifyProduct } from "@/stores/cartStore";
 import type { ApiProduct } from "@/lib/api";
+import type { ShopifyProduct } from "@/stores/cartStore";
 
 interface ProductQuickViewProps {
     handle: string;
@@ -28,35 +27,38 @@ interface ProductQuickViewProps {
 
 export const ProductQuickView = ({ handle, children, initialProduct, initialCatalogProduct }: ProductQuickViewProps) => {
     const [isOpen, setIsOpen] = useState(false);
-    const { data: fetchedShopifyProduct, isLoading: shopifyLoading } = useShopifyProduct(handle && !initialProduct && !initialCatalogProduct ? handle : "");
-    const { products } = useCatalogApi();
+    const { data: fetchedCatalogProduct, isLoading: catalogLoading } = useCatalogProduct(isOpen && !initialCatalogProduct ? handle : null);
 
-    const shopifyProduct = initialProduct || fetchedShopifyProduct;
+    const product = initialCatalogProduct || fetchedCatalogProduct;
 
-    const catalogProduct = useMemo(() => {
-        if (initialCatalogProduct) return initialCatalogProduct;
-        if (shopifyProduct) return null;
-        return products.find(p => p.slug === handle || String(p.id) === handle) ?? null;
-    }, [products, handle, shopifyProduct, initialCatalogProduct]);
+    // Shopify Fallback logic
+    const s_p = initialProduct?.node;
+    const s_variant = s_p?.variants?.edges[0]?.node;
+    const s_image = s_p?.images?.edges[0]?.node?.url;
+    const s_price = s_p?.priceRange?.minVariantPrice;
 
     const addItem = useCartStore(state => state.addItem);
     const cartLoading = useCartStore(state => state.isLoading);
-    const [selectedVariantIdx, setSelectedVariantIdx] = useState(0);
     const [quantity, setQuantity] = useState(1);
     const [selectedImage, setSelectedImage] = useState(0);
+    const [selectedVariantId, setSelectedVariantId] = useState<number | null>(null);
 
-    const product = shopifyProduct || catalogProduct;
-    const isShopify = !!shopifyProduct;
+    const selectedVariant = useMemo(() => {
+        if (!product?.variants || product.variants.length === 0) return null;
+        return product.variants.find(v => v.id === selectedVariantId) || product.variants[0];
+    }, [product, selectedVariantId]);
 
-    // Normalize images and gallery first so we can use them in the effect
-    const getShopifyNode = (p: ShopifyProduct | (ShopifyProduct['node'] & { node?: never })) => 
-        'node' in p ? p.node : p;
-    
-    const node = isShopify ? getShopifyNode(product as ShopifyProduct | (ShopifyProduct['node'] & { node?: never })) : null;
-    const images = isShopify ? node?.images?.edges || [] : [];
-    const gallery = isShopify 
-        ? (images as Array<{ node: { url: string } }>).map((img) => img.node.url) 
-        : [(product as ApiProduct)?.image_url, ...((product as ApiProduct)?.image_url_2 ? [(product as ApiProduct)?.image_url_2] : []), ...((product as ApiProduct)?.image_url_3 ? [(product as ApiProduct)?.image_url_3] : [])].filter(Boolean) as string[];
+    useEffect(() => {
+        if (product?.variants && product.variants.length > 0 && selectedVariantId === null) {
+            setSelectedVariantId(product.variants[0].id);
+        }
+    }, [product, selectedVariantId]);
+
+    const gallery = product 
+        ? [product.image_url, product.image_url_2, product.image_url_3].filter(Boolean) as string[]
+        : initialProduct 
+            ? (s_p?.images?.edges.map(e => e.node.url).filter(Boolean) as string[])
+            : [];
 
     // Keyboard navigation
     useEffect(() => {
@@ -73,38 +75,38 @@ export const ProductQuickView = ({ handle, children, initialProduct, initialCata
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, [isOpen, gallery.length]);
 
-    const title = isShopify ? node?.title : (product as ApiProduct)?.name || "Product";
-    const description = isShopify ? node?.description : (product as ApiProduct)?.description;
-    const variants = isShopify ? node?.variants?.edges || [] : [];
-    const selectedVariant = isShopify ? variants[selectedVariantIdx]?.node : null;
-    const price = isShopify ? selectedVariant?.price : { amount: String((product as ApiProduct)?.price || 0), currencyCode: "LKR" };
+    const title = product?.name || s_p?.title || "Product";
+    const description = product?.description || s_p?.description;
+    const price = { amount: String(product?.price || 0), currencyCode: "$" };
 
     const handleAddToCart = async () => {
-        if (!product) return;
-        if (isShopify) {
-            if (!selectedVariant || !node) return;
-            await addItem({
-                type: 'shopify',
-                productId: node.id,
-                name: title,
-                image: gallery[0],
-                price: selectedVariant.price,
-                quantity,
-                shopifyVariantId: selectedVariant.id,
-                shopifyData: { node } as unknown as ShopifyProduct, // Wrap node back for cart store expectation
-                selectedOptions: selectedVariant.selectedOptions || [],
-            });
-        } else {
-            const apiProd = product as ApiProduct;
+        if (product) {
+            const finalPrice = selectedVariant 
+                ? (selectedVariant.discount_price || selectedVariant.price)
+                : (product.is_hot_deal && product.discount_price ? product.discount_price : product.price);
             await addItem({
                 type: 'catalog',
-                productId: String(apiProd.id),
-                name: title,
+                productId: String(product.id),
+                variantId: selectedVariant ? String(selectedVariant.id) : undefined,
+                name: (selectedVariant && selectedVariant.name) ? `${title} - ${selectedVariant.name}` : title,
                 image: gallery[0],
-                price: price,
+                price: { amount: String(finalPrice || 0), currencyCode: "$" },
                 quantity,
             });
+        } else if (initialProduct && s_variant) {
+            await addItem({
+                type: 'shopify',
+                productId: s_p?.id || "",
+                name: s_p?.title || "Untitled",
+                price: s_variant.price,
+                quantity: quantity,
+                image: s_image,
+                shopifyVariantId: s_variant.id,
+                shopifyData: initialProduct,
+                selectedOptions: s_variant.selectedOptions || [],
+            });
         }
+
         toast.success("Added to cart", {
             description: `${quantity}x ${title}`,
             position: "top-center",
@@ -114,7 +116,7 @@ export const ProductQuickView = ({ handle, children, initialProduct, initialCata
     };
 
     // If we have no data and we are loading, then we hide or show a skeleton
-    if (shopifyLoading && !product) {
+    if (catalogLoading && !product) {
         return <div className="hidden">{children}</div>;
     }
 
@@ -209,24 +211,82 @@ export const ProductQuickView = ({ handle, children, initialProduct, initialCata
                     {/* Right: Info */}
                     <div className="p-8 flex flex-col gap-6">
                         <div className="space-y-4">
-                            <Badge variant="secondary" className="bg-slate-100 text-slate-600 border-none px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider w-fit">
-                                {isShopify ? 'In Stock' : (product as ApiProduct)?.category?.name || 'Catalog Item'}
-                            </Badge>
+                            <div className="flex items-center gap-2">
+                                <Badge variant="secondary" className="bg-slate-100 text-slate-600 border-none px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider w-fit">
+                                    {product?.category?.name || 'Catalog Item'}
+                                </Badge>
+                                {product?.brand && (
+                                    <Badge variant="outline" className="border-slate-200 text-slate-400 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider w-fit">
+                                        {product.brand}
+                                    </Badge>
+                                )}
+                            </div>
                             <DialogTitle className="text-3xl font-display font-black text-slate-900 leading-tight">
                                 {title}
                             </DialogTitle>
-                            <div className="flex items-baseline gap-2">
-                                <span className="text-3xl font-display font-black text-primary">
-                                    <span className="text-base font-bold text-slate-400 mr-0.5">{price.currencyCode}</span>
-                                    {parseFloat(price.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                </span>
+                            <div className="flex flex-col gap-1">
+                                {selectedVariant ? (
+                                    <div className="flex items-baseline gap-2">
+                                        <span className="text-3xl font-display font-black text-primary">
+                                            <span className="text-base font-bold text-slate-400 mr-0.5">$</span>
+                                            {selectedVariant.price?.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
+                                        </span>
+                                    </div>
+                                ) : (product?.is_hot_deal && product?.discount_price) ? (
+                                    <div className="flex items-baseline gap-3">
+                                        <span className="text-4xl font-display font-black text-red-600">
+                                            <span className="text-base font-bold text-red-400 mr-0.5">$</span>
+                                            {product.discount_price.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
+                                        </span>
+                                        <span className="text-xl font-bold text-slate-300 line-through">
+                                            ${product.price?.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
+                                        </span>
+                                    </div>
+                                ) : product ? (
+                                    <div className="flex items-baseline gap-2">
+                                        <span className="text-3xl font-display font-black text-primary">
+                                            <span className="text-base font-bold text-slate-400 mr-0.5">$</span>
+                                            {product?.price?.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
+                                        </span>
+                                    </div>
+                                ) : s_price ? (
+                                    <div className="flex items-baseline gap-2">
+                                        <span className="text-3xl font-display font-black text-primary">
+                                            <span className="text-base font-bold text-slate-400 mr-0.5">{s_price.currencyCode}</span>
+                                            {parseFloat(s_price.amount).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
+                                        </span>
+                                    </div>
+                                ) : null}
                             </div>
                         </div>
 
                         <div className="space-y-6">
-                            <p className="text-sm text-slate-500 leading-relaxed line-clamp-4">
-                                {description || "Premium quality product for professional and home use."}
-                            </p>
+                            <div className="space-y-4">
+                                {product.variants && product.variants.length > 0 && (
+                                    <div className="space-y-2">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Options</span>
+                                        <div className="flex flex-wrap gap-2">
+                                            {product.variants.map((v) => (
+                                                <button
+                                                    key={v.id}
+                                                    onClick={() => setSelectedVariantId(v.id)}
+                                                    className={cn(
+                                                        "px-3 py-2 rounded-xl text-[11px] font-bold transition-all border-2",
+                                                        selectedVariantId === v.id
+                                                            ? "bg-slate-900 border-slate-900 text-white shadow-lg"
+                                                            : "bg-white border-slate-100 text-slate-600 hover:border-slate-300"
+                                                    )}
+                                                >
+                                                    {v.name}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                                <p className="text-sm text-slate-500 leading-relaxed line-clamp-4 italic">
+                                    {description || "Premium quality product for professional and home use."}
+                                </p>
+                            </div>
 
                             <div className="space-y-4 bg-slate-50 p-6 rounded-2xl border border-slate-100/50">
                                 <div className="flex items-center justify-between">

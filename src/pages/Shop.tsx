@@ -1,110 +1,197 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ProductCard } from "@/components/ProductCard";
-import { useShopifyProducts } from "@/hooks/useShopifyProducts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, Package, LayoutGrid, List, X, ExternalLink, Filter, ArrowRight } from "lucide-react";
+import { Search, Package, LayoutGrid, List, X, ExternalLink, Filter, ArrowRight, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { ShopifyProduct } from "@/lib/shopify";
 import { useCatalogApi } from "@/hooks/useCatalogApi";
 import { ApiCategory, ApiProduct } from "@/lib/api";
-
-const PRICE_RANGES = [
-  { label: "All Prices", value: "all" },
-  { label: "Under LKR 25", value: "0-25" },
-  { label: "LKR 25 – 50", value: "25-50" },
-  { label: "LKR 50 – 100", value: "50-100" },
-  { label: "Over LKR 100", value: "100+" },
-];
 
 const Shop = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState(searchParams.get("q") || "");
   const [sort, setSort] = useState("name-asc");
-  const [priceRange, setPriceRange] = useState("all");
   const [view, setView] = useState<"grid" | "list">("grid");
-  const [gridCols, setGridCols] = useState<3 | 4>(4);
+  const [gridCols, setGridCols] = useState<3 | 4>(3);
 
-  const { categories, products: allProducts, isLoading: catalogLoading } = useCatalogApi();
   const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null);
-  const [activeSubcategoryId, setActiveSubcategoryId] = useState<string>("");
+  const [activeSubcategoryId, setActiveSubcategoryId] = useState<number | null>(null);
+  const [showArrivalsOnly, setShowArrivalsOnly] = useState(searchParams.get("arrivals") === "true");
+  const [showHotOnly, setShowHotOnly] = useState(searchParams.get("hot") === "true");
+  const [showBrandsOnly, setShowBrandsOnly] = useState(searchParams.get("brands") === "true");
+  const [selectedBrand, setSelectedBrand] = useState<string | null>(searchParams.get("brand"));
+  const [minPrice, setMinPrice] = useState<string>("");
+  const [maxPrice, setMaxPrice] = useState<string>("");
+  
+  const { categories, subCategories: allSubCategories, products: activeCategoryProducts, isLoading: catalogLoading } = useCatalogApi({ 
+    category_id: (showArrivalsOnly || showHotOnly || showBrandsOnly) ? null : activeCategoryId,
+    sub_category_id: (showArrivalsOnly || showHotOnly || showBrandsOnly) ? null : activeSubcategoryId,
+    is_new_arrival: showArrivalsOnly || undefined,
+    is_hot_deal: showHotOnly || undefined,
+    brand: selectedBrand || undefined
+  });
+
+  const handleCategoryChange = (categoryId: number | null) => {
+    setActiveCategoryId(categoryId);
+    setActiveSubcategoryId(null);
+    setShowArrivalsOnly(false);
+    setShowHotOnly(false);
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.delete("arrivals");
+      next.delete("hot");
+      next.delete("brands");
+      next.delete("brand");
+      if (categoryId === null) {
+        next.delete("cat");
+      } else {
+        const cat = categories.find(c => c.id === categoryId);
+        if (cat) {
+          next.set("cat", cat.slug || String(cat.id));
+        }
+      }
+      return next;
+    }, { replace: true });
+  };
+
+  const handleSubcategoryChange = (subId: number | null) => {
+    setActiveSubcategoryId(subId);
+    setShowArrivalsOnly(false);
+    setShowHotOnly(false);
+    setSearchParams(prev => {
+        const next = new URLSearchParams(prev);
+        next.delete("arrivals");
+        next.delete("hot");
+        next.delete("brands");
+        next.delete("brand");
+        return next;
+    });
+  };
+
+  const handleArrivalsToggle = () => {
+    setShowArrivalsOnly(true);
+    setShowHotOnly(false);
+    setActiveCategoryId(null);
+    setActiveSubcategoryId(null);
+    setSearchParams(prev => {
+        const next = new URLSearchParams(prev);
+        next.set("arrivals", "true");
+        next.delete("hot");
+        next.delete("cat");
+        return next;
+    });
+  };
+
+  const handleHotToggle = () => {
+    setShowHotOnly(true);
+    setShowArrivalsOnly(false);
+    setShowBrandsOnly(false);
+    setActiveCategoryId(null);
+    setActiveSubcategoryId(null);
+    setSearchParams(prev => {
+        const next = new URLSearchParams(prev);
+        next.set("hot", "true");
+        next.delete("arrivals");
+        next.delete("brands");
+        next.delete("brand");
+        next.delete("cat");
+        return next;
+    });
+  };
+
+  const handleBrandsToggle = () => {
+    setShowBrandsOnly(true);
+    setShowArrivalsOnly(false);
+    setShowHotOnly(false);
+    setSelectedBrand(null);
+    setActiveCategoryId(null);
+    setActiveSubcategoryId(null);
+    setSearchParams(prev => {
+        const next = new URLSearchParams(prev);
+        next.set("brands", "true");
+        next.delete("arrivals");
+        next.delete("hot");
+        next.delete("brand");
+        next.delete("cat");
+        return next;
+    });
+  };
+
+  const handleBrandSelect = (brand: string | null) => {
+    setSelectedBrand(brand);
+    setSearchParams(prev => {
+        const next = new URLSearchParams(prev);
+        if (brand) next.set("brand", brand);
+        else next.delete("brand");
+        return next;
+    });
+  };
 
   useEffect(() => {
     if (activeCategoryId === null && categories[0]?.id) setActiveCategoryId(categories[0].id);
   }, [categories, activeCategoryId]);
 
   const activeCategory = useMemo(() => categories.find((c) => c.id === activeCategoryId) ?? categories[0], [activeCategoryId, categories]);
-  const activeCategoryProducts = useMemo(() => allProducts.filter(p => p.category_id === (activeCategory?.id)), [allProducts, activeCategory])
 
-  // Derive subcategories from products in the active category (using 'slug' segments as proxy since ApiProduct doesn't have subcategory)
-  const subcategories: { id: string; name: string }[] = [];
-
-  const { data: shopifyProducts, isLoading } = useShopifyProducts(50);
+  const subcategories = useMemo(() => {
+    if (!activeCategoryId) return [];
+    return allSubCategories.filter(s => s.category_id === activeCategoryId);
+  }, [allSubCategories, activeCategoryId]);
 
   const activeSubcategory = useMemo(() => {
-    if (!activeSubcategoryId) return null;
+    if (activeSubcategoryId === null) return null;
     return subcategories.find(s => s.id === activeSubcategoryId);
   }, [activeSubcategoryId, subcategories]);
 
+  // Extract unique brands from all products (we might need a separate API call for this eventually, but for now we filter from local products if we have them or let the user see them when they browse)
+  // For the "Shop By Brand" sidebar, we should ideally have a list of all brands.
+  const { products: allProductsForBrands } = useCatalogApi({}); // Fetch all for brand list
+  const availableBrands = useMemo(() => {
+    const brands = new Set<string>();
+    allProductsForBrands.forEach(prod => {
+        if (prod?.brand) brands.add(prod.brand);
+    });
+    return Array.from(brands).sort();
+  }, [allProductsForBrands]);
+
   // Combine and filter everything
   const unifiedItems = useMemo(() => {
-    if (!activeCategory) return [];
-
-    // 1. Static Products from Catalog (now from DB)
-    const catalogFiltered = activeCategoryProducts
+    // If we have an active category but we are in "New Arrivals" mode, we should show all products filtered by new arrival
+    // The useCatalogApi handles the fetching based on those params anyway.
+    
+    // Filter products from Catalog
+    return activeCategoryProducts
       .filter((p) => {
         const matchesSearch = !search ||
           p.name.toLowerCase().includes(search.toLowerCase()) ||
           (p.description?.toLowerCase() || "").includes(search.toLowerCase());
-        return matchesSearch;
+          
+        const price = p.price ?? 0;
+        const matchesMinPrice = minPrice === "" || price >= parseFloat(minPrice);
+        const matchesMaxPrice = maxPrice === "" || price <= parseFloat(maxPrice);
+        
+        return matchesSearch && matchesMinPrice && matchesMaxPrice;
       })
-      .map(p => ({ type: 'catalog' as const, data: p, id: String(p.id), name: p.name, price: p.price ?? 0 }));
-
-    // 2. Shopify Products
-    const keywords = (activeSubcategory?.name || activeCategory.name).toLowerCase();
-    const shopifyFiltered = (shopifyProducts || [])
-      .filter((p) => {
-        const title = p.node.title.toLowerCase();
-        const desc = p.node.description.toLowerCase();
-        const tags = p.node.tags.map(t => t.toLowerCase());
-
-        const matchesKeywords = title.includes(keywords) || desc.includes(keywords) || tags.some(t => t.includes(keywords));
-        const matchesSearch = !search ||
-          title.includes(search.toLowerCase()) ||
-          desc.includes(search.toLowerCase()) ||
-          tags.some(t => t.includes(search.toLowerCase()));
-
-        const price = parseFloat(p.node.priceRange.minVariantPrice.amount);
-        let matchesPrice = true;
-        if (priceRange === "0-25") matchesPrice = price < 25;
-        else if (priceRange === "25-50") matchesPrice = price >= 25 && price <= 50;
-        else if (priceRange === "50-100") matchesPrice = price >= 50 && price <= 100;
-        else if (priceRange === "100+") matchesPrice = price > 100;
-
-        return matchesKeywords && matchesSearch && matchesPrice;
-      })
-      .map(p => ({
-        type: 'shopify' as const,
-        data: p,
-        id: p.node.id,
-        name: p.node.title,
-        price: parseFloat(p.node.priceRange.minVariantPrice.amount)
-      }));
-
-    // 3. Merge and Sort
-    return [...catalogFiltered, ...shopifyFiltered].sort((a, b) => {
-      switch (sort) {
-        case "name-desc": return b.name.localeCompare(a.name);
-        case "price-asc": return a.price - b.price;
-        case "price-desc": return b.price - a.price;
-        default: return a.name.localeCompare(b.name);
-      }
-    });
-  }, [activeCategory, activeSubcategory, shopifyProducts, search, priceRange, sort]);
+      .map(p => ({ 
+        type: 'catalog' as const, 
+        data: p, 
+        id: String(p.id), 
+        name: p.name, 
+        price: p.price ?? 0 
+      }))
+      .sort((a, b) => {
+        switch (sort) {
+          case "name-desc": return b.name.localeCompare(a.name);
+          case "price-asc": return a.price - b.price;
+          case "price-desc": return b.price - a.price;
+          default: return a.name.localeCompare(b.name);
+        }
+      });
+  }, [activeCategory, activeCategoryProducts, search, sort]);
 
   useEffect(() => {
     const q = searchParams.get("q");
@@ -112,20 +199,61 @@ const Shop = () => {
   }, [searchParams]);
 
   useEffect(() => {
+    const arrivals = searchParams.get("arrivals") === "true";
+    if (arrivals !== showArrivalsOnly) {
+        setShowArrivalsOnly(arrivals);
+        if (arrivals) {
+            setActiveCategoryId(null);
+            setActiveSubcategoryId(null);
+            setShowHotOnly(false);
+        }
+    }
+
+    const hot = searchParams.get("hot") === "true";
+    if (hot !== showHotOnly) {
+        setShowHotOnly(hot);
+        if (hot) {
+            setActiveCategoryId(null);
+            setActiveSubcategoryId(null);
+            setShowArrivalsOnly(false);
+            setShowBrandsOnly(false);
+        }
+    }
+
+    const brands = searchParams.get("brands") === "true";
+    if (brands !== showBrandsOnly) {
+        setShowBrandsOnly(brands);
+        if (brands) {
+            setActiveCategoryId(null);
+            setActiveSubcategoryId(null);
+            setShowArrivalsOnly(false);
+            setShowHotOnly(false);
+        }
+    }
+
+    const brand = searchParams.get("brand");
+    if (brand !== selectedBrand) {
+        setSelectedBrand(brand);
+    }
+
     const cat = searchParams.get("cat");
     if (!cat) return;
     const match = categories.find((c) => c.slug === cat) || categories.find((c) => String(c.id) === cat);
     if (match && match.id !== activeCategoryId) {
       setActiveCategoryId(match.id);
-      setActiveSubcategoryId("");
+      setActiveSubcategoryId(null);
+      setShowArrivalsOnly(false);
+      setShowHotOnly(false);
+      setShowBrandsOnly(false);
     }
-  }, [categories, searchParams, activeCategoryId]);
+  }, [categories, searchParams, activeCategoryId, showArrivalsOnly, showHotOnly, showBrandsOnly, selectedBrand]);
 
   const clearFilters = () => {
     setSearch("");
-    setPriceRange("all");
     setSort("name-asc");
-    setActiveSubcategoryId("");
+    setActiveSubcategoryId(null);
+    setMinPrice("");
+    setMaxPrice("");
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
       next.delete("q");
@@ -138,15 +266,19 @@ const Shop = () => {
       {/* Simplified Hero Section */}
       <section className="bg-primary py-16 lg:py-24 border-b border-white/5">
         <div className="container px-4">
-          <div className="max-w-3xl mx-auto text-center space-y-6">
+          <div className="max-w-xl mx-auto text-center space-y-6">
             <h1 className="text-3xl md:text-5xl font-display font-bold text-primary-foreground tracking-tight">
-              Our Professional Catalog
+              {showHotOnly ? "Hot Deals" : showArrivalsOnly ? "New Arrivals" : showBrandsOnly ? "Shop By Brand" : activeCategoryId === null ? "All Products" : "Our Professional Catalog"}
             </h1>
-            <p className="text-primary-foreground/70 text-sm md:text-base max-w-xl mx-auto">
-              Browse our complete range of commercial and domestic cleaning supplies. Select a category below to filter.
+            <p className="text-primary-foreground/70 text-sm md:text-base max-w-md mx-auto">
+              {showHotOnly 
+                ? "Don't miss out on our best prices and limited-time discounts."
+                : showArrivalsOnly 
+                ? "Discover our latest cleaning solutions and professional equipment." 
+                : "Browse our complete range of commercial and domestic cleaning supplies."}
             </p>
 
-            <div className="pt-4 max-w-md mx-auto">
+            <div className="pt-4 max-w-xs mx-auto">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-primary-foreground/60" />
                 <Input
@@ -163,21 +295,82 @@ const Shop = () => {
 
       <main className="flex-1 py-12 bg-background">
         <div className="container px-4">
-          <div className="grid gap-10 lg:grid-cols-[250px_1fr]">
+          <div className={cn("grid gap-10", (subcategories.length > 0 && !showArrivalsOnly && !showHotOnly) ? "lg:grid-cols-[220px_200px_1fr]" : "lg:grid-cols-[250px_1fr]")}>
             {/* Cleaner Sidebar Navigation */}
             <aside className="space-y-8 hidden lg:block">
               <div className="space-y-4">
                 <div className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em] pb-2 border-b border-border">
-                  Categories
+                  Collections
                 </div>
                 <div className="flex flex-col gap-1">
+                  <button
+                    onClick={() => handleCategoryChange(null)}
+                    className={cn(
+                      "w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all",
+                      activeCategoryId === null && !showArrivalsOnly && !showHotOnly
+                        ? "bg-primary text-primary-foreground font-bold shadow-sm"
+                        : "text-foreground hover:bg-muted"
+                    )}
+                  >
+                    <span>All Products</span>
+                    {activeCategoryId === null && !showArrivalsOnly && !showHotOnly && <ArrowRight className="h-4 w-4" />}
+                  </button>
+
+                  <button
+                    onClick={handleArrivalsToggle}
+                    className={cn(
+                      "w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all",
+                      showArrivalsOnly
+                        ? "bg-primary text-primary-foreground font-bold shadow-sm"
+                        : "text-foreground hover:bg-muted"
+                    )}
+                  >
+                    <div className="flex items-center gap-2">
+                        <Badge className="bg-amber-500/20 text-amber-600 border-none text-[9px] h-4">NEW</Badge>
+                        <span>New Arrivals</span>
+                    </div>
+                    {showArrivalsOnly && <ArrowRight className="h-4 w-4" />}
+                  </button>
+
+                  <button
+                    onClick={handleHotToggle}
+                    className={cn(
+                      "w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all",
+                      showHotOnly
+                        ? "bg-red-600 text-white font-bold shadow-sm"
+                        : "text-foreground hover:bg-muted"
+                    )}
+                  >
+                    <div className="flex items-center gap-2">
+                        <Badge className="bg-red-500/20 text-red-600 border-none text-[9px] h-4">HOT</Badge>
+                        <span>Hot Deals</span>
+                    </div>
+                    {showHotOnly && <ArrowRight className="h-4 w-4" />}
+                  </button>
+
+                  <button
+                    onClick={handleBrandsToggle}
+                    className={cn(
+                      "w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all",
+                      showBrandsOnly
+                        ? "bg-primary text-primary-foreground font-bold shadow-sm"
+                        : "text-foreground hover:bg-muted"
+                    )}
+                  >
+                    <div className="flex items-center gap-2">
+                        <Package className="h-4 w-4 text-slate-400" />
+                        <span>Shop By Brand</span>
+                    </div>
+                    {showBrandsOnly && <ArrowRight className="h-4 w-4" />}
+                  </button>
+
+                  <div className="h-4" />
+                  <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-3 mb-2">Categories</div>
+
                   {categories.map((c) => (
                     <div key={c.id}>
                       <button
-                        onClick={() => {
-                          setActiveCategoryId(c.id);
-                          setActiveSubcategoryId("");
-                        }}
+                        onClick={() => handleCategoryChange(c.id)}
                         className={cn(
                           "w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all",
                           c.id === activeCategoryId
@@ -189,61 +382,125 @@ const Shop = () => {
                         {c.id === activeCategoryId && <ArrowRight className="h-4 w-4" />}
                       </button>
 
-                      {/* Nested Subcategories */}
-                      {c.id === activeCategoryId && subcategories.length > 0 && (
-                        <div className="pl-4 mt-1 mb-2 flex flex-col gap-1 border-l border-border ml-2">
-                          <button
-                            onClick={() => setActiveSubcategoryId("")}
-                            className={cn(
-                              "text-left px-3 py-1.5 rounded-md text-xs",
-                              activeSubcategoryId === ""
-                                ? "text-primary font-bold"
-                                : "text-muted-foreground hover:text-foreground"
-                            )}
-                          >
-                            All {c.name}
-                          </button>
-
-                          {subcategories.map(sub => (
-                            <button
-                              key={sub.id}
-                              onClick={() => setActiveSubcategoryId(sub.id)}
-                              className={cn(
-                                "text-left px-3 py-1.5 rounded-md text-xs",
-                                activeSubcategoryId === sub.id
-                                  ? "text-primary font-bold"
-                                  : "text-muted-foreground hover:text-foreground"
-                              )}
-                            >
-                              {sub.name}
-                            </button>
-                          ))}
-                        </div>
-                      )}
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Price Filter in Sidebar */}
-              <div className="space-y-4 pt-4 border-t border-border">
-                <div className="text-sm font-semibold text-foreground">Price Range</div>
-                <div className="space-y-2">
-                  {PRICE_RANGES.map((r) => (
-                    <button
-                      key={r.value}
-                      onClick={() => setPriceRange(r.value)}
-                      className={cn(
-                        "w-full text-left px-4 py-2 rounded-lg text-sm transition-colors",
-                        priceRange === r.value ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                      )}
+              <div className="space-y-4">
+                <div className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em] pb-2 border-b border-border">
+                  Price Range
+                </div>
+                <div className="space-y-3">
+                  <div className="flex gap-2">
+                    <div className="flex-1 space-y-1">
+                      <label className="text-[9px] font-bold text-muted-foreground uppercase">Min ($)</label>
+                      <Input 
+                        type="number" 
+                        placeholder="0" 
+                        value={minPrice} 
+                        onChange={(e) => setMinPrice(e.target.value)}
+                        className="h-9 bg-muted/50 border-none rounded-lg text-xs"
+                      />
+                    </div>
+                    <div className="flex-1 space-y-1">
+                      <label className="text-[9px] font-bold text-muted-foreground uppercase">Max ($)</label>
+                      <Input 
+                        type="number" 
+                        placeholder="Any" 
+                        value={maxPrice} 
+                        onChange={(e) => setMaxPrice(e.target.value)}
+                        className="h-9 bg-muted/50 border-none rounded-lg text-xs"
+                      />
+                    </div>
+                  </div>
+                  {(minPrice || maxPrice) && (
+                    <button 
+                      onClick={() => { setMinPrice(""); setMaxPrice(""); }}
+                      className="text-[10px] font-bold text-primary hover:underline"
                     >
-                      {r.label}
+                      Clear Price Filter
                     </button>
-                  ))}
+                  )}
                 </div>
               </div>
             </aside>
+
+            {/* Brand Sidebar (Opens when Shop By Brand is active) */}
+            {showBrandsOnly && (
+              <aside className="space-y-8 hidden lg:block animate-in fade-in slide-in-from-left-2 duration-500">
+                <div className="space-y-4">
+                  <div className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em] pb-2 border-b border-border">
+                    Available Brands
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <button
+                      onClick={() => handleBrandSelect(null)}
+                      className={cn(
+                        "w-full text-left px-3 py-2 rounded-lg text-sm transition-all",
+                        selectedBrand === null
+                          ? "bg-muted text-primary font-bold"
+                          : "text-foreground hover:bg-muted"
+                      )}
+                    >
+                      All Brands
+                    </button>
+                    {availableBrands.map((brand) => (
+                      <button
+                        key={brand}
+                        onClick={() => handleBrandSelect(brand)}
+                        className={cn(
+                          "w-full text-left px-3 py-2 rounded-lg text-sm transition-all",
+                          selectedBrand === brand
+                            ? "bg-muted text-primary font-bold"
+                            : "text-foreground hover:bg-muted"
+                        )}
+                      >
+                        {brand}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </aside>
+            )}
+
+            {/* Subcategories Sidebar (Opens in Right of Category) */}
+            {(subcategories.length > 0 && !showArrivalsOnly && !showHotOnly && !showBrandsOnly) && (
+              <aside className="space-y-8 hidden lg:block animate-in fade-in slide-in-from-left-2 duration-500">
+                <div className="space-y-4">
+                  <div className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em] pb-2 border-b border-border">
+                    {activeCategory?.name} Types
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <button
+                      onClick={() => handleSubcategoryChange(null)}
+                      className={cn(
+                        "w-full text-left px-3 py-2 rounded-lg text-sm transition-all",
+                        activeSubcategoryId === null
+                          ? "bg-muted text-primary font-bold"
+                          : "text-foreground hover:bg-muted"
+                      )}
+                    >
+                      All {activeCategory?.name}
+                    </button>
+                    {subcategories.map((sub) => (
+                      <button
+                        key={sub.id}
+                        onClick={() => handleSubcategoryChange(sub.id)}
+                        className={cn(
+                          "w-full text-left px-3 py-2 rounded-lg text-sm transition-all",
+                          activeSubcategoryId === sub.id
+                            ? "bg-muted text-primary font-bold"
+                            : "text-foreground hover:bg-muted"
+                        )}
+                      >
+                        {sub.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </aside>
+            )}
 
             {/* Main Content Area */}
             <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-700">
@@ -258,8 +515,7 @@ const Shop = () => {
                     onValueChange={(val) => {
                       const nextId = Number(val);
                       if (!Number.isNaN(nextId)) {
-                        setActiveCategoryId(nextId);
-                        setActiveSubcategoryId("");
+                        handleCategoryChange(nextId);
                       }
                     }}
                   >
@@ -276,14 +532,17 @@ const Shop = () => {
                   </Select>
 
                   {subcategories.length > 0 && (
-                    <Select value={activeSubcategoryId} onValueChange={setActiveSubcategoryId}>
+                    <Select 
+                      value={activeSubcategoryId === null ? "all" : String(activeSubcategoryId)} 
+                      onValueChange={(val) => handleSubcategoryChange(val === "all" ? null : Number(val))}
+                    >
                       <SelectTrigger className="w-full bg-muted/50 border-none rounded-xl h-11">
                         <SelectValue placeholder={`All ${activeCategory?.name || "categories"}`} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">All {activeCategory?.name}</SelectItem>
+                        <SelectItem value="all">All {activeCategory?.name}</SelectItem>
                         {subcategories.map((s) => (
-                          <SelectItem key={s.id} value={s.id}>
+                          <SelectItem key={s.id} value={String(s.id)}>
                             {s.name}
                           </SelectItem>
                         ))}
@@ -291,25 +550,29 @@ const Shop = () => {
                     </Select>
                   )}
 
-                  <Select value={priceRange} onValueChange={setPriceRange}>
-                    <SelectTrigger className="w-full bg-muted/50 border-none rounded-xl h-11">
-                      <SelectValue placeholder="Price range" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {PRICE_RANGES.map((r) => (
-                        <SelectItem key={r.value} value={r.value}>
-                          {r.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex gap-2">
+                    <Input 
+                      type="number" 
+                      placeholder="Min $" 
+                      value={minPrice} 
+                      onChange={(e) => setMinPrice(e.target.value)}
+                      className="h-11 bg-muted/50 border-none rounded-xl text-sm"
+                    />
+                    <Input 
+                      type="number" 
+                      placeholder="Max $" 
+                      value={maxPrice} 
+                      onChange={(e) => setMaxPrice(e.target.value)}
+                      className="h-11 bg-muted/50 border-none rounded-xl text-sm"
+                    />
+                  </div>
                 </div>
               </div>
               {/* Toolbar */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-card p-4 rounded-2xl shadow-sm border border-border mb-8">
                 <div className="flex items-center gap-3">
                   <h2 className="text-xl font-display font-bold text-foreground">
-                    {activeSubcategory?.name || activeCategory?.name || "All Products"}
+                    {showHotOnly ? "Hot Deals" : showArrivalsOnly ? "New Arrivals" : showBrandsOnly ? (selectedBrand || "All Brands") : activeSubcategory?.name || activeCategory?.name || "All Products"}
                   </h2>
                   <Badge variant="secondary" className="bg-muted text-muted-foreground border-none">
                     {unifiedItems.length} Items
@@ -351,19 +614,25 @@ const Shop = () => {
               </div>
 
               {/* Active Filters Bar */}
-              {(search || priceRange !== "all") && (
+              {(search || minPrice || maxPrice) && (
                 <div className="flex items-center gap-2 flex-wrap pb-2">
                   <span className="text-xs uppercase tracking-wider text-muted-foreground font-bold mr-2">Filters:</span>
                   {search && (
                     <Badge variant="default" className="gap-1.5 px-3 py-1 bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 transition-colors">
-                      "{search}"
+                      Search: "{search}"
                       <X className="h-3 w-3 cursor-pointer" onClick={() => setSearch("")} />
                     </Badge>
                   )}
-                  {priceRange !== "all" && (
+                  {minPrice && (
                     <Badge variant="default" className="gap-1.5 px-3 py-1 bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 transition-colors">
-                      {PRICE_RANGES.find((r) => r.value === priceRange)?.label}
-                      <X className="h-3 w-3 cursor-pointer" onClick={() => setPriceRange("all")} />
+                      Min: ${minPrice}
+                      <X className="h-3 w-3 cursor-pointer" onClick={() => setMinPrice("")} />
+                    </Badge>
+                  )}
+                  {maxPrice && (
+                    <Badge variant="default" className="gap-1.5 px-3 py-1 bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 transition-colors">
+                      Max: ${maxPrice}
+                      <X className="h-3 w-3 cursor-pointer" onClick={() => setMaxPrice("")} />
                     </Badge>
                   )}
                   <button onClick={clearFilters} className="text-xs font-semibold text-destructive hover:underline ml-2 transition-all">
@@ -373,7 +642,7 @@ const Shop = () => {
               )}
 
               {/* Unified Grid/List View */}
-              {(isLoading || catalogLoading) ? (
+              {catalogLoading ? (
                 <div className="space-y-12">
                   <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in zoom-in duration-700">
                     <div className="relative mb-8">
@@ -393,7 +662,7 @@ const Shop = () => {
                   <div className={cn(
                     "grid gap-6 sm:gap-8 opacity-40", 
                     view === "list" ? "grid-cols-1" : 
-                    gridCols === 3 ? "grid-cols-2 lg:grid-cols-3" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                    gridCols === 3 ? "grid-cols-2 lg:grid-cols-3" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-3"
                   )}>
                     {Array.from({ length: 8 }).map((_, i) => (
                       <div key={i} className="rounded-[2rem] border border-slate-100 bg-white p-5 space-y-6 animate-pulse" style={{ animationDelay: `${i * 100}ms` }}>
@@ -411,19 +680,20 @@ const Shop = () => {
                   </div>
                 </div>
               ) : unifiedItems.length > 0 ? (
-                <div className={cn(
-                  "grid gap-6 sm:gap-8", 
-                  view === "list" ? "grid-cols-1" : 
-                  gridCols === 3 ? "grid-cols-2 lg:grid-cols-3" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-                )}>
-                  {unifiedItems.map((item) => (
-                    <ProductCard
-                      key={item.id}
-                      variant={view}
-                      product={item.type === 'shopify' ? item.data : undefined}
-                      catalogItem={item.type === 'catalog' ? item.data : undefined}
-                    />
-                  ))}
+                <div className="relative">
+                  <div className={cn(
+                    "grid gap-6 sm:gap-8", 
+                    view === "list" ? "grid-cols-1" : 
+                    gridCols === 3 ? "grid-cols-2 lg:grid-cols-3" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-3"
+                  )}>
+                    {unifiedItems.map((item) => (
+                      <ProductCard
+                        key={item.id}
+                        variant={view}
+                        catalogItem={item.data}
+                      />
+                    ))}
+                  </div>
                 </div>
               ) : (
                 <div className="text-center py-24 rounded-3xl border-2 border-dashed border-border bg-card/50 backdrop-blur-sm">
@@ -448,3 +718,4 @@ const Shop = () => {
 };
 
 export default Shop;
+

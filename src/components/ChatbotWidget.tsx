@@ -32,7 +32,7 @@ const CATEGORY_NAME_MAP = new Map(CATEGORIES.map((c) => [c.name.toLowerCase(), c
 const FAQ: { keywords: string[]; answer: string }[] = [
   {
     keywords: ["shipping", "delivery", "ship"],
-    answer: "Happy to help! We offer **free shipping** on orders over $150. Standard delivery is **1-3 business days** across Australia.",
+    answer: "Happy to help! We offer **free shipping** on orders over $100. Standard delivery is **1-3 business days** across Australia.",
   },
   {
     keywords: ["bulk", "wholesale", "volume", "discount"],

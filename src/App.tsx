@@ -2,7 +2,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import { TopBar } from "@/components/TopBar";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -18,17 +19,33 @@ import NotFound from "./pages/NotFound";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Profile from "./pages/Profile";
+import AdminHome from "./pages/AdminHome";
+import AdminCatalog from "./pages/AdminCatalog";
+import AdminCatalogPro from "@/pages/AdminCatalogPro";
+import AdminProducts from "./pages/AdminProducts";
+import AdminOrders from "./pages/AdminOrders";
+import AdminCustomers from "./pages/AdminCustomers";
+import AdminInventory from "./pages/AdminInventory";
 import { ChatbotWidget } from "@/components/ChatbotWidget";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { RouteLoading } from "@/components/RouteLoading";
 
 const queryClient = new QueryClient();
 
 const AppContent = () => {
   useCartSync();
+  const location = useLocation();
+  const isAdminPath = location.pathname.startsWith("/admin");
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [location.pathname]);
+
   return (
     <div className="min-h-screen flex flex-col">
-      <TopBar />
-      <Header />
+      <RouteLoading pathname={location.pathname} />
+      {!isAdminPath && <TopBar />}
+      {!isAdminPath && <Header />}
       <div className="flex-1">
         <Routes>
           <Route path="/" element={<Index />} />
@@ -41,10 +58,17 @@ const AppContent = () => {
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/admin" element={<AdminCatalogPro />} />
+          <Route path="/admin/catalog" element={<AdminCatalog />} />
+          <Route path="/admin/catalog-pro" element={<AdminCatalogPro />} />
+          <Route path="/admin/products" element={<AdminProducts />} />
+          <Route path="/admin/orders" element={<AdminOrders />} />
+          <Route path="/admin/customers" element={<AdminCustomers />} />
+          <Route path="/admin/inventory" element={<AdminInventory />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
-      <Footer />
+      {!isAdminPath && <Footer />}
       <ChatbotWidget />
       <ScrollToTop />
     </div>

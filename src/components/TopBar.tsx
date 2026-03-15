@@ -23,11 +23,11 @@ export const TopBar = () => {
     <div className="bg-primary text-primary-foreground text-xs py-2 border-b border-primary-foreground/10">
       <div className="container flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <a href="tel:1300472722" className="flex items-center gap-1.5 hover:text-secondary transition-colors">
-            <Phone className="h-3 w-3" /> 1300 GRAPC
+          <a href="tel: +61 416 163 126472722" className="flex items-center gap-1.5 hover:text-secondary transition-colors">
+            <Phone className="h-3 w-3" />  +61 416 163 126  
           </a>
-          <a href="mailto:info@grapc.com.au" className="hidden sm:flex items-center gap-1.5 hover:text-secondary transition-colors">
-            <Mail className="h-3 w-3" /> info@grapc.com.au
+          <a href="mailto:info@cleanyglow.lk" className="hidden sm:flex items-center gap-1.5 hover:text-secondary transition-colors">
+            <Mail className="h-3 w-3" /> info@cleanyglow.lk
           </a>
         </div>
         <p className="hidden md:block font-medium tracking-wide uppercase">
@@ -39,7 +39,7 @@ export const TopBar = () => {
           </p>
           <span className="hidden sm:block text-primary-foreground/30">|</span>
           <div className="flex items-center gap-2.5">
-            <a href="https://wa.me/1300472722" target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors" aria-label="WhatsApp">
+            <a href="https://wa.me/ +61 416 163 126472722" target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors" aria-label="WhatsApp">
               <WhatsAppIcon />
             </a>
             <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-secondary transition-colors" aria-label="Facebook">

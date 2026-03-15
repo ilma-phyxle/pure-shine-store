@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { UserPlus } from "lucide-react";
+
 import authBg from "@/assets/auth-bg.jpg";
 
 const SignUp = () => {
@@ -33,7 +34,7 @@ const SignUp = () => {
             <UserPlus className="h-6 w-6 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-white">Create Account</h1>
-          <p className="text-sm text-white/70 mt-1">Join GRAPC for exclusive deals & easy ordering</p>
+          <p className="text-sm text-white/70 mt-1">Join   for exclusive deals & easy ordering</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">

@@ -1,0 +1,1267 @@
+{
+  "store": {
+    "name": "Cleaners Outlet",
+    "tagline": "Professional Cleaning Supplies — Commercial & Domestic",
+    "website": "https://cleanersgallery.com.au",
+    "currency": "AUD",
+    "location": "Melbourne, Australia",
+    "logo_url": "https://cleanersgallery.com.au/cdn/shop/files/cleaners-gallery-logo.png"
+  },
+  "navigation": [
+    {
+      "label": "Product / Shop",
+      "path": "/shop"
+    },
+    {
+      "label": "Blogs",
+      "path": "/blogs"
+    },
+    {
+      "label": "About",
+      "path": "/about"
+    },
+    {
+      "label": "Contact",
+      "path": "/contact"
+    }
+  ],
+  "categories": [
+    {
+      "id": "cat-001",
+      "slug": "cleaning-chemicals",
+      "name": "Cleaning Chemicals",
+      "description": "Professional-grade cleaning chemicals for commercial and domestic use. All-purpose degreasers, disinfectants, floor cleaners, and more.",
+      "icon": "🧪",
+      "color_hex": "#00897B",
+      "background_hex": "#E0F2F1",
+      "image_url": "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&q=80",
+      "banner_url": "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=1200&q=80",
+      "product_count": 8,
+      "source_url": "https://cleanersgallery.com.au/collections/chemical?sort_by=manual&filter.p.vendor=Times",
+      "products": [
+        {
+          "id": "prod-001",
+          "slug": "times-heavy-duty-alkaline-degreaser",
+          "name": "Times Golden Hour Heavy Duty Alkaline Degreaser",
+          "brand": "Times",
+          "short_description": "Heavy-duty alkaline degreaser for industrial and commercial surfaces.",
+          "description": "Times Golden Hour Heavy Duty Alkaline Degreaser is a powerful, professional-strength cleaner designed to cut through grease, oil, and heavy soiling on all hard surfaces. Ideal for commercial kitchens, factories, and industrial environments.",
+          "category_id": "cat-001",
+          "category_name": "Cleaning Chemicals",
+          "subcategory": "All-Purpose Cleaners",
+          "image_url": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&q=80",
+            "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=500&q=80"
+          ],
+          "tags": [
+            "degreaser",
+            "alkaline",
+            "heavy-duty",
+            "commercial",
+            "industrial"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/collections/chemical?sort_by=manual&filter.p.vendor=Times",
+          "sku": "TIMES-001",
+          "price": "32.00"
+        },
+        {
+          "id": "prod-002",
+          "slug": "times-lemon-disinfectant",
+          "name": "TIMES Lemon Time Disinfectant",
+          "brand": "Times",
+          "short_description": "Lemon-scented disinfectant for general surface sanitisation.",
+          "description": "TIMES Lemon Time Disinfectant is a hospital-grade surface disinfectant with a fresh lemon fragrance. Kills 99.9% of bacteria and viruses on hard surfaces. Suitable for kitchens, bathrooms, and high-touch areas.",
+          "category_id": "cat-001",
+          "category_name": "Cleaning Chemicals",
+          "subcategory": "All-Purpose Cleaners",
+          "image_url": "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=500&q=80"
+          ],
+          "tags": [
+            "disinfectant",
+            "lemon",
+            "antibacterial",
+            "surface-cleaner"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/collections/chemical?sort_by=manual&filter.p.vendor=Times",
+          "sku": "TIMES-002",
+          "price": "14.50"
+        },
+        {
+          "id": "prod-003",
+          "slug": "bleach",
+          "name": "Industrial Bleach",
+          "brand": "Generic",
+          "short_description": "Heavy-strength bleach for disinfection, whitening and sanitising.",
+          "description": "Industrial-strength bleach for commercial and domestic use. Effective against bacteria, mould, and mildew on hard surfaces. Suitable for bathrooms, kitchens, and laundry applications.",
+          "category_id": "cat-001",
+          "category_name": "Cleaning Chemicals",
+          "subcategory": "Bleach",
+          "image_url": "https://images.unsplash.com/photo-1609710228159-0fa9bd7c0827?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1609710228159-0fa9bd7c0827?w=500&q=80"
+          ],
+          "tags": [
+            "bleach",
+            "disinfectant",
+            "whitening",
+            "mould-remover"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/collections/chemical",
+          "sku": "CHEM-BLEACH-001",
+          "price": "12.90"
+        },
+        {
+          "id": "prod-004",
+          "slug": "carpet-cleaner",
+          "name": "Carpet Cleaner",
+          "brand": "Generic",
+          "short_description": "Deep-action carpet cleaning solution for stains and odours.",
+          "description": "Professional carpet cleaning concentrate. Penetrates deep into carpet fibres to lift and remove stubborn stains, dirt, and odours. Safe for use in carpet cleaning machines and spot-treatment.",
+          "category_id": "cat-001",
+          "category_name": "Cleaning Chemicals",
+          "subcategory": "Carpet Cleaners",
+          "image_url": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&q=80"
+          ],
+          "tags": [
+            "carpet",
+            "stain-remover",
+            "odour-removal",
+            "deep-clean"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/collections/chemical",
+          "sku": "CHEM-CARPET-001",
+          "price": "24.50"
+        },
+        {
+          "id": "prod-005",
+          "slug": "floor-cleaner",
+          "name": "Floor Cleaner",
+          "brand": "Generic",
+          "short_description": "Professional floor cleaning solution for all hard floor types.",
+          "description": "Multi-surface floor cleaner suitable for tiles, vinyl, timber, and polished concrete. Leaves floors streak-free with a fresh scent. Dilutable concentrate for economical use.",
+          "category_id": "cat-001",
+          "category_name": "Cleaning Chemicals",
+          "subcategory": "Floor Cleaners",
+          "image_url": "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=500&q=80"
+          ],
+          "tags": [
+            "floor-cleaner",
+            "tiles",
+            "vinyl",
+            "hardwood",
+            "multi-surface"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/collections/chemical",
+          "sku": "CHEM-FLOOR-001",
+          "price": "18.90"
+        },
+        {
+          "id": "prod-006",
+          "slug": "glass-cleaning-products",
+          "name": "Glass Cleaning Products",
+          "brand": "Generic",
+          "short_description": "Streak-free glass and window cleaning solution.",
+          "description": "Professional glass and window cleaning solution. Delivers a crystal-clear, streak-free finish on glass, mirrors, and windows. Fast-drying formula suitable for commercial and domestic use.",
+          "category_id": "cat-001",
+          "category_name": "Cleaning Chemicals",
+          "subcategory": "Glass Cleaning Products",
+          "image_url": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500&q=80"
+          ],
+          "tags": [
+            "glass-cleaner",
+            "window",
+            "streak-free",
+            "mirrors"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/collections/chemical",
+          "sku": "CHEM-GLASS-001",
+          "price": "15.75"
+        },
+        {
+          "id": "prod-007",
+          "slug": "household-disinfectant",
+          "name": "Household Disinfectant",
+          "brand": "Generic",
+          "short_description": "Kills 99.9% of bacteria and viruses on household surfaces.",
+          "description": "Ready-to-use household disinfectant for kitchens, bathrooms, and high-touch areas. Effective against a broad spectrum of bacteria and viruses. Safe for use around family and pets when dry.",
+          "category_id": "cat-001",
+          "category_name": "Cleaning Chemicals",
+          "subcategory": "Household Disinfectants",
+          "image_url": "https://images.unsplash.com/photo-1583947581924-860bda6a26df?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1583947581924-860bda6a26df?w=500&q=80"
+          ],
+          "tags": [
+            "disinfectant",
+            "antibacterial",
+            "antiviral",
+            "household"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/collections/chemical",
+          "sku": "CHEM-DISINFECT-001",
+          "price": "9.95"
+        },
+        {
+          "id": "prod-008",
+          "slug": "oven-grill-cleaner",
+          "name": "Oven & Grill Cleaner",
+          "brand": "Generic",
+          "short_description": "Heavy-duty degreaser for ovens, grills and barbeques.",
+          "description": "Industrial-strength oven and grill cleaner. Dissolves baked-on grease, carbon deposits, and food residue quickly. Suitable for commercial kitchen ovens, grills, fryers, and BBQs.",
+          "category_id": "cat-001",
+          "category_name": "Cleaning Chemicals",
+          "subcategory": "Oven & Grill Cleaners",
+          "image_url": "https://images.unsplash.com/photo-1556909045-b2d7d9e47b3f?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1556909045-b2d7d9e47b3f?w=500&q=80"
+          ],
+          "tags": [
+            "oven-cleaner",
+            "grill",
+            "BBQ",
+            "degreaser",
+            "kitchen"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/collections/chemical",
+          "sku": "CHEM-OVEN-001",
+          "price": "21.00"
+        }
+      ]
+    },
+    {
+      "id": "cat-002",
+      "slug": "paper-products",
+      "name": "Paper Products",
+      "description": "High-quality Caprice paper products for commercial and hospitality use — toilet paper, hand towels, facial tissues, and napkins.",
+      "icon": "🧻",
+      "color_hex": "#1565C0",
+      "background_hex": "#E3F2FD",
+      "image_url": "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=600&q=80",
+      "banner_url": "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=1200&q=80",
+      "product_count": 6,
+      "source_url": "https://cleanersgallery.com.au/collections/paper",
+      "products": [
+        {
+          "id": "prod-009",
+          "slug": "caprice-toilet-paper-2ply-48rolls",
+          "name": "Caprice Duro Toilet Paper Roll",
+          "brand": "Caprice",
+          "short_description": "Individually wrapped 2ply toilet paper, 48 rolls per carton.",
+          "description": "Caprice Duro Toilet Paper Rolls are individually wrapped for hygiene in busy washrooms. Available in 2ply 400 sheets (48 rolls/carton) and 3ply 225 sheets (48 rolls/carton). Suitable for hotels, offices, schools, and commercial facilities.",
+          "category_id": "cat-002",
+          "category_name": "Paper Products",
+          "subcategory": "Toilet Paper Roll",
+          "variants": [
+            {
+              "name": "2ply 400 sheets — 48 Rolls/Carton",
+              "sku": "CAP-TP-2PLY-48"
+            },
+            {
+              "name": "3ply 225 sheets — 48 Rolls/Carton",
+              "sku": "CAP-TP-3PLY-48"
+            }
+          ],
+          "image_url": "https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=500&q=80"
+          ],
+          "tags": [
+            "toilet-paper",
+            "2ply",
+            "3ply",
+            "caprice",
+            "bulk",
+            "commercial"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/caprice-duro-toilet-paper-48-roll-400-sheet-individually-wrapped",
+          "sku": "CAP-TP-001"
+        },
+        {
+          "id": "prod-010",
+          "slug": "caprice-interleaved-hand-towel",
+          "name": "Caprice Duro Interleaved Hand Towel",
+          "brand": "Caprice",
+          "short_description": "24 x 23cm interleaved hand towels — multiple grades available.",
+          "description": "Caprice Duro Interleaved Hand Towels are designed for high-traffic washrooms. Available in Standard, Economy, and 2 Ply options. Dimensions: 24cm x 23cm. Ideal for offices, schools, hospitals, and hospitality environments.",
+          "category_id": "cat-002",
+          "category_name": "Paper Products",
+          "subcategory": "Interleaved Hand Towel",
+          "variants": [
+            {
+              "name": "Interleaved Hand Towel 24x23cm",
+              "sku": "CAP-HT-STD"
+            },
+            {
+              "name": "Economy Interleaved Towel 24x23cm",
+              "sku": "CAP-HT-ECO"
+            },
+            {
+              "name": "2 Ply Interleaved Towel 24x23cm",
+              "sku": "CAP-HT-2PLY"
+            }
+          ],
+          "image_url": "https://images.unsplash.com/photo-1620821629017-d4598fc43b4a?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1620821629017-d4598fc43b4a?w=500&q=80"
+          ],
+          "tags": [
+            "hand-towel",
+            "interleaved",
+            "caprice",
+            "washroom",
+            "commercial"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/caprice-duro-interleaved-hand-towel-24-x-23cm",
+          "sku": "CAP-HT-001"
+        },
+        {
+          "id": "prod-011",
+          "slug": "caprice-jumbo-toilet-paper-300m",
+          "name": "Caprice Jumbo Toilet Paper Roll 300m",
+          "brand": "Caprice",
+          "short_description": "2ply jumbo roll 300 metres, 8 rolls per carton.",
+          "description": "Caprice Jumbo Toilet Paper Roll 2ply, 300 metres per roll. Carton quantity of 8 rolls. Designed for high-traffic commercial washrooms. Requires a jumbo toilet roll dispenser.",
+          "category_id": "cat-002",
+          "category_name": "Paper Products",
+          "subcategory": "Jumbo Toilet Paper Roll",
+          "image_url": "https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=500&q=80"
+          ],
+          "tags": [
+            "jumbo-roll",
+            "toilet-paper",
+            "300m",
+            "caprice",
+            "2ply",
+            "commercial"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/caprice-jumbo-toilet-paper-roll-300-metre",
+          "sku": "CAP-JTP-001"
+        },
+        {
+          "id": "prod-012",
+          "slug": "caprice-facial-tissues-2ply",
+          "name": "Caprice Ultrasoft Facial Tissues 2 Ply",
+          "brand": "Caprice",
+          "short_description": "2ply facial tissues, 200 sheets per box, 24 boxes per carton.",
+          "description": "Caprice Ultrasoft Facial Tissues are soft, strong and dermatologically tested. 2 Ply, 200 sheets per box. Carton contains 24 boxes. Ideal for offices, hotels, medical centres, and hospitality.",
+          "category_id": "cat-002",
+          "category_name": "Paper Products",
+          "subcategory": "Facial Tissues",
+          "image_url": "https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?w=500&q=80"
+          ],
+          "tags": [
+            "facial-tissues",
+            "2ply",
+            "caprice",
+            "ultrasoft",
+            "bulk"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/caprice-ultrasoft-facial-tissues-2-ply-24-x-200-sheet",
+          "sku": "CAP-FT-001"
+        },
+        {
+          "id": "prod-013",
+          "slug": "caprice-roll-towel-80m",
+          "name": "Caprice Roll Towel 80m",
+          "brand": "Caprice",
+          "short_description": "Continuous roll towel, 80m per roll, 16 rolls per carton.",
+          "description": "Caprice Roll Towels 80m. Each carton contains 16 rolls. Designed for use with roll towel dispensers in commercial washrooms, kitchens, and industrial facilities.",
+          "category_id": "cat-002",
+          "category_name": "Paper Products",
+          "subcategory": "Roll Towel",
+          "image_url": "https://images.unsplash.com/photo-1620821629017-d4598fc43b4a?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1620821629017-d4598fc43b4a?w=500&q=80"
+          ],
+          "tags": [
+            "roll-towel",
+            "80m",
+            "caprice",
+            "continuous-roll",
+            "commercial"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/caprice-roll-towel-80m-16-roll-towels",
+          "sku": "CAP-RT-001"
+        },
+        {
+          "id": "prod-014",
+          "slug": "caprice-paper-napkins-dinner-gt-fold",
+          "name": "Caprice Quilted Dinner Napkins — White GT Fold",
+          "brand": "Caprice",
+          "short_description": "Premium white quilted dinner napkins in GT fold.",
+          "description": "Caprice Quilted Dinner White GT Fold Napkins. Elegant, premium-quality napkins for restaurants, cafes, catering events, and hospitality. White colour with quilted finish for a premium presentation.",
+          "category_id": "cat-002",
+          "category_name": "Paper Products",
+          "subcategory": "Paper Napkins",
+          "image_url": "https://images.unsplash.com/photo-1617191258694-7b857c1ba4b9?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1617191258694-7b857c1ba4b9?w=500&q=80"
+          ],
+          "tags": [
+            "napkins",
+            "dinner",
+            "white",
+            "GT-fold",
+            "caprice",
+            "hospitality"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/caprice-quilted-dinner-white-gt-fold",
+          "sku": "CAP-PN-001"
+        }
+      ]
+    },
+    {
+      "id": "cat-003",
+      "slug": "garbage-bin-liners",
+      "name": "Garbage Bin Liners",
+      "description": "Heavy-duty LDPE black bin liners in multiple sizes — from small kitchen bins to large 240L commercial bins.",
+      "icon": "🗑️",
+      "color_hex": "#4527A0",
+      "background_hex": "#EDE7F6",
+      "image_url": "https://images.unsplash.com/photo-1604187351574-c75ca79f5807?w=600&q=80",
+      "banner_url": "https://images.unsplash.com/photo-1604187351574-c75ca79f5807?w=1200&q=80",
+      "product_count": 4,
+      "source_url": "https://cleanersgallery.com.au/collections/bin-liners",
+      "products": [
+        {
+          "id": "prod-015",
+          "slug": "bin-liners-36l-black",
+          "name": "36L Large Kitchen Tidy Bag Roll",
+          "brand": "Tailored Packaging",
+          "short_description": "Black 36L kitchen bin liner roll, 8 micron thickness.",
+          "description": "36L Large Kitchen Tidy Bag Roll in black. 8um thickness. Sold in rolls for convenient dispensing. Ideal for kitchen bins, office bins, and small waste containers.",
+          "category_id": "cat-003",
+          "category_name": "Garbage Bin Liners",
+          "subcategory": "36L Bin Liners",
+          "specifications": {
+            "volume": "36L",
+            "colour": "Black",
+            "thickness": "8um",
+            "format": "Roll"
+          },
+          "image_url": "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=500&q=80"
+          ],
+          "tags": [
+            "bin-liners",
+            "36L",
+            "kitchen",
+            "black",
+            "roll"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/36l-large-kitchen-tidy-bag-roll-8um-black",
+          "sku": "BL-36L-001"
+        },
+        {
+          "id": "prod-016",
+          "slug": "bin-liners-73l-black",
+          "name": "73L Medium Duty Black LDPE Bin Liners",
+          "brand": "Tailored Packaging",
+          "short_description": "Medium-duty 73L black bin liners, 250 liners per carton.",
+          "description": "Tailored Packaging Medium Duty Black LDPE 73L Bin Liners. 250 liners per carton. Suitable for office waste bins, retail, and light commercial use.",
+          "category_id": "cat-003",
+          "category_name": "Garbage Bin Liners",
+          "subcategory": "73L Bin Liners",
+          "specifications": {
+            "volume": "73L",
+            "colour": "Black",
+            "duty": "Medium",
+            "material": "LDPE",
+            "qty_per_carton": 250
+          },
+          "image_url": "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=500&q=80"
+          ],
+          "tags": [
+            "bin-liners",
+            "73L",
+            "black",
+            "medium-duty",
+            "LDPE",
+            "bulk"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/tailored-packaging-medium-duty-black-ldpe-73l-bin-liners-250-liners",
+          "sku": "BL-73L-001"
+        },
+        {
+          "id": "prod-017",
+          "slug": "bin-liners-120l-black",
+          "name": "120L Heavy Duty Black LDPE Bin Liners",
+          "brand": "Tailored Packaging",
+          "short_description": "Heavy-duty 120L black bin liners, 250 liners per carton.",
+          "description": "Tailored Packaging Heavy Duty Black LDPE 120L Bin Liners. 250 liners per carton. Designed for large commercial and industrial waste bins. Extra-thick LDPE for heavy loads and sharp waste.",
+          "category_id": "cat-003",
+          "category_name": "Garbage Bin Liners",
+          "subcategory": "120L Bin Liners",
+          "specifications": {
+            "volume": "120L",
+            "colour": "Black",
+            "duty": "Heavy",
+            "material": "LDPE",
+            "qty_per_carton": 250
+          },
+          "image_url": "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=500&q=80"
+          ],
+          "tags": [
+            "bin-liners",
+            "120L",
+            "black",
+            "heavy-duty",
+            "LDPE",
+            "commercial"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/tailored-packaging-heavy-duty-120l-garbage-bin-liners-black-ldpe-250",
+          "sku": "BL-120L-001"
+        },
+        {
+          "id": "prod-018",
+          "slug": "bin-liners-240l-black",
+          "name": "240L Heavy Duty Black LDPE Bin Liners",
+          "brand": "Tailored Packaging",
+          "short_description": "Heavy-duty 240L black bin liners for large industrial bins.",
+          "description": "Tailored Packaging Heavy Duty Black LDPE 240L Bin Liners. 250 liners per carton. Ideal for large outdoor and industrial wheelie bins. Extremely durable LDPE construction handles heavy and bulky waste.",
+          "category_id": "cat-003",
+          "category_name": "Garbage Bin Liners",
+          "subcategory": "240L Bin Liners",
+          "specifications": {
+            "volume": "240L",
+            "colour": "Black",
+            "duty": "Heavy",
+            "material": "LDPE",
+            "qty_per_carton": 250
+          },
+          "image_url": "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=500&q=80"
+          ],
+          "tags": [
+            "bin-liners",
+            "240L",
+            "black",
+            "heavy-duty",
+            "LDPE",
+            "wheelie-bin"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/tailored-packaging-heavy-duty-240l-black-garbage-bin-liners-ldpe-250",
+          "sku": "BL-240L-001"
+        }
+      ]
+    },
+    {
+      "id": "cat-004",
+      "slug": "disposable-gloves",
+      "name": "Disposable Gloves",
+      "description": "Nitrile and poly disposable gloves for cleaning, food handling, and medical use — powder-free options available.",
+      "icon": "🧤",
+      "color_hex": "#AD1457",
+      "background_hex": "#FCE4EC",
+      "image_url": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&q=80",
+      "banner_url": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=1200&q=80",
+      "product_count": 3,
+      "source_url": "https://cleanersgallery.com.au/collections/gloves",
+      "products": [
+        {
+          "id": "prod-019",
+          "slug": "ultra-touch-nitrile-blue-gloves",
+          "name": "Ultra Touch Nitrile Blue Powder Free Gloves",
+          "brand": "Ultra Touch",
+          "short_description": "Blue nitrile powder-free gloves — S, M, L, XL available.",
+          "description": "Ultra Touch Nitrile Blue Powder Free Gloves. Latex-free and powder-free for comfort and safety. Textured fingertips for enhanced grip. Suitable for cleaning, medical, food preparation, and general use. Available in sizes S, M, L, XL.",
+          "category_id": "cat-004",
+          "category_name": "Disposable Gloves",
+          "subcategory": "Nitrile Gloves",
+          "specifications": {
+            "material": "Nitrile",
+            "colour": "Blue",
+            "powder": "Powder-Free",
+            "sizes": [
+              "S",
+              "M",
+              "L",
+              "XL"
+            ],
+            "latex_free": true
+          },
+          "image_url": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&q=80"
+          ],
+          "tags": [
+            "nitrile",
+            "gloves",
+            "blue",
+            "powder-free",
+            "latex-free",
+            "disposable"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/ultra-touch-nitrile-blue-powder-free-gloves",
+          "sku": "GLOVE-NIT-001"
+        },
+        {
+          "id": "prod-020",
+          "slug": "clear-poly-gloves-large",
+          "name": "Clear Poly Gloves — Large",
+          "brand": "Generic",
+          "short_description": "Clear disposable poly gloves for food handling — Large size.",
+          "description": "Clear disposable polyethylene gloves, Large size. Lightweight and economical. Ideal for food preparation, light cleaning, and general handling tasks where full protection is not required.",
+          "category_id": "cat-004",
+          "category_name": "Disposable Gloves",
+          "subcategory": "Clear Poly Gloves",
+          "specifications": {
+            "material": "Polyethylene",
+            "colour": "Clear",
+            "size": "Large"
+          },
+          "image_url": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&q=80"
+          ],
+          "tags": [
+            "gloves",
+            "clear",
+            "poly",
+            "large",
+            "food-safe",
+            "disposable"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/gloves-large",
+          "sku": "GLOVE-CLR-L-001"
+        },
+        {
+          "id": "prod-021",
+          "slug": "clear-poly-gloves-medium",
+          "name": "Clear Poly Gloves — Medium",
+          "brand": "Generic",
+          "short_description": "Clear disposable poly gloves for food handling — Medium size.",
+          "description": "Clear disposable polyethylene gloves, Medium size. Lightweight and economical. Ideal for food preparation, light cleaning, and general handling tasks.",
+          "category_id": "cat-004",
+          "category_name": "Disposable Gloves",
+          "subcategory": "Clear Poly Gloves",
+          "specifications": {
+            "material": "Polyethylene",
+            "colour": "Clear",
+            "size": "Medium"
+          },
+          "image_url": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=500&q=80"
+          ],
+          "tags": [
+            "gloves",
+            "clear",
+            "poly",
+            "medium",
+            "food-safe",
+            "disposable"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/gloves-medium",
+          "sku": "GLOVE-CLR-M-001"
+        }
+      ]
+    },
+    {
+      "id": "cat-005",
+      "slug": "dusters",
+      "name": "Dusters",
+      "description": "Professional lambswool and microfibre dusters for delicate and hard-to-reach surfaces.",
+      "icon": "🪶",
+      "color_hex": "#E65100",
+      "background_hex": "#FBE9E7",
+      "image_url": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80",
+      "banner_url": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80",
+      "product_count": 1,
+      "source_url": "https://cleanersgallery.com.au/collections/oates",
+      "products": [
+        {
+          "id": "prod-022",
+          "slug": "oates-wool-duster-60cm",
+          "name": "Oates Wool Duster — 60cm",
+          "brand": "Oates",
+          "short_description": "Handcrafted genuine lambswool duster, 60cm. Assorted colours.",
+          "description": "Oates Wool Duster 60cm. Handcrafted genuine lambswool creates a dense duster head that maximises surface contact. Creates a static charge to attract fine dust and lint. Premium wool fibres are flexible and gentle on delicate surfaces. Comes in assorted colours.",
+          "category_id": "cat-005",
+          "category_name": "Dusters",
+          "subcategory": "Wool Duster",
+          "specifications": {
+            "material": "Genuine Lambswool",
+            "length": "60cm",
+            "colours": "Assorted"
+          },
+          "image_url": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500&q=80"
+          ],
+          "tags": [
+            "duster",
+            "wool",
+            "lambswool",
+            "oates",
+            "60cm",
+            "delicate-surfaces"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/oates-wool-duster-60-cm",
+          "sku": "OATES-WD-60-001"
+        }
+      ]
+    },
+    {
+      "id": "cat-006",
+      "slug": "mop-bucket-mop-heads",
+      "name": "Mop Bucket & Mop Heads",
+      "description": "Commercial-grade mop buckets with wringers and professional contractor mop heads.",
+      "icon": "🪣",
+      "color_hex": "#2E7D32",
+      "background_hex": "#E8F5E9",
+      "image_url": "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=600&q=80",
+      "banner_url": "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=1200&q=80",
+      "product_count": 2,
+      "source_url": "https://cleanersgallery.com.au/collections/mops",
+      "products": [
+        {
+          "id": "prod-023",
+          "slug": "mop-bucket-16l-commercial",
+          "name": "Mop Bucket 16L Commercial Heavy Duty Wringer",
+          "brand": "Generic",
+          "short_description": "16L commercial heavy-duty mop bucket with wringer.",
+          "description": "16L Commercial Cleaning Heavy Duty Wringer Mop Bucket. Durable construction for intensive daily use. Integrated wringer for efficient water extraction. Suitable for commercial and industrial floor cleaning operations.",
+          "category_id": "cat-006",
+          "category_name": "Mop Bucket & Mop Heads",
+          "subcategory": "Mop Bucket",
+          "specifications": {
+            "capacity": "16L",
+            "type": "Wringer Bucket",
+            "duty": "Heavy"
+          },
+          "image_url": "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=500&q=80"
+          ],
+          "tags": [
+            "mop-bucket",
+            "16L",
+            "wringer",
+            "commercial",
+            "heavy-duty"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/mop-bucket-16l-commercial-cleaning-heavy-duty-wringer-bucket",
+          "sku": "MOP-BKT-16L-001"
+        },
+        {
+          "id": "prod-024",
+          "slug": "sabco-professional-contractor-mop",
+          "name": "Sabco Professional Contractor Mop Head",
+          "brand": "Sabco",
+          "short_description": "Heavy-duty contractor mop head for commercial floor cleaning.",
+          "description": "Sabco Professional Contractor Mop Head. Built for high-frequency commercial use. Durable cotton and synthetic blend mop head delivers excellent water absorption and floor coverage. Compatible with standard mop handles.",
+          "category_id": "cat-006",
+          "category_name": "Mop Bucket & Mop Heads",
+          "subcategory": "Mop Head",
+          "image_url": "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=500&q=80"
+          ],
+          "tags": [
+            "mop-head",
+            "contractor",
+            "sabco",
+            "commercial",
+            "floor-cleaning"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/sabco-professional-contractor-mop",
+          "sku": "MOP-HEAD-SAB-001"
+        }
+      ]
+    },
+    {
+      "id": "cat-007",
+      "slug": "brooms-handles",
+      "name": "Brooms & Handles",
+      "description": "Professional brooms, cobweb brooms, and grout brushes from Oates and Sabco for indoor and outdoor use.",
+      "icon": "🧹",
+      "color_hex": "#6A1B9A",
+      "background_hex": "#F3E5F5",
+      "image_url": "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&q=80",
+      "banner_url": "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=1200&q=80",
+      "product_count": 4,
+      "source_url": "https://cleanersgallery.com.au/collections/brooms",
+      "products": [
+        {
+          "id": "prod-025",
+          "slug": "oates-soft-grip-grout-brush",
+          "name": "Oates Soft Grip Grout Brush",
+          "brand": "Oates",
+          "short_description": "Ergonomic soft-grip grout brush for tiles and grout lines.",
+          "description": "Oates Soft Grip Grout Brush features a comfortable soft-grip handle and stiff nylon bristles for scrubbing grout lines, tiles, and corners. Ideal for bathrooms, kitchens, and outdoor paving.",
+          "category_id": "cat-007",
+          "category_name": "Brooms & Handles",
+          "subcategory": "Grout Brush",
+          "image_url": "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=500&q=80"
+          ],
+          "tags": [
+            "grout-brush",
+            "oates",
+            "soft-grip",
+            "tiles",
+            "bathroom"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/oates-soft-grip-grout-brush-1",
+          "sku": "OATES-GB-001"
+        },
+        {
+          "id": "prod-026",
+          "slug": "sabco-premium-outdoor-broom",
+          "name": "Sabco Premium Outdoor Broom",
+          "brand": "Sabco",
+          "short_description": "Heavy-duty outdoor broom for driveways, paths, and courtyards.",
+          "description": "Sabco Premium Outdoor Broom with durable stiff bristles for sweeping outdoor surfaces including concrete, brick, asphalt, and pavers. Ergonomic handle for comfortable extended use.",
+          "category_id": "cat-007",
+          "category_name": "Brooms & Handles",
+          "subcategory": "Broom",
+          "image_url": "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=500&q=80"
+          ],
+          "tags": [
+            "broom",
+            "outdoor",
+            "sabco",
+            "heavy-duty",
+            "concrete",
+            "paving"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/sabco-premium-outdoor-broom",
+          "sku": "SAB-BROOM-001"
+        },
+        {
+          "id": "prod-027",
+          "slug": "oates-domed-cobweb-broom",
+          "name": "Oates Domed Cobweb Broom",
+          "brand": "Oates",
+          "short_description": "Domed head cobweb broom for ceilings and high corners.",
+          "description": "Oates Domed Cobweb Broom features a domed head that effectively captures and removes cobwebs from ceilings, cornices, and high corners. Lightweight with a long handle for easy reach.",
+          "category_id": "cat-007",
+          "category_name": "Brooms & Handles",
+          "subcategory": "Cobweb Broom",
+          "image_url": "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=500&q=80"
+          ],
+          "tags": [
+            "cobweb-broom",
+            "oates",
+            "ceiling",
+            "domed",
+            "high-reach"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/oates-domed-cobweb-broom",
+          "sku": "OATES-CWB-001"
+        },
+        {
+          "id": "prod-028",
+          "slug": "oates-round-cobweb-broom",
+          "name": "Oates Round Flexible Cobweb Broom",
+          "brand": "Oates",
+          "short_description": "Flexible round cobweb broom for hard-to-reach corners.",
+          "description": "Oates Round Cobweb Broom with a flexible round head that bends to follow contours of walls, ceilings, and corners. Ideal for removing cobwebs in tight and awkward spaces.",
+          "category_id": "cat-007",
+          "category_name": "Brooms & Handles",
+          "subcategory": "Flexible Cobweb Broom",
+          "image_url": "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=500&q=80"
+          ],
+          "tags": [
+            "cobweb-broom",
+            "flexible",
+            "oates",
+            "round",
+            "corners"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/oates-round-cobweb-broom",
+          "sku": "OATES-RCWB-001"
+        }
+      ]
+    },
+    {
+      "id": "cat-008",
+      "slug": "spray-bottles",
+      "name": "Spray Bottles",
+      "description": "Professional-grade spray bottles and trigger heads for dispensing cleaning chemicals efficiently.",
+      "icon": "💧",
+      "color_hex": "#0277BD",
+      "background_hex": "#E1F5FE",
+      "image_url": "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&q=80",
+      "banner_url": "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=1200&q=80",
+      "product_count": 2,
+      "source_url": "https://cleanersgallery.com.au/collections/spray-bottles",
+      "products": [
+        {
+          "id": "prod-029",
+          "slug": "nab-clean-500ml-spray-bottle",
+          "name": "NAB Clean 500ml Plastic Spray Bottle — Straight",
+          "brand": "NAB Clean",
+          "short_description": "500ml straight plastic spray bottle for chemical dispensing.",
+          "description": "NAB Clean 500ml Straight Plastic Spray Bottle. Durable, chemical-resistant bottle suitable for all cleaning solutions. Designed to work with the NAB Clean trigger head. Graduated measurements for accurate dilution.",
+          "category_id": "cat-008",
+          "category_name": "Spray Bottles",
+          "subcategory": "Plastic Spray Bottle",
+          "specifications": {
+            "capacity": "500ml",
+            "material": "Plastic",
+            "type": "Straight"
+          },
+          "image_url": "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=500&q=80"
+          ],
+          "tags": [
+            "spray-bottle",
+            "500ml",
+            "plastic",
+            "NAB-clean",
+            "chemical-resistant"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/nab-clean-500ml-plastic-spray-bottle-straight",
+          "sku": "NAB-SB-500-001"
+        },
+        {
+          "id": "prod-030",
+          "slug": "nab-clean-trigger",
+          "name": "NAB Clean Spray Trigger",
+          "brand": "NAB Clean",
+          "short_description": "Replacement spray trigger for NAB Clean spray bottles.",
+          "description": "NAB Clean Replacement Spray Trigger. Compatible with NAB Clean spray bottles. Adjustable nozzle for stream, mist, or off settings. Chemical-resistant materials for long-lasting performance.",
+          "category_id": "cat-008",
+          "category_name": "Spray Bottles",
+          "subcategory": "Trigger",
+          "image_url": "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=500&q=80"
+          ],
+          "tags": [
+            "trigger",
+            "spray-trigger",
+            "NAB-clean",
+            "replacement",
+            "adjustable-nozzle"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/nab-clean-trigger",
+          "sku": "NAB-TRG-001"
+        }
+      ]
+    },
+    {
+      "id": "cat-009",
+      "slug": "cleaning-wipes-cloths",
+      "name": "Cleaning Wipes & Cloths",
+      "description": "Professional microfibre cloths and heavy-duty wiper rolls for streak-free cleaning of all surfaces.",
+      "icon": "🧽",
+      "color_hex": "#558B2F",
+      "background_hex": "#F1F8E9",
+      "image_url": "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=600&q=80",
+      "banner_url": "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=1200&q=80",
+      "product_count": 3,
+      "source_url": "https://cleanersgallery.com.au/collections/cloths",
+      "products": [
+        {
+          "id": "prod-031",
+          "slug": "microfibre-cloths-40x40-colour",
+          "name": "Microfibre Cloths 40cm x 40cm — Colour Coded",
+          "brand": "Generic",
+          "short_description": "Colour-coded microfibre cloths for multi-zone cleaning, 40x40cm.",
+          "description": "Professional-grade microfibre cloths, 40cm x 40cm. Available in Blue, Yellow, Green, and Red for colour-coded cleaning zones. Traps and lifts dust, grease, and grime without chemicals. Machine washable and reusable.",
+          "category_id": "cat-009",
+          "category_name": "Cleaning Wipes & Cloths",
+          "subcategory": "Microfibre Cloths",
+          "specifications": {
+            "dimensions": "40cm x 40cm",
+            "colours": [
+              "Blue",
+              "Yellow",
+              "Green",
+              "Red"
+            ],
+            "reusable": true,
+            "machine_washable": true
+          },
+          "image_url": "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=500&q=80"
+          ],
+          "tags": [
+            "microfibre",
+            "cloths",
+            "colour-coded",
+            "40x40",
+            "reusable",
+            "multi-surface"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/microfibre-cloths-blue",
+          "sku": "MFC-40-001"
+        },
+        {
+          "id": "prod-032",
+          "slug": "microfibre-cloths-glass",
+          "name": "Microfibre Cloths for Glass",
+          "brand": "Generic",
+          "short_description": "Lint-free microfibre cloths for streak-free glass and mirror cleaning.",
+          "description": "Specialist microfibre cloths designed specifically for glass, windows, and mirrors. Ultra-fine fibres deliver a lint-free, streak-free finish. Can be used dry or with minimal water or glass cleaner.",
+          "category_id": "cat-009",
+          "category_name": "Cleaning Wipes & Cloths",
+          "subcategory": "Microfibre Cloths for Glass",
+          "specifications": {
+            "use": "Glass / Mirrors / Windows",
+            "finish": "Lint-free, Streak-free",
+            "reusable": true,
+            "machine_washable": true
+          },
+          "image_url": "https://images.unsplash.com/photo-1527515637462-cff94edd56f9?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1527515637462-cff94edd56f9?w=500&q=80"
+          ],
+          "tags": [
+            "microfibre",
+            "glass-cloth",
+            "streak-free",
+            "lint-free",
+            "mirrors",
+            "windows"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/microfibre-cloths-glass",
+          "sku": "MFC-GLASS-001"
+        },
+        {
+          "id": "prod-033",
+          "slug": "duro-wiper-roll-heavy-duty-50cm",
+          "name": "Duro Heavy Duty Wiper Roll 50cm x 30cm",
+          "brand": "Duro",
+          "short_description": "Industrial-strength perforated wiper roll, 50cm x 30cm.",
+          "description": "Duro Heavy Duty Wiper Roll 50cm x 30cm. Strong, absorbent, and perforated for easy tearing. Ideal for workshop spills, industrial wiping, and heavy-duty surface cleaning where cloths are not practical.",
+          "category_id": "cat-009",
+          "category_name": "Cleaning Wipes & Cloths",
+          "subcategory": "Wiper Roll",
+          "specifications": {
+            "dimensions": "50cm x 30cm",
+            "duty": "Heavy",
+            "format": "Perforated Roll"
+          },
+          "image_url": "https://images.unsplash.com/photo-1620821629017-d4598fc43b4a?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1620821629017-d4598fc43b4a?w=500&q=80"
+          ],
+          "tags": [
+            "wiper-roll",
+            "heavy-duty",
+            "duro",
+            "industrial",
+            "absorbent",
+            "perforated"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/duro-wiper-roll-heavy-duty-50cm-x-30cm",
+          "sku": "DURO-WR-001"
+        }
+      ]
+    },
+    {
+      "id": "cat-010",
+      "slug": "window-cleaning-accessories",
+      "name": "Window Cleaning Accessories",
+      "description": "Professional window cleaning tools — squeegees, T-bars, extension poles, and window buckets.",
+      "icon": "🪟",
+      "color_hex": "#00838F",
+      "background_hex": "#E0F7FA",
+      "image_url": "https://images.unsplash.com/photo-1527515637462-cff94edd56f9?w=600&q=80",
+      "banner_url": "https://images.unsplash.com/photo-1527515637462-cff94edd56f9?w=1200&q=80",
+      "product_count": 4,
+      "source_url": "https://cleanersgallery.com.au/collections/window-cleaning",
+      "products": [
+        {
+          "id": "prod-034",
+          "slug": "window-bucket-12-5l",
+          "name": "12.5L Window Cleaning Bucket — Blue & White",
+          "brand": "Generic",
+          "short_description": "Wide, flat 12.5L window bucket for T-bars and squeegees.",
+          "description": "12.5L Window Cleaning Bucket in Blue & White. Wide, flat design accommodates large T-bar washers and squeegees. Durable plastic construction for professional outdoor and commercial window cleaning.",
+          "category_id": "cat-010",
+          "category_name": "Window Cleaning Accessories",
+          "subcategory": "Window Bucket",
+          "specifications": {
+            "capacity": "12.5L",
+            "colour": "Blue & White",
+            "shape": "Wide / Flat"
+          },
+          "image_url": "https://images.unsplash.com/photo-1527515637462-cff94edd56f9?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1527515637462-cff94edd56f9?w=500&q=80"
+          ],
+          "tags": [
+            "window-bucket",
+            "12.5L",
+            "T-bar",
+            "squeegee",
+            "professional"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/12-5l-window-bucket",
+          "sku": "WIN-BKT-001"
+        },
+        {
+          "id": "prod-035",
+          "slug": "glidex-t-bar-washer",
+          "name": "Glidex T-Bar & Washer",
+          "brand": "Glidex",
+          "short_description": "Professional T-bar applicator and washer for window cleaning.",
+          "description": "Glidex T-Bar & Washer for professional window cleaning. The washer sleeve glides over glass to pre-wet and loosen dirt. Compatible with standard window extension poles. Sold as a set.",
+          "category_id": "cat-010",
+          "category_name": "Window Cleaning Accessories",
+          "subcategory": "T-bar & Washer",
+          "image_url": "https://images.unsplash.com/photo-1527515637462-cff94edd56f9?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1527515637462-cff94edd56f9?w=500&q=80"
+          ],
+          "tags": [
+            "T-bar",
+            "washer",
+            "glidex",
+            "window-cleaning",
+            "professional"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/glidex-t-bar-washer",
+          "sku": "WIN-TBAR-001"
+        },
+        {
+          "id": "prod-036",
+          "slug": "window-extension-pole",
+          "name": "Window Extension Pole — 1.2m / 2.4m / 3.6m",
+          "brand": "Generic",
+          "short_description": "Telescopic extension pole for window cleaning at height.",
+          "description": "Telescopic Window Extension Pole available in 1.2m, 2.4m, and 3.6m lengths. Lightweight aluminium construction with locking collar. Compatible with T-bars, squeegees, and other window cleaning accessories.",
+          "category_id": "cat-010",
+          "category_name": "Window Cleaning Accessories",
+          "subcategory": "Window Extension Pole",
+          "variants": [
+            {
+              "name": "1.2m Extension Pole",
+              "sku": "WIN-POLE-1.2"
+            },
+            {
+              "name": "2.4m Extension Pole",
+              "sku": "WIN-POLE-2.4"
+            },
+            {
+              "name": "3.6m Extension Pole",
+              "sku": "WIN-POLE-3.6"
+            }
+          ],
+          "image_url": "https://images.unsplash.com/photo-1527515637462-cff94edd56f9?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1527515637462-cff94edd56f9?w=500&q=80"
+          ],
+          "tags": [
+            "extension-pole",
+            "telescopic",
+            "window-cleaning",
+            "1.2m",
+            "2.4m",
+            "3.6m"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/window-extension-pole",
+          "sku": "WIN-POLE-001"
+        },
+        {
+          "id": "prod-037",
+          "slug": "sabco-stainless-steel-squeegee",
+          "name": "Sabco Pro Stainless Steel Power Dry Squeegee",
+          "brand": "Sabco",
+          "short_description": "Stainless steel professional window squeegee for streak-free results.",
+          "description": "Sabco Pro Stainless Steel Power Dry Squeegee. Professional-grade stainless steel channel with high-quality rubber blade for streak-free window and glass cleaning. Fits standard window cleaning poles.",
+          "category_id": "cat-010",
+          "category_name": "Window Cleaning Accessories",
+          "subcategory": "Squeegee",
+          "specifications": {
+            "material": "Stainless Steel",
+            "brand": "Sabco",
+            "blade": "Rubber",
+            "pole_compatible": true
+          },
+          "image_url": "https://images.unsplash.com/photo-1527515637462-cff94edd56f9?w=500&q=80",
+          "gallery": [
+            "https://images.unsplash.com/photo-1527515637462-cff94edd56f9?w=500&q=80"
+          ],
+          "tags": [
+            "squeegee",
+            "stainless-steel",
+            "sabco",
+            "professional",
+            "streak-free",
+            "window"
+          ],
+          "in_stock": true,
+          "product_url": "https://cleanersgallery.com.au/products/sabco-pro-stainless-steel-power-dry-squeegee",
+          "sku": "SAB-SQ-001"
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "total_categories": 10,
+    "total_products": 37,
+    "generated_date": "2026-03-07",
+    "version": "1.0.0",
+    "notes": "Image URLs use Unsplash placeholder images. Replace with actual product images from cleanersgallery.com.au CDN or supplier image assets before going to production."
+  }
+}

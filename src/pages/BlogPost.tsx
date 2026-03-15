@@ -49,7 +49,7 @@ const BlogPost = () => {
           <article className="prose prose-lg max-w-none">
             <p className="text-lg text-muted-foreground leading-relaxed">{post.excerpt}</p>
             <p className="text-muted-foreground leading-relaxed mt-4">
-              Maintaining a clean and hygienic environment is essential for any business or home. At GRAPC, we understand the importance of using the right products for every cleaning challenge. Whether you're managing a large commercial space or keeping your home spotless, having access to professional-grade cleaning supplies makes all the difference.
+              Maintaining a clean and hygienic environment is essential for any business or home. At  , we understand the importance of using the right products for every cleaning challenge. Whether you're managing a large commercial space or keeping your home spotless, having access to professional-grade cleaning supplies makes all the difference.
             </p>
             <p className="text-muted-foreground leading-relaxed mt-4">
               Our range of products is specifically designed to meet Australian standards and deliver exceptional results. From eco-friendly solutions to heavy-duty industrial cleaners, we stock everything you need to maintain the highest levels of cleanliness and hygiene.

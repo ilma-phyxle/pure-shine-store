@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 
 const SHOPIFY_API_VERSION = '2025-07';
-const SHOPIFY_STORE_PERMANENT_DOMAIN = 'grapc-clean-ecommerce-svn4t.myshopify.com';
+const SHOPIFY_STORE_PERMANENT_DOMAIN = '-clean-ecommerce-svn4t.myshopify.com';
 const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 const SHOPIFY_STOREFRONT_TOKEN = '1356a4bf357ff02d2c28bfb8b4bac550';
 
@@ -46,6 +46,7 @@ export interface ShopifyProduct {
       name: string;
       values: string[];
     }>;
+    tags: string[];
   };
 }
 
@@ -121,6 +122,7 @@ export const PRODUCTS_QUERY = `
             name
             values
           }
+          tags
         }
       }
     }
@@ -170,6 +172,7 @@ export const PRODUCT_BY_HANDLE_QUERY = `
         name
         values
       }
+      tags
     }
   }
 `;

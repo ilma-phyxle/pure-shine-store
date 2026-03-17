@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCart, Loader2, Package, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -32,9 +32,28 @@ export const ProductCard = ({ product, catalogItem, variant = "grid" }: ProductC
 
   const [quantity, setQuantity] = useState(1);
   const [showBuyNowDialog, setShowBuyNowDialog] = useState(false);
+  const [showHotEnabled, setShowHotEnabled] = useState(true);
+
+  useEffect(() => {
+    const readToggle = (key: string, fallback = true) => {
+      const value = localStorage.getItem(key);
+      if (value === null) return fallback;
+      return value === "true";
+    };
+    const load = () => {
+      setShowHotEnabled(readToggle("shop_show_hot_deals", true));
+    };
+    load();
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "shop_show_hot_deals") load();
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
 
   // Derived properties
   const isCatalog = !product && !!c;
+  const hotAllowed = showHotEnabled && isCatalog && c?.is_hot_deal && c?.discount_price;
   const title = p?.title || c?.name || "Untitled Item";
   const description = p?.description || c?.description || "";
   const handleForQuickView = p?.handle || String(c?.slug || c?.id || "");
@@ -49,7 +68,7 @@ export const ProductCard = ({ product, catalogItem, variant = "grid" }: ProductC
         toast.info("Please select an option", { position: "top-center" });
         return;
       }
-      const finalPrice = (c.is_hot_deal && c.discount_price) ? c.discount_price : (c.price ?? 0);
+      const finalPrice = hotAllowed ? c.discount_price! : (c.price ?? 0);
       await addItem({
                 type: 'catalog',
                 productId: String(c.id),
@@ -90,8 +109,7 @@ export const ProductCard = ({ product, catalogItem, variant = "grid" }: ProductC
   };
 
   const handleConfirmBuyNow = async (customerInfo: CustomerInfo) => {
-    const isHot = isCatalog && c?.is_hot_deal && c?.discount_price;
-    const priceAmount = isHot ? c.discount_price! : parseFloat(price?.amount || String(c?.price ?? 0) || "0");
+    const priceAmount = hotAllowed ? c!.discount_price! : parseFloat(price?.amount || String(c?.price ?? 0) || "0");
     const currencyCode = price?.currencyCode || '$';
 
     const orderData = {
@@ -151,7 +169,7 @@ export const ProductCard = ({ product, catalogItem, variant = "grid" }: ProductC
                 <Package className="h-12 w-12 opacity-20" />
               </div>
             )}
-            {isCatalog && c?.is_hot_deal && (
+            {showHotEnabled && isCatalog && c?.is_hot_deal && (
               <div className="absolute top-4 right-4 animate-bounce">
                 <span className="px-3 py-1 bg-red-600 rounded-full text-[10px] font-black text-white uppercase tracking-widest shadow-xl shadow-red-500/20">
                   HOT DEAL
@@ -185,7 +203,7 @@ export const ProductCard = ({ product, catalogItem, variant = "grid" }: ProductC
               </ProductQuickView>
               <div className="flex items-center gap-3">
                 <div className="flex items-baseline gap-2">
-                  {(isCatalog && c?.is_hot_deal && c?.discount_price) ? (
+                  {hotAllowed ? (
                     <>
                       <div className="flex items-baseline">
                         <span className="text-xs font-bold text-red-400 mr-1">$</span>
@@ -269,7 +287,7 @@ export const ProductCard = ({ product, catalogItem, variant = "grid" }: ProductC
                 <ProductQuickView handle={handleForQuickView} initialProduct={product} initialCatalogProduct={catalogItem}>
                   <Button
                     variant="default"
-                    className="flex-1 h-12 rounded-2xl bg-primary hover:bg-primary/90 text-white shadow-xl shadow-primary/10 transition-all duration-300 font-black text-[10px] uppercase tracking-[0.15em]"
+                    className="flex-1 h-12 rounded-2xl bg-[#288200] hover:bg-[#237200] text-white shadow-xl shadow-[#288200]/20 transition-all duration-300 font-black text-[10px] uppercase tracking-[0.15em]"
                   >
                     Buy Now
                   </Button>
@@ -277,7 +295,7 @@ export const ProductCard = ({ product, catalogItem, variant = "grid" }: ProductC
               ) : (
                 <Button
                   variant="default"
-                  className="flex-1 h-12 rounded-2xl bg-primary hover:bg-primary/90 text-white shadow-xl shadow-primary/10 transition-all duration-300 font-black text-[10px] uppercase tracking-[0.15em]"
+                  className="flex-1 h-12 rounded-2xl bg-[#288200] hover:bg-[#237200] text-white shadow-xl shadow-[#288200]/20 transition-all duration-300 font-black text-[10px] uppercase tracking-[0.15em]"
                   onClick={handleBuyNow}
                   disabled={isLoading || (!!product && !variant_shopify?.availableForSale)}
                 >
@@ -319,7 +337,7 @@ export const ProductCard = ({ product, catalogItem, variant = "grid" }: ProductC
               </div>
             )}
             <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            {isCatalog && c?.is_hot_deal && (
+            {hotAllowed && (
               <div className="absolute top-4 right-4 flex flex-col items-end gap-2">
                 <span className="px-2.5 py-1 rounded-full bg-red-600 text-[9px] font-black text-white uppercase tracking-wider shadow-lg shadow-red-600/20">
                   HOT
@@ -365,7 +383,7 @@ export const ProductCard = ({ product, catalogItem, variant = "grid" }: ProductC
           <div className="flex flex-col min-w-[100px]">
             <span className="text-[10px] uppercase font-bold text-slate-500 tracking-[0.2em] mb-1">Price</span>
             <div className="flex items-baseline flex-wrap gap-2">
-              {(isCatalog && c?.is_hot_deal && c?.discount_price) ? (
+              {hotAllowed ? (
                 <>
                   <div className="flex items-baseline">
                     <span className="text-xs font-bold text-red-400 mr-1">$</span>
@@ -449,7 +467,7 @@ export const ProductCard = ({ product, catalogItem, variant = "grid" }: ProductC
               <ProductQuickView handle={handleForQuickView} initialProduct={product} initialCatalogProduct={catalogItem}>
                 <Button
                   variant="default"
-                  className="h-10 sm:h-12 rounded-xl sm:rounded-2xl bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/10 transition-all duration-300 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.1em] sm:tracking-[0.15em] w-full px-2"
+                  className="h-10 sm:h-12 rounded-xl sm:rounded-2xl bg-[#288200] hover:bg-[#237200] text-white shadow-lg shadow-[#288200]/20 transition-all duration-300 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.1em] sm:tracking-[0.15em] w-full px-2"
                 >
                   Buy Now
                 </Button>
@@ -457,7 +475,7 @@ export const ProductCard = ({ product, catalogItem, variant = "grid" }: ProductC
             ) : (
               <Button
                 variant="default"
-                className="h-10 sm:h-12 rounded-xl sm:rounded-2xl bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/10 transition-all duration-300 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.1em] sm:tracking-[0.15em] w-full px-2"
+                className="h-10 sm:h-12 rounded-xl sm:rounded-2xl bg-[#288200] hover:bg-[#237200] text-white shadow-lg shadow-[#288200]/20 transition-all duration-300 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.1em] sm:tracking-[0.15em] w-full px-2"
                 onClick={handleBuyNow}
                 disabled={isLoading || (!!product && !variant_shopify?.availableForSale)}
               >

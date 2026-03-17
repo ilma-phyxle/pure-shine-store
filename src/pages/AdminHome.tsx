@@ -22,10 +22,15 @@ import {
 import { cn } from "@/lib/utils";
 import { getDashboardStats, ApiDashboardStats } from "@/lib/api";
 import { toast } from "sonner";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Loader2, Save } from "lucide-react";
 
 const AdminHome = () => {
   const [stats, setStats] = useState<ApiDashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const { settings, isUpdating, updateSettings, isEnabled } = useSiteSettings();
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -154,7 +159,51 @@ const AdminHome = () => {
             </div>
           </div>
 
-          {/* Side List: Quick Links / Catalog */}
+          {/* Homepage Sections Toggle */}
+          <div className="bg-slate-900/40 border border-slate-900 rounded-3xl overflow-hidden mt-8">
+            <div className="p-6 border-b border-slate-900 bg-slate-900/20 flex items-center justify-between">
+              <h3 className="font-bold text-slate-200">Homepage Sections</h3>
+              {isUpdating && <Loader2 className="h-4 w-4 text-primary animate-spin" />}
+            </div>
+            <div className="p-6 space-y-6">
+              <div className="flex items-center justify-between group">
+                <div className="space-y-0.5">
+                  <Label className="text-slate-200 font-bold uppercase text-[10px] tracking-widest">New Arrivals</Label>
+                  <p className="text-[11px] text-slate-500">Show New Arrivals section on homepage</p>
+                </div>
+                <Switch 
+                  checked={isEnabled('show_new_arrivals')}
+                  onCheckedChange={(checked) => updateSettings({ show_new_arrivals: checked })}
+                  disabled={isUpdating}
+                />
+              </div>
+
+              <div className="flex items-center justify-between group">
+                <div className="space-y-0.5">
+                  <Label className="text-slate-200 font-bold uppercase text-[10px] tracking-widest">Hot Deals</Label>
+                  <p className="text-[11px] text-slate-500">Show Hot Deals section on homepage</p>
+                </div>
+                <Switch 
+                  checked={isEnabled('show_hot_deals')}
+                  onCheckedChange={(checked) => updateSettings({ show_hot_deals: checked })}
+                  disabled={isUpdating}
+                />
+              </div>
+
+              <div className="flex items-center justify-between group">
+                <div className="space-y-0.5">
+                  <Label className="text-slate-200 font-bold uppercase text-[10px] tracking-widest">Shop By Brand</Label>
+                  <p className="text-[11px] text-slate-500">Show Brand logo section on homepage</p>
+                </div>
+                <Switch 
+                  checked={isEnabled('show_shop_by_brand')}
+                  onCheckedChange={(checked) => updateSettings({ show_shop_by_brand: checked })}
+                  disabled={isUpdating}
+                />
+              </div>
+            </div>
+          </div>
+
           <div className="bg-slate-900/40 border border-slate-900 rounded-3xl overflow-hidden">
             <div className="p-6 border-b border-slate-900 bg-slate-900/20">
               <h3 className="font-bold text-slate-200">Catalog Shortcut</h3>

@@ -15,6 +15,7 @@ import { WhyInvestSection } from "@/components/home/WhyInvestSection";
 import { StatsSection } from "@/components/home/StatsSection";
 import { BlogPreviewSection } from "@/components/home/BlogPreviewSection";
 import { useCatalogApi } from "@/hooks/useCatalogApi";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { cn } from "@/lib/utils";
 import type { ApiProduct } from "@/lib/api";
 import type { EmblaCarouselType } from "embla-carousel";
@@ -35,10 +36,15 @@ const Index = () => {
   const [showOnlyNewArrivals, setShowOnlyNewArrivals] = useState(false);
 
   const { categories: catalogCategories, products: catalogProducts, isLoading: isCatalogLoading, error: catalogError } = useCatalogApi({ 
-    limit: 8,
+    limit: 12, // Increased to get enough for different sections
     category_id: activeProductsCategoryId === 'all' ? null : activeProductsCategoryId,
-    is_new_arrival: showOnlyNewArrivals ? true : undefined
   });
+
+  const { isEnabled } = useSiteSettings();
+
+  const hotDeals = catalogProducts.filter(p => p.is_hot_deal);
+  const newArrivals = catalogProducts.filter(p => p.is_new_arrival);
+  const brands = Array.from(new Set(catalogProducts.map(p => p.brand).filter(Boolean))) as string[];
 
   const [hoveredId, setHoveredId] = useState<string | number | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -351,21 +357,23 @@ const Index = () => {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:items-center gap-4 sm:gap-6">
-                  <div className="flex flex-col gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Specials:</span>
-                    <button 
-                      onClick={() => setShowOnlyNewArrivals(!showOnlyNewArrivals)}
-                      className={cn(
-                        "h-11 px-6 rounded-2xl flex items-center gap-2 border transition-all font-display font-black text-[10px] uppercase tracking-widest whitespace-nowrap",
-                        showOnlyNewArrivals 
-                          ? "bg-primary border-primary text-white shadow-lg shadow-primary/20" 
-                          : "bg-slate-100 border-slate-200 text-slate-500 hover:border-primary/30"
-                      )}
-                    >
-                      <Star className={cn("h-3.5 w-3.5", showOnlyNewArrivals ? "fill-white" : "fill-transparent")} />
-                      New Arrivals
-                    </button>
-                  </div>
+                  {isEnabled('show_new_arrivals') && (
+                    <div className="flex flex-col gap-2">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Specials:</span>
+                      <button 
+                        onClick={() => setShowOnlyNewArrivals(!showOnlyNewArrivals)}
+                        className={cn(
+                          "h-11 px-6 rounded-2xl flex items-center gap-2 border transition-all font-display font-black text-[10px] uppercase tracking-widest whitespace-nowrap",
+                          showOnlyNewArrivals 
+                            ? "bg-primary border-primary text-white shadow-lg shadow-primary/20" 
+                            : "bg-slate-100 border-slate-200 text-slate-500 hover:border-primary/30"
+                        )}
+                      >
+                        <Star className={cn("h-3.5 w-3.5", showOnlyNewArrivals ? "fill-white" : "fill-transparent")} />
+                        New Arrivals
+                      </button>
+                    </div>
+                  )}
 
                   <div className="flex flex-col gap-2">
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Sort by:</span>
@@ -425,7 +433,9 @@ const Index = () => {
               .filter(item => {
                 // Category Filter
                 const matchesCategory = activeProductsCategoryId === 'all' || item.category_id === activeProductsCategoryId;
-                return matchesCategory;
+                // New Arrival logic (filtered by state button)
+                const matchesNewArrival = !showOnlyNewArrivals || item.is_new_arrival;
+                return matchesCategory && matchesNewArrival;
               })
               .sort((a, b) => {
                 const nameA = a.name;
@@ -469,6 +479,46 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Hot Deals Section */}
+      {isEnabled('show_hot_deals') && hotDeals.length > 0 && (
+        <section className="py-16 md:py-24 bg-primary/5">
+          <div className="container">
+            <AnimatedSection>
+              <div className="flex items-center gap-4 mb-4">
+                <div className="h-px w-12 bg-primary" />
+                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Limited Time</span>
+              </div>
+              <h2 className="text-3xl md:text-5xl font-display font-black mb-12 text-slate-900 tracking-tight">
+                HOT <span className="text-primary italic">DEALS</span>
+              </h2>
+            </AnimatedSection>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+              {hotDeals.slice(0, 4).map((item, i) => (
+                <AnimatedSection key={item.id} delay={i * 0.1}>
+                  <ProductCard catalogItem={item} />
+                </AnimatedSection>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Brands Section */}
+      {isEnabled('show_shop_by_brand') && brands.length > 0 && (
+        <section className="py-12 bg-white border-y border-slate-100">
+          <div className="container">
+            <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
+              {brands.map((brand, i) => (
+                <div key={brand} className="text-xl md:text-2xl font-display font-black text-slate-300 hover:text-primary transition-colors cursor-default uppercase tracking-tighter italic">
+                  {brand}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <ServicesSection />
 

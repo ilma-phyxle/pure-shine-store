@@ -144,3 +144,7 @@ export interface ApiDashboardStats {
 
 export const getDashboardStats = () => api.get<ApiDashboardStats>('stats/dashboard').then(res => res.data);
 
+// Site Settings Services
+export const getSiteSettings = () => api.get<Record<string, any>>('site-settings').then(res => res.data);
+export const updateSiteSettings = (settings: Record<string, any>) => api.post('site-settings/bulk', settings).then(res => res.data);
+

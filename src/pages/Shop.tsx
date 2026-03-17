@@ -20,12 +20,24 @@ const Shop = () => {
 
   const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null);
   const [activeSubcategoryId, setActiveSubcategoryId] = useState<number | null>(null);
+  const [allCategoriesSelected, setAllCategoriesSelected] = useState(false);
   const [showArrivalsOnly, setShowArrivalsOnly] = useState(searchParams.get("arrivals") === "true");
   const [showHotOnly, setShowHotOnly] = useState(searchParams.get("hot") === "true");
   const [showBrandsOnly, setShowBrandsOnly] = useState(searchParams.get("brands") === "true");
   const [selectedBrand, setSelectedBrand] = useState<string | null>(searchParams.get("brand"));
   const [minPrice, setMinPrice] = useState<string>("");
   const [maxPrice, setMaxPrice] = useState<string>("");
+  const [leftCollapsedManual, setLeftCollapsedManual] = useState<boolean | null>(null);
+  const [showArrivalsEnabled, setShowArrivalsEnabled] = useState(true);
+  const [showHotEnabled, setShowHotEnabled] = useState(true);
+  const [showBrandsEnabled, setShowBrandsEnabled] = useState(true);
+  const [brandsExpanded, setBrandsExpanded] = useState(false);
+
+  const SETTINGS_KEYS = {
+    arrivals: "shop_show_new_arrivals",
+    hotDeals: "shop_show_hot_deals",
+    brands: "shop_show_brands",
+  };
   
   const { categories, subCategories: allSubCategories, products: activeCategoryProducts, isLoading: catalogLoading } = useCatalogApi({ 
     category_id: (showArrivalsOnly || showHotOnly || showBrandsOnly) ? null : activeCategoryId,
@@ -38,6 +50,7 @@ const Shop = () => {
   const handleCategoryChange = (categoryId: number | null) => {
     setActiveCategoryId(categoryId);
     setActiveSubcategoryId(null);
+    setAllCategoriesSelected(categoryId === null);
     setShowArrivalsOnly(false);
     setShowHotOnly(false);
     setSearchParams((prev) => {
@@ -73,6 +86,7 @@ const Shop = () => {
   };
 
   const handleArrivalsToggle = () => {
+    if (!showArrivalsEnabled) return;
     setShowArrivalsOnly(true);
     setShowHotOnly(false);
     setActiveCategoryId(null);
@@ -87,6 +101,7 @@ const Shop = () => {
   };
 
   const handleHotToggle = () => {
+    if (!showHotEnabled) return;
     setShowHotOnly(true);
     setShowArrivalsOnly(false);
     setShowBrandsOnly(false);
@@ -104,6 +119,7 @@ const Shop = () => {
   };
 
   const handleBrandsToggle = () => {
+    if (!showBrandsEnabled) return;
     setShowBrandsOnly(true);
     setShowArrivalsOnly(false);
     setShowHotOnly(false);
@@ -132,15 +148,60 @@ const Shop = () => {
   };
 
   useEffect(() => {
-    if (activeCategoryId === null && categories[0]?.id) setActiveCategoryId(categories[0].id);
-  }, [categories, activeCategoryId]);
+    if (activeCategoryId === null && !allCategoriesSelected && categories[0]?.id) {
+      setActiveCategoryId(categories[0].id);
+    }
+  }, [categories, activeCategoryId, allCategoriesSelected]);
+
+  useEffect(() => {
+    const readToggle = (key: string, fallback = true) => {
+      const value = localStorage.getItem(key);
+      if (value === null) return fallback;
+      return value === "true";
+    };
+    const load = () => {
+      setShowArrivalsEnabled(readToggle(SETTINGS_KEYS.arrivals, true));
+      setShowHotEnabled(readToggle(SETTINGS_KEYS.hotDeals, true));
+      setShowBrandsEnabled(readToggle(SETTINGS_KEYS.brands, true));
+    };
+    load();
+    const onStorage = (e: StorageEvent) => {
+      if (!e.key) return;
+      if (Object.values(SETTINGS_KEYS).includes(e.key)) load();
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
+  useEffect(() => {
+    if (!showArrivalsEnabled && showArrivalsOnly) {
+      setShowArrivalsOnly(false);
+    }
+    if (!showHotEnabled && showHotOnly) {
+      setShowHotOnly(false);
+    }
+    if (!showBrandsEnabled && showBrandsOnly) {
+      setShowBrandsOnly(false);
+      setSelectedBrand(null);
+    }
+  }, [showArrivalsEnabled, showHotEnabled, showBrandsEnabled, showArrivalsOnly, showHotOnly, showBrandsOnly]);
 
   const activeCategory = useMemo(() => categories.find((c) => c.id === activeCategoryId) ?? categories[0], [activeCategoryId, categories]);
 
   const subcategories = useMemo(() => {
-    if (!activeCategoryId) return [];
+    if (!activeCategoryId || allCategoriesSelected) return [];
     return allSubCategories.filter(s => s.category_id === activeCategoryId);
-  }, [allSubCategories, activeCategoryId]);
+  }, [allSubCategories, activeCategoryId, allCategoriesSelected]);
+
+  const subPanelOpen = subcategories.length > 0 && !showArrivalsOnly && !showHotOnly && !showBrandsOnly;
+  const leftCollapsed = leftCollapsedManual ?? subPanelOpen;
+  const desktopCols = subPanelOpen ? (leftCollapsed ? 4 : 3) : 4;
+
+  useEffect(() => {
+    if (!subPanelOpen) {
+      setLeftCollapsedManual(null);
+    }
+  }, [subPanelOpen]);
 
   const activeSubcategory = useMemo(() => {
     if (activeSubcategoryId === null) return null;
@@ -157,6 +218,8 @@ const Shop = () => {
     });
     return Array.from(brands).sort();
   }, [allProductsForBrands]);
+
+  const visibleBrands = brandsExpanded ? availableBrands : availableBrands.slice(0, 10);
 
   // Combine and filter everything
   const unifiedItems = useMemo(() => {
@@ -264,7 +327,7 @@ const Shop = () => {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* Simplified Hero Section */}
-      <section className="bg-primary py-16 lg:py-24 border-b border-white/5">
+      <section className="bg-primary py-10 lg:py-14 border-b border-white/5">
         <div className="container px-4">
           <div className="max-w-xl mx-auto text-center space-y-6">
             <h1 className="text-3xl md:text-5xl font-display font-bold text-primary-foreground tracking-tight">
@@ -278,31 +341,85 @@ const Shop = () => {
                 : "Browse our complete range of commercial and domestic cleaning supplies."}
             </p>
 
-            <div className="pt-4 max-w-xs mx-auto">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-primary-foreground/60" />
-                <Input
-                  placeholder="Search products..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-12 h-12 bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/40 rounded-xl focus:ring-primary/20 transition-all"
-                />
-              </div>
-            </div>
+            <div className="pt-4" />
           </div>
         </div>
       </section>
 
       <main className="flex-1 py-12 bg-background">
         <div className="container px-4">
-          <div className={cn("grid gap-10", (subcategories.length > 0 && !showArrivalsOnly && !showHotOnly) ? "lg:grid-cols-[220px_200px_1fr]" : "lg:grid-cols-[250px_1fr]")}>
+          <div className={cn(
+            "grid gap-10",
+            subPanelOpen
+              ? leftCollapsed
+                ? "lg:grid-cols-[0px_220px_1fr]"
+                : "lg:grid-cols-[250px_220px_1fr]"
+              : showBrandsOnly
+                ? "lg:grid-cols-[250px_220px_1fr]"
+                : "lg:grid-cols-[250px_1fr]"
+          )}>
             {/* Cleaner Sidebar Navigation */}
-            <aside className="space-y-8 hidden lg:block">
+            <aside className={cn(
+              "space-y-8 hidden lg:block transition-all duration-300",
+              leftCollapsed && "opacity-0 w-0 overflow-hidden pointer-events-none"
+            )}>
               <div className="space-y-4">
-                <div className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em] pb-2 border-b border-border">
+                <div className="flex items-center justify-between text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em] pb-2 border-b border-border">
                   Collections
+                  {subPanelOpen && (
+                    <button
+                      type="button"
+                      onClick={() => setLeftCollapsedManual((prev) => {
+                        const next = !(prev ?? subPanelOpen);
+                        return next;
+                      })}
+                      className="text-[10px] font-black tracking-[0.2em] text-primary hover:underline"
+                    >
+                      {leftCollapsed ? "SEE ALL PRODUCTS" : "SHOW LESS"}
+                    </button>
+                  )}
                 </div>
                 <div className="flex flex-col gap-1">
+                  <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-3 mb-2">Categories</div>
+                  <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
+                    <div className="grid grid-cols-[1fr_auto] gap-2 px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground bg-muted/40 border-b border-border">
+                      <span>Category</span>
+                      <span>Action</span>
+                    </div>
+                    <div className="divide-y divide-border">
+                      <button
+                        onClick={() => handleCategoryChange(null)}
+                        className={cn(
+                          "w-full text-left px-4 py-3 text-sm transition-all grid grid-cols-[1fr_auto] items-center gap-2",
+                          activeCategoryId === null && !showArrivalsOnly && !showHotOnly
+                            ? "bg-primary/10 text-primary font-bold"
+                            : "text-foreground hover:bg-muted/60"
+                        )}
+                      >
+                        <span>All Categories</span>
+                        <ArrowRight className={cn("h-4 w-4", activeCategoryId === null && !showArrivalsOnly && !showHotOnly ? "opacity-100" : "opacity-40")} />
+                      </button>
+                      {categories.map((c) => (
+                        <button
+                          key={c.id}
+                          onClick={() => handleCategoryChange(c.id)}
+                          className={cn(
+                            "w-full text-left px-4 py-3 text-sm transition-all grid grid-cols-[1fr_auto] items-center gap-2",
+                            c.id === activeCategoryId
+                              ? "bg-primary/10 text-primary font-bold"
+                              : "text-foreground hover:bg-muted/60"
+                          )}
+                        >
+                          <span>{c.name}</span>
+                          <ArrowRight className={cn("h-4 w-4", c.id === activeCategoryId ? "opacity-100" : "opacity-40")} />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="h-4" />
+                  <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-3 mb-2">Collections</div>
+
                   <button
                     onClick={() => handleCategoryChange(null)}
                     className={cn(
@@ -316,122 +433,79 @@ const Shop = () => {
                     {activeCategoryId === null && !showArrivalsOnly && !showHotOnly && <ArrowRight className="h-4 w-4" />}
                   </button>
 
-                  <button
-                    onClick={handleArrivalsToggle}
-                    className={cn(
-                      "w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all",
-                      showArrivalsOnly
-                        ? "bg-primary text-primary-foreground font-bold shadow-sm"
-                        : "text-foreground hover:bg-muted"
-                    )}
-                  >
-                    <div className="flex items-center gap-2">
-                        <Badge className="bg-amber-500/20 text-amber-600 border-none text-[9px] h-4">NEW</Badge>
-                        <span>New Arrivals</span>
-                    </div>
-                    {showArrivalsOnly && <ArrowRight className="h-4 w-4" />}
-                  </button>
-
-                  <button
-                    onClick={handleHotToggle}
-                    className={cn(
-                      "w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all",
-                      showHotOnly
-                        ? "bg-red-600 text-white font-bold shadow-sm"
-                        : "text-foreground hover:bg-muted"
-                    )}
-                  >
-                    <div className="flex items-center gap-2">
-                        <Badge className="bg-red-500/20 text-red-600 border-none text-[9px] h-4">HOT</Badge>
-                        <span>Hot Deals</span>
-                    </div>
-                    {showHotOnly && <ArrowRight className="h-4 w-4" />}
-                  </button>
-
-                  <button
-                    onClick={handleBrandsToggle}
-                    className={cn(
-                      "w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all",
-                      showBrandsOnly
-                        ? "bg-primary text-primary-foreground font-bold shadow-sm"
-                        : "text-foreground hover:bg-muted"
-                    )}
-                  >
-                    <div className="flex items-center gap-2">
-                        <Package className="h-4 w-4 text-slate-400" />
-                        <span>Shop By Brand</span>
-                    </div>
-                    {showBrandsOnly && <ArrowRight className="h-4 w-4" />}
-                  </button>
-
-                  <div className="h-4" />
-                  <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-3 mb-2">Categories</div>
-
-                  {categories.map((c) => (
-                    <div key={c.id}>
-                      <button
-                        onClick={() => handleCategoryChange(c.id)}
-                        className={cn(
-                          "w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all",
-                          c.id === activeCategoryId
-                            ? "bg-primary text-primary-foreground font-bold shadow-sm"
-                            : "text-foreground hover:bg-muted"
-                        )}
-                      >
-                        <span>{c.name}</span>
-                        {c.id === activeCategoryId && <ArrowRight className="h-4 w-4" />}
-                      </button>
-
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em] pb-2 border-b border-border">
-                  Price Range
-                </div>
-                <div className="space-y-3">
-                  <div className="flex gap-2">
-                    <div className="flex-1 space-y-1">
-                      <label className="text-[9px] font-bold text-muted-foreground uppercase">Min ($)</label>
-                      <Input 
-                        type="number" 
-                        placeholder="0" 
-                        value={minPrice} 
-                        onChange={(e) => setMinPrice(e.target.value)}
-                        className="h-9 bg-muted/50 border-none rounded-lg text-xs"
-                      />
-                    </div>
-                    <div className="flex-1 space-y-1">
-                      <label className="text-[9px] font-bold text-muted-foreground uppercase">Max ($)</label>
-                      <Input 
-                        type="number" 
-                        placeholder="Any" 
-                        value={maxPrice} 
-                        onChange={(e) => setMaxPrice(e.target.value)}
-                        className="h-9 bg-muted/50 border-none rounded-lg text-xs"
-                      />
-                    </div>
-                  </div>
-                  {(minPrice || maxPrice) && (
-                    <button 
-                      onClick={() => { setMinPrice(""); setMaxPrice(""); }}
-                      className="text-[10px] font-bold text-primary hover:underline"
+                  {showArrivalsEnabled && (
+                    <button
+                      onClick={handleArrivalsToggle}
+                      className={cn(
+                        "w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all",
+                        showArrivalsOnly
+                          ? "bg-primary text-primary-foreground font-bold shadow-sm"
+                          : "text-foreground hover:bg-muted"
+                      )}
                     >
-                      Clear Price Filter
+                      <div className="flex items-center gap-2">
+                          <Badge className="bg-amber-500/20 text-amber-600 border-none text-[9px] h-4">NEW</Badge>
+                          <span>New Arrivals</span>
+                      </div>
+                      {showArrivalsOnly && <ArrowRight className="h-4 w-4" />}
+                    </button>
+                  )}
+
+                  {showHotEnabled && (
+                    <button
+                      onClick={handleHotToggle}
+                      className={cn(
+                        "w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all",
+                        showHotOnly
+                          ? "bg-red-600 text-white font-bold shadow-sm"
+                          : "text-foreground hover:bg-muted"
+                      )}
+                    >
+                      <div className="flex items-center gap-2">
+                          <Badge className="bg-red-500/20 text-red-600 border-none text-[9px] h-4">HOT</Badge>
+                          <span>Hot Deals</span>
+                      </div>
+                      {showHotOnly && <ArrowRight className="h-4 w-4" />}
+                    </button>
+                  )}
+
+                  {showBrandsEnabled && (
+                    <button
+                      onClick={handleBrandsToggle}
+                      className={cn(
+                        "w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all",
+                        showBrandsOnly
+                          ? "bg-primary text-primary-foreground font-bold shadow-sm"
+                          : "text-foreground hover:bg-muted"
+                      )}
+                    >
+                      <div className="flex items-center gap-2">
+                          <Package className="h-4 w-4 text-slate-400" />
+                          <span>Shop By Brand</span>
+                      </div>
+                      {showBrandsOnly && <ArrowRight className="h-4 w-4" />}
                     </button>
                   )}
                 </div>
               </div>
+
             </aside>
 
             {/* Brand Sidebar (Opens when Shop By Brand is active) */}
-            {showBrandsOnly && (
+            {showBrandsOnly && showBrandsEnabled && (
               <aside className="space-y-8 hidden lg:block animate-in fade-in slide-in-from-left-2 duration-500">
                 <div className="space-y-4">
-                  <div className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em] pb-2 border-b border-border">
-                    Available Brands
+                  <div className="flex items-center justify-between text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em] pb-2 border-b border-border">
+                    <span>Available Brands</span>
+                    {availableBrands.length > 10 && (
+                      <button
+                        type="button"
+                        onClick={() => setBrandsExpanded((v) => !v)}
+                        className="text-[10px] font-black tracking-[0.2em] text-primary hover:underline"
+                      >
+                        {brandsExpanded ? "SHOW LESS" : "SHOW MORE"}
+                      </button>
+                    )}
                   </div>
                   <div className="flex flex-col gap-1">
                     <button
@@ -445,7 +519,7 @@ const Shop = () => {
                     >
                       All Brands
                     </button>
-                    {availableBrands.map((brand) => (
+                    {visibleBrands.map((brand) => (
                       <button
                         key={brand}
                         onClick={() => handleBrandSelect(brand)}
@@ -468,35 +542,74 @@ const Shop = () => {
             {(subcategories.length > 0 && !showArrivalsOnly && !showHotOnly && !showBrandsOnly) && (
               <aside className="space-y-8 hidden lg:block animate-in fade-in slide-in-from-left-2 duration-500">
                 <div className="space-y-4">
-                  <div className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em] pb-2 border-b border-border">
-                    {activeCategory?.name} Types
-                  </div>
-                  <div className="flex flex-col gap-1">
+                  <div className="flex items-center justify-end">
                     <button
-                      onClick={() => handleSubcategoryChange(null)}
+                      type="button"
+                      onClick={() => {
+                        if (leftCollapsed) {
+                          setLeftCollapsedManual(false);
+                          handleSubcategoryChange(null);
+                        } else {
+                          setLeftCollapsedManual(true);
+                        }
+                      }}
                       className={cn(
-                        "w-full text-left px-3 py-2 rounded-lg text-sm transition-all",
-                        activeSubcategoryId === null
-                          ? "bg-muted text-primary font-bold"
-                          : "text-foreground hover:bg-muted"
+                        "rounded-full border border-blue-900/40 bg-blue-900 text-white text-[10px] font-black tracking-[0.2em] uppercase hover:bg-blue-800 transition-all shadow-sm",
+                        leftCollapsed ? "h-7 px-3 text-[9px]" : "h-9 px-5"
                       )}
                     >
-                      All {activeCategory?.name}
+                      {leftCollapsed ? "SEE ALL PRODUCTS" : "SHOW LESS"}
                     </button>
-                    {subcategories.map((sub) => (
+                  </div>
+                  <div className="flex items-center justify-between text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em] pb-2 border-b border-border">
+                    <span>{activeCategory?.name} Types</span>
+                    {subPanelOpen && (
                       <button
-                        key={sub.id}
-                        onClick={() => handleSubcategoryChange(sub.id)}
+                        type="button"
+                        onClick={() => setLeftCollapsedManual((prev) => {
+                          const next = !(prev ?? subPanelOpen);
+                          return next;
+                        })}
+                        className="text-[10px] font-black tracking-[0.2em] text-primary hover:underline"
+                      >
+                        {leftCollapsed ? "SHOW MORE" : "SHOW LESS"}
+                      </button>
+                    )}
+                  </div>
+                  <div className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
+                    <div className="grid grid-cols-[1fr_auto] gap-2 px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground bg-muted/40 border-b border-border">
+                      <span>Subcategory</span>
+                      <span>Action</span>
+                    </div>
+                    <div className="divide-y divide-border">
+                      <button
+                        onClick={() => handleSubcategoryChange(null)}
                         className={cn(
-                          "w-full text-left px-3 py-2 rounded-lg text-sm transition-all",
-                          activeSubcategoryId === sub.id
-                            ? "bg-muted text-primary font-bold"
-                            : "text-foreground hover:bg-muted"
+                          "w-full text-left px-4 py-3 text-sm transition-all grid grid-cols-[1fr_auto] items-center gap-2",
+                          activeSubcategoryId === null
+                            ? "bg-primary/10 text-primary font-bold"
+                            : "text-foreground hover:bg-muted/60"
                         )}
                       >
-                        {sub.name}
+                        <span>All Products in {activeCategory?.name}</span>
+                        <ArrowRight className={cn("h-4 w-4", activeSubcategoryId === null ? "opacity-100" : "opacity-40")} />
                       </button>
-                    ))}
+                      {subcategories.map((sub) => (
+                        <button
+                          key={sub.id}
+                          onClick={() => handleSubcategoryChange(sub.id)}
+                          className={cn(
+                            "w-full text-left px-4 py-3 text-sm transition-all grid grid-cols-[1fr_auto] items-center gap-2",
+                            activeSubcategoryId === sub.id
+                              ? "bg-primary/10 text-primary font-bold"
+                              : "text-foreground hover:bg-muted/60"
+                          )}
+                        >
+                          <span>{sub.name}</span>
+                          <ArrowRight className={cn("h-4 w-4", activeSubcategoryId === sub.id ? "opacity-100" : "opacity-40")} />
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </aside>
@@ -510,9 +623,14 @@ const Shop = () => {
                   Filters
                 </div>
                 <div className="grid grid-cols-1 gap-3">
+                  <label className="text-[9px] font-bold text-muted-foreground uppercase">Category</label>
                   <Select
-                    value={activeCategoryId ? String(activeCategoryId) : ""}
+                    value={activeCategoryId === null ? "all" : String(activeCategoryId)}
                     onValueChange={(val) => {
+                      if (val === "all") {
+                        handleCategoryChange(null);
+                        return;
+                      }
                       const nextId = Number(val);
                       if (!Number.isNaN(nextId)) {
                         handleCategoryChange(nextId);
@@ -523,6 +641,7 @@ const Shop = () => {
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="all">All Categories</SelectItem>
                       {categories.map((c) => (
                         <SelectItem key={c.id} value={String(c.id)}>
                           {c.name}
@@ -532,6 +651,8 @@ const Shop = () => {
                   </Select>
 
                   {subcategories.length > 0 && (
+                    <>
+                    <label className="text-[9px] font-bold text-muted-foreground uppercase">Subcategory</label>
                     <Select 
                       value={activeSubcategoryId === null ? "all" : String(activeSubcategoryId)} 
                       onValueChange={(val) => handleSubcategoryChange(val === "all" ? null : Number(val))}
@@ -548,26 +669,63 @@ const Shop = () => {
                         ))}
                       </SelectContent>
                     </Select>
+                    </>
                   )}
 
-                  <div className="flex gap-2">
-                    <Input 
-                      type="number" 
-                      placeholder="Min $" 
-                      value={minPrice} 
-                      onChange={(e) => setMinPrice(e.target.value)}
-                      className="h-11 bg-muted/50 border-none rounded-xl text-sm"
-                    />
-                    <Input 
-                      type="number" 
-                      placeholder="Max $" 
-                      value={maxPrice} 
-                      onChange={(e) => setMaxPrice(e.target.value)}
-                      className="h-11 bg-muted/50 border-none rounded-xl text-sm"
+                  {/* Price range hidden on mobile per request */}
+                </div>
+              </div>
+              {/* Price + Search Inline */}
+              <div className="bg-card p-4 rounded-2xl shadow-sm border border-border">
+                <div className="grid gap-4 md:grid-cols-[minmax(0,360px)_1fr]">
+                  <div className="flex flex-col gap-2">
+                    <div className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em]">
+                      Price Range
+                    </div>
+                    <div className="flex flex-wrap md:flex-nowrap items-end gap-2">
+                      <div className="space-y-1">
+                        <label className="text-[9px] font-bold text-muted-foreground uppercase">Min ($)</label>
+                        <Input 
+                          type="number" 
+                          placeholder="0" 
+                          value={minPrice} 
+                          onChange={(e) => setMinPrice(e.target.value)}
+                          className="h-10 w-24 bg-white border-border rounded-xl text-xs"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[9px] font-bold text-muted-foreground uppercase">Max ($)</label>
+                        <Input 
+                          type="number" 
+                          placeholder="Any" 
+                          value={maxPrice} 
+                          onChange={(e) => setMaxPrice(e.target.value)}
+                          className="h-10 w-28 bg-white border-border rounded-xl text-xs"
+                        />
+                      </div>
+                      {(minPrice || maxPrice) && (
+                        <button 
+                          onClick={() => { setMinPrice(""); setMaxPrice(""); }}
+                          className="text-[10px] font-bold text-primary hover:underline mb-1"
+                        >
+                          Clear
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="relative min-w-0 md:self-end">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                    <Input
+                      placeholder="Search products..."
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      className="pl-12 h-11 bg-white border-border rounded-xl text-sm focus:ring-primary/20 transition-all w-full"
                     />
                   </div>
                 </div>
               </div>
+
               {/* Toolbar */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-card p-4 rounded-2xl shadow-sm border border-border mb-8">
                 <div className="flex items-center gap-3">
@@ -662,7 +820,7 @@ const Shop = () => {
                   <div className={cn(
                     "grid gap-6 sm:gap-8 opacity-40", 
                     view === "list" ? "grid-cols-1" : 
-                    gridCols === 3 ? "grid-cols-2 lg:grid-cols-3" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-3"
+                    desktopCols === 4 ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-4" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-3"
                   )}>
                     {Array.from({ length: 8 }).map((_, i) => (
                       <div key={i} className="rounded-[2rem] border border-slate-100 bg-white p-5 space-y-6 animate-pulse" style={{ animationDelay: `${i * 100}ms` }}>
@@ -684,7 +842,7 @@ const Shop = () => {
                   <div className={cn(
                     "grid gap-6 sm:gap-8", 
                     view === "list" ? "grid-cols-1" : 
-                    gridCols === 3 ? "grid-cols-2 lg:grid-cols-3" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-3"
+                    desktopCols === 4 ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-4" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-3"
                   )}>
                     {unifiedItems.map((item) => (
                       <ProductCard
@@ -718,4 +876,3 @@ const Shop = () => {
 };
 
 export default Shop;
-

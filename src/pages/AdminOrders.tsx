@@ -99,7 +99,7 @@ const AdminOrders = () => {
             case "Shipped": return "text-purple-400";
             case "Delivered": return "text-emerald-400";
             case "Cancelled": return "text-red-400";
-            default: return "text-slate-400";
+            default: return "text-slate-500";
         }
     };
 
@@ -108,7 +108,7 @@ const AdminOrders = () => {
             case "Paid": return "text-emerald-400";
             case "Pending": return "text-amber-400";
             case "Refunded": return "text-red-400";
-            default: return "text-slate-400";
+            default: return "text-slate-500";
         }
     };
 
@@ -123,11 +123,11 @@ const AdminOrders = () => {
             <div className="space-y-8 max-w-7xl mx-auto">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
-                        <h1 className="text-3xl font-display font-bold tracking-tight text-white mb-1">Order Management</h1>
+                        <h1 className="text-3xl font-display font-bold tracking-tight text-blue-900 mb-1">Order Management</h1>
                         <p className="text-slate-500 text-sm">Monitor sales, track shipments, and manage customer interactions.</p>
                     </div>
                     <div className="flex items-center gap-3">
-                        <Button variant="outline" className="h-11 border-slate-800 bg-slate-900/50 hover:bg-slate-900 text-slate-300 rounded-xl px-5 font-bold text-xs uppercase tracking-widest transition-all">
+                        <Button variant="outline" className="h-11 border-slate-200 bg-white hover:bg-slate-100 text-slate-700 rounded-xl px-5 font-bold text-xs uppercase tracking-widest transition-all">
                             <Download className="h-4 w-4 mr-2" />Export CSV
                         </Button>
                     </div>
@@ -141,37 +141,37 @@ const AdminOrders = () => {
                         { label: "Total Orders", value: String(orders.length), color: "text-emerald-400", bg: "bg-emerald-500/5", icon: CheckCircle2 },
                         { label: "Cancelled", value: String(cancelledOrders), color: "text-red-400", bg: "bg-red-500/5", icon: XCircle },
                     ].map((stat, i) => (
-                        <div key={i} className="p-6 rounded-3xl border border-slate-900 bg-slate-900/20 hover:bg-slate-900/40 transition-all group">
+                        <div key={i} className="p-6 rounded-3xl border border-slate-200 bg-white hover:bg-slate-50 transition-all group shadow-sm">
                             <div className="flex items-center justify-between mb-4">
                                 <div className={cn("p-2 rounded-xl", stat.bg)}>
                                     <stat.icon className={cn("h-4 w-4", stat.color)} />
                                 </div>
                             </div>
                             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-1">{stat.label}</p>
-                            <h3 className="text-2xl font-display font-bold text-white">{stat.value}</h3>
+                            <h3 className="text-2xl font-display font-bold text-blue-900">{stat.value}</h3>
                         </div>
                     ))}
                 </div>
 
                 {/* Table */}
-                <div className="bg-slate-900/30 border border-slate-900 rounded-[2.5rem] overflow-hidden backdrop-blur-sm">
-                    <div className="p-8 border-b border-slate-900/50 space-y-6">
+                <div className="bg-white border border-slate-200 rounded-[2.5rem] overflow-hidden">
+                    <div className="p-8 border-b border-slate-200 space-y-6">
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div className="relative flex-1 max-w-md group">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-600" />
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
                                 <Input
                                 placeholder="Search orders by ID, name, or mobile..."
-                                    className="pl-12 h-12 bg-slate-900 border-slate-700 rounded-2xl focus:ring-primary/20 text-slate-100 placeholder:text-slate-500"
+                                    className="pl-12 h-12 bg-white border-slate-200 rounded-2xl focus:ring-primary/20 text-slate-900 placeholder:text-slate-400"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                 />
                             </div>
                             <Select value={statusFilter} onValueChange={setStatusFilter}>
-                                <SelectTrigger className="w-[160px] h-12 bg-slate-900 border-slate-700 rounded-2xl text-slate-100 font-medium">
+                                <SelectTrigger className="w-[160px] h-12 bg-white border-slate-200 rounded-2xl text-slate-900 font-medium">
                                     <SelectValue placeholder="All Status" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-slate-900 border-slate-700 shadow-2xl">
-                                    <SelectItem value="all" className="text-slate-200">All Status</SelectItem>
+                                <SelectContent className="bg-white border-slate-200 shadow-xl">
+                                    <SelectItem value="all" className="text-slate-700">All Status</SelectItem>
                                     <SelectItem value="processing" className="text-blue-400">Processing</SelectItem>
                                     <SelectItem value="shipped" className="text-purple-400">Shipped</SelectItem>
                                     <SelectItem value="delivered" className="text-emerald-400">Delivered</SelectItem>
@@ -185,27 +185,27 @@ const AdminOrders = () => {
                         {loading ? (
                             <div className="text-center py-16 text-slate-500">Loading orders...</div>
                         ) : filteredOrders.length === 0 ? (
-                            <div className="text-center py-16 text-slate-400">
+                            <div className="text-center py-16 text-slate-500">
                                 <ShoppingBag className="h-12 w-12 mx-auto mb-4 opacity-30" />
-                                <p className="font-semibold text-slate-300">No orders yet</p>
+                                <p className="font-semibold text-slate-700">No orders yet</p>
                                 <p className="text-sm mt-1 text-slate-500">Orders placed by customers will appear here.</p>
                             </div>
                         ) : (
                             <Table>
                                 <TableHeader className="border-none">
                                     <TableRow className="hover:bg-transparent border-none">
-                                        <TableHead className="text-slate-400 font-bold uppercase text-[9px] tracking-[0.2em] h-14 px-6">Order ID</TableHead>
-                                        <TableHead className="text-slate-400 font-bold uppercase text-[9px] tracking-[0.2em] h-14 px-6">Order Details</TableHead>
-                                        <TableHead className="text-slate-400 font-bold uppercase text-[9px] tracking-[0.2em] h-14 px-6">Contact Info</TableHead>
-                                        <TableHead className="text-slate-400 font-bold uppercase text-[9px] tracking-[0.2em] h-14 px-6">Amount</TableHead>
-                                        <TableHead className="text-slate-400 font-bold uppercase text-[9px] tracking-[0.2em] h-14 px-6">Payment</TableHead>
-                                        <TableHead className="text-slate-400 font-bold uppercase text-[9px] tracking-[0.2em] h-14 px-6">Status</TableHead>
-                                        <TableHead className="text-slate-600 font-bold uppercase text-[9px] tracking-[0.2em] h-14 px-6 text-right">Actions</TableHead>
+                                        <TableHead className="text-slate-500 font-bold uppercase text-[9px] tracking-[0.2em] h-14 px-6">Order ID</TableHead>
+                                        <TableHead className="text-slate-500 font-bold uppercase text-[9px] tracking-[0.2em] h-14 px-6">Order Details</TableHead>
+                                        <TableHead className="text-slate-500 font-bold uppercase text-[9px] tracking-[0.2em] h-14 px-6">Contact Info</TableHead>
+                                        <TableHead className="text-slate-500 font-bold uppercase text-[9px] tracking-[0.2em] h-14 px-6">Amount</TableHead>
+                                        <TableHead className="text-slate-500 font-bold uppercase text-[9px] tracking-[0.2em] h-14 px-6">Payment</TableHead>
+                                        <TableHead className="text-slate-500 font-bold uppercase text-[9px] tracking-[0.2em] h-14 px-6">Status</TableHead>
+                                        <TableHead className="text-slate-500 font-bold uppercase text-[9px] tracking-[0.2em] h-14 px-6 text-right">Actions</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {filteredOrders.map((order) => (
-                                        <TableRow key={order.id} className="border-slate-900/30 hover:bg-slate-900/40 transition-all group">
+                                        <TableRow key={order.id} className="border-slate-200 hover:bg-slate-50 transition-all group">
                                             <TableCell className="px-6 py-6">
                                                 <div className="flex flex-col">
                                                     <span className="font-mono text-xs font-bold text-primary">#{order.id}</span>
@@ -214,7 +214,7 @@ const AdminOrders = () => {
                                                     </span>
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="px-6 py-6 font-medium text-slate-300">
+                                            <TableCell className="px-6 py-6 font-medium text-slate-700">
                                                 <div className="flex items-center gap-2">
                                                     <Package className="h-4 w-4 text-slate-700" />
                                                     <span className="line-clamp-1">{order.info || "—"}</span>
@@ -222,11 +222,11 @@ const AdminOrders = () => {
                                             </TableCell>
                                             <TableCell className="px-6 py-6">
                                                 <div className="space-y-0.5">
-                                                    <p className="text-sm font-bold text-white flex items-center gap-1.5">
-                                                        <User className="h-3 w-3 text-slate-600" />
+                                                    <p className="text-sm font-bold text-blue-900 flex items-center gap-1.5">
+                                                        <User className="h-3 w-3 text-slate-500" />
                                                         {order.customer}
                                                     </p>
-                                                    <p className="text-xs font-bold text-slate-400 flex items-center gap-1.5">
+                                                    <p className="text-xs font-bold text-slate-500 flex items-center gap-1.5">
                                                         <MessageSquare className="h-3 w-3 text-slate-500" />
                                                         {order.mobile || "—"}
                                                     </p>
@@ -234,7 +234,7 @@ const AdminOrders = () => {
                                             </TableCell>
                                             <TableCell className="px-6 py-6">
                                                 <div className="space-y-1">
-                                                    <p className="font-bold text-white text-sm">{order.total || "—"}</p>
+                                                    <p className="font-bold text-blue-900 text-sm">{order.total || "—"}</p>
                                                 </div>
                                             </TableCell>
                                             {/* Payment Status - Editable */}
@@ -244,13 +244,13 @@ const AdminOrders = () => {
                                                     onValueChange={(val) => handlePaymentUpdate(order.id, val)}
                                                 >
                                                     <SelectTrigger className={cn(
-                                                        "h-9 w-[120px] rounded-xl border border-slate-900 bg-slate-950/50 text-[10px] font-black uppercase tracking-widest focus:ring-primary/20",
+                                                        "h-9 w-[120px] rounded-xl border border-slate-200 bg-white text-[10px] font-black uppercase tracking-widest focus:ring-primary/20",
                                                         getPaymentColor(order.payment)
                                                     )}>
                                                         <CreditCard className="h-3 w-3 mr-1 opacity-60" />
                                                         <SelectValue />
                                                     </SelectTrigger>
-                                                    <SelectContent className="bg-slate-950 border-slate-900">
+                                                    <SelectContent className="bg-white border-slate-200">
                                                         <SelectItem value="Paid" className="text-[11px] font-bold text-emerald-400 uppercase tracking-widest">Paid</SelectItem>
                                                         <SelectItem value="Pending" className="text-[11px] font-bold text-amber-400 uppercase tracking-widest">Pending</SelectItem>
                                                         <SelectItem value="Refunded" className="text-[11px] font-bold text-red-400 uppercase tracking-widest">Refunded</SelectItem>
@@ -264,12 +264,12 @@ const AdminOrders = () => {
                                                     onValueChange={(val) => handleStatusUpdate(order.id, val)}
                                                 >
                                                     <SelectTrigger className={cn(
-                                                        "h-9 w-[130px] rounded-xl border border-slate-900 bg-slate-950/50 text-[10px] font-black uppercase tracking-widest focus:ring-primary/20",
+                                                        "h-9 w-[130px] rounded-xl border border-slate-200 bg-white text-[10px] font-black uppercase tracking-widest focus:ring-primary/20",
                                                         getStatusColor(order.status)
                                                     )}>
                                                         <SelectValue />
                                                     </SelectTrigger>
-                                                    <SelectContent className="bg-slate-950 border-slate-900">
+                                                    <SelectContent className="bg-white border-slate-200">
                                                         <SelectItem value="Processing" className="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Processing</SelectItem>
                                                         <SelectItem value="Shipped" className="text-[10px] font-bold text-purple-400 uppercase tracking-widest">Shipped</SelectItem>
                                                         <SelectItem value="Delivered" className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Delivered</SelectItem>
@@ -280,25 +280,25 @@ const AdminOrders = () => {
                                             <TableCell className="px-6 py-6 text-right">
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
-                                                        <Button variant="ghost" size="icon" className="h-10 w-10 text-slate-600 hover:text-white hover:bg-slate-800 rounded-xl">
+                                                        <Button variant="ghost" size="icon" className="h-10 w-10 text-slate-500 hover:text-blue-900 hover:bg-slate-100 rounded-xl">
                                                             <MoreHorizontal className="h-5 w-5" />
                                                         </Button>
                                                     </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end" className="w-56 bg-slate-950 border-slate-900 text-slate-200 p-2 rounded-2xl shadow-2xl">
+                                                    <DropdownMenuContent align="end" className="w-56 bg-white border-slate-200 text-slate-700 p-2 rounded-2xl shadow-xl">
                                                         <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-slate-500 px-4 py-3">Order Controls</DropdownMenuLabel>
-                                                        <DropdownMenuSeparator className="bg-slate-900" />
+                                                        <DropdownMenuSeparator className="bg-slate-200" />
                                                         <DropdownMenuItem 
-                                                            className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-900 focus:bg-slate-900 cursor-pointer text-slate-300"
+                                                            className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 focus:bg-slate-100 cursor-pointer text-slate-700"
                                                             onClick={() => setSelectedOrder(order)}
                                                         >
                                                             <Eye className="h-4 w-4 text-primary" />
                                                             <span className="font-semibold text-sm">View Full Details</span>
                                                         </DropdownMenuItem>
-                                                        <DropdownMenuItem className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-900 focus:bg-slate-900 cursor-pointer text-slate-300">
+                                                        <DropdownMenuItem className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 focus:bg-slate-100 cursor-pointer text-slate-700">
                                                             <Truck className="h-4 w-4 text-purple-400" />
                                                             <span className="font-semibold text-sm">Print Labels</span>
                                                         </DropdownMenuItem>
-                                                        <DropdownMenuSeparator className="bg-slate-900" />
+                                                        <DropdownMenuSeparator className="bg-slate-200" />
                                                         <DropdownMenuItem
                                                             className="flex items-center gap-3 p-3 rounded-xl hover:bg-red-500/10 focus:bg-red-500/10 text-red-500 cursor-pointer"
                                                             onClick={() => setOrderToDelete(order)}
@@ -316,7 +316,7 @@ const AdminOrders = () => {
                         )}
                     </div>
 
-                    <div className="p-8 border-t border-slate-900 flex items-center justify-between bg-slate-900/10">
+                    <div className="p-8 border-t border-slate-200 flex items-center justify-between bg-slate-50/60">
                         <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Showing {filteredOrders.length} orders</p>
                     </div>
                 </div>
@@ -324,16 +324,16 @@ const AdminOrders = () => {
 
             {/* Full Order Detail Dialog */}
             <Dialog open={!!selectedOrder} onOpenChange={(v) => { if (!v) setSelectedOrder(null); }}>
-                <DialogContent className="max-w-xl rounded-[2rem] border-slate-900 bg-slate-950 p-0 overflow-hidden shadow-2xl">
+                <DialogContent className="max-w-xl rounded-[2rem] border-slate-200 bg-white p-0 overflow-hidden shadow-2xl">
                     {selectedOrder && (
                         <>
                             {/* Header */}
-                            <div className="px-8 pt-8 pb-6 bg-gradient-to-br from-slate-900 to-slate-800 border-b border-slate-800">
+                            <div className="px-8 pt-8 pb-6 bg-gradient-to-br from-white to-slate-50 border-b border-slate-200">
                                 <div className="flex items-start justify-between">
                                     <div>
                                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">Order Details</p>
-                                        <h2 className="text-2xl font-display font-black text-white">#{selectedOrder.id}</h2>
-                                        <p className="text-slate-400 text-xs font-medium mt-1 flex items-center gap-1.5">
+                                        <h2 className="text-2xl font-display font-black text-blue-900">#{selectedOrder.id}</h2>
+                                        <p className="text-slate-500 text-xs font-medium mt-1 flex items-center gap-1.5">
                                             <Calendar className="h-3 w-3" />
                                             {new Date(selectedOrder.created_at).toLocaleString()}
                                         </p>
@@ -355,16 +355,16 @@ const AdminOrders = () => {
                             </div>
 
                             {/* Customer Info */}
-                            <div className="px-8 py-5 border-b border-slate-900 space-y-3">
+                            <div className="px-8 py-5 border-b border-slate-200 space-y-3">
                                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Customer</p>
                                 <div className="flex flex-col gap-2">
-                                    <div className="flex items-center gap-2 text-sm text-white font-bold">
-                                        <User className="h-4 w-4 text-slate-600" />
+                                    <div className="flex items-center gap-2 text-sm text-blue-900 font-bold">
+                                        <User className="h-4 w-4 text-slate-500" />
                                         {selectedOrder.customer}
                                     </div>
                                     {selectedOrder.mobile && (
-                                        <div className="flex items-center gap-2 text-sm text-slate-400 font-medium">
-                                            <Phone className="h-4 w-4 text-slate-600" />
+                                        <div className="flex items-center gap-2 text-sm text-slate-500 font-medium">
+                                            <Phone className="h-4 w-4 text-slate-500" />
                                             {selectedOrder.mobile}
                                         </div>
                                     )}
@@ -372,21 +372,21 @@ const AdminOrders = () => {
                             </div>
 
                             {/* Items */}
-                            <div className="px-8 py-5 border-b border-slate-900 space-y-3">
+                            <div className="px-8 py-5 border-b border-slate-200 space-y-3">
                                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Items Ordered</p>
                                 {selectedOrder.items && selectedOrder.items.length > 0 ? (
                                     <div className="space-y-2">
                                         {selectedOrder.items.map((item, i) => (
-                                            <div key={i} className="flex items-center gap-3 p-3 rounded-2xl bg-slate-900/50 border border-slate-900">
+                                            <div key={i} className="flex items-center gap-3 p-3 rounded-2xl bg-white border border-slate-200">
                                                 {item.image ? (
-                                                    <img src={item.image} alt={item.name} className="w-10 h-10 rounded-xl object-cover bg-slate-800 flex-shrink-0" />
+                                                    <img src={item.image} alt={item.name} className="w-10 h-10 rounded-xl object-cover bg-slate-100 flex-shrink-0" />
                                                 ) : (
-                                                    <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center flex-shrink-0">
-                                                        <Package className="h-4 w-4 text-slate-600" />
+                                                    <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0">
+                                                        <Package className="h-4 w-4 text-slate-500" />
                                                     </div>
                                                 )}
                                                 <div className="flex-1 min-w-0">
-                                                    <p className="text-sm font-bold text-white truncate">{item.name}</p>
+                                                    <p className="text-sm font-bold text-blue-900 truncate">{item.name}</p>
                                                     <p className="text-[10px] text-slate-500 font-medium">Qty: {item.quantity}</p>
                                                 </div>
                                                 <p className="font-bold text-primary text-sm flex-shrink-0">
@@ -396,14 +396,14 @@ const AdminOrders = () => {
                                         ))}
                                     </div>
                                 ) : (
-                                    <p className="text-slate-600 text-sm italic">{selectedOrder.info || "No item details available."}</p>
+                                    <p className="text-slate-500 text-sm italic">{selectedOrder.info || "No item details available."}</p>
                                 )}
                             </div>
 
                             {/* Total */}
                             <div className="px-8 py-5 flex items-center justify-between">
-                                <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Order Total</p>
-                                <p className="text-2xl font-display font-black text-white">{selectedOrder.total || "—"}</p>
+                                <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Order Total</p>
+                                <p className="text-2xl font-display font-black text-blue-900">{selectedOrder.total || "—"}</p>
                             </div>
                         </>
                     )}
@@ -411,24 +411,24 @@ const AdminOrders = () => {
             </Dialog>
 
             <AlertDialog open={!!orderToDelete} onOpenChange={(open) => !open && setOrderToDelete(null)}>
-                <AlertDialogContent className="bg-slate-950 border-slate-900 text-slate-100 max-w-md rounded-[2rem]">
+                <AlertDialogContent className="bg-white border-slate-200 text-slate-900 max-w-md rounded-[2rem]">
                     <AlertDialogHeader>
                         <div className="h-12 w-12 rounded-2xl bg-red-500/10 flex items-center justify-center mb-4">
                             <AlertTriangle className="h-6 w-6 text-red-500" />
                         </div>
                         <AlertDialogTitle className="text-xl font-display font-black">Delete Order?</AlertDialogTitle>
                         <AlertDialogDescription className="text-slate-500 text-sm leading-relaxed">
-                            Are you sure you want to delete order <span className="text-white font-bold">#{orderToDelete?.id}</span>? 
+                            Are you sure you want to delete order <span className="text-blue-900 font-bold">#{orderToDelete?.id}</span>? 
                             This will permanently remove the order record from the database. This action cannot be undone.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="mt-6 gap-3">
-                        <AlertDialogCancel className="bg-slate-900 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-white h-11 px-6 rounded-xl font-bold">
+                        <AlertDialogCancel className="bg-white border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-blue-900 h-11 px-6 rounded-xl font-bold">
                             Cancel
                         </AlertDialogCancel>
                         <AlertDialogAction 
                             onClick={() => orderToDelete && handleDelete(orderToDelete.id)}
-                            className="bg-red-500 hover:bg-red-600 text-white border-none h-11 px-6 rounded-xl font-bold shadow-lg shadow-red-500/20"
+                            className="bg-red-500 hover:bg-red-600 text-blue-900 border-none h-11 px-6 rounded-xl font-bold shadow-lg shadow-red-500/20"
                         >
                             Delete Order
                         </AlertDialogAction>
@@ -440,3 +440,4 @@ const AdminOrders = () => {
 };
 
 export default AdminOrders;
+

@@ -106,7 +106,7 @@ const AdminProducts = () => {
       <Card key={p.id} className="p-4 space-y-3">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="font-semibold leading-snug truncate">{p.name}</p>
+            <p className="font-semibold leading-snug truncate text-blue-900">{p.name}</p>
             <p className="text-xs text-muted-foreground">Category: {p.category?.name || 'None'}</p>
           </div>
           <Button
@@ -191,18 +191,18 @@ const AdminProducts = () => {
       <div className="space-y-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-display font-bold tracking-tight text-slate-100">Product API List</h1>
+            <h1 className="text-3xl font-display font-bold tracking-tight text-slate-900">Product API List</h1>
             <p className="text-slate-500">Manage your product catalog items on the remote database.</p>
           </div>
         </div>
 
         <Tabs defaultValue="list" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:w-[400px] bg-slate-900 border-slate-800">
-            <TabsTrigger value="list" className="gap-2 data-[state=active]:bg-primary transition-all">
+          <TabsList className="grid w-full grid-cols-2 lg:w-[400px] bg-white border border-slate-200 rounded-xl p-1">
+            <TabsTrigger value="list" className="gap-2 rounded-lg text-slate-600 data-[state=active]:bg-primary data-[state=active]:text-white transition-all">
               <Package className="h-4 w-4" />
               Products
             </TabsTrigger>
-            <TabsTrigger value="add" className="gap-2 data-[state=active]:bg-primary transition-all">
+            <TabsTrigger value="add" className="gap-2 rounded-lg text-slate-600 data-[state=active]:bg-primary data-[state=active]:text-white transition-all">
               <Plus className="h-4 w-4" />
               Add New
             </TabsTrigger>

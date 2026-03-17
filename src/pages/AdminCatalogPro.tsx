@@ -272,17 +272,17 @@ const AdminCatalogPro = () => {
             <div className="space-y-8">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2">
                     <div>
-                        <h1 className="text-3xl font-display font-bold tracking-tight text-white mb-1">Catalog Manager</h1>
+                        <h1 className="text-3xl font-display font-bold tracking-tight text-blue-900 mb-1">Catalog Manager</h1>
                         <p className="text-slate-500 text-sm">Manage your store collections and product details. All data saved to database.</p>
                     </div>
-                    <div className="flex items-center gap-3 bg-slate-900/40 p-1.5 rounded-2xl border border-slate-900">
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-950/50 rounded-xl border border-slate-800">
+                    <div className="flex items-center gap-3 bg-white/40 p-1.5 rounded-2xl border border-slate-200">
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-white/50 rounded-xl border border-slate-200">
                             <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Store Currency</span>
                             <Select value={storeCurrency} onValueChange={setStoreCurrency}>
                                 <SelectTrigger className="h-8 w-24 bg-transparent border-none text-primary font-bold text-xs focus:ring-0">
                                     <SelectValue />
                                 </SelectTrigger>
-                                <SelectContent className="bg-slate-950 border-slate-800">
+                                <SelectContent className="bg-white border-slate-200">
                                     {CURRENCIES.map(c => (
                                         <SelectItem key={c.code} value={c.code} className="text-slate-300 focus:bg-primary focus:text-white">
                                             {c.code} ({c.symbol})
@@ -297,7 +297,7 @@ const AdminCatalogPro = () => {
                 <div className="grid gap-6 lg:grid-cols-[250px_1fr]">
                     {/* Categories Sidebar */}
                     <div className="space-y-4">
-                        <div className="flex items-center justify-between pb-2 border-b border-slate-900">
+                        <div className="flex items-center justify-between pb-2 border-b border-slate-200">
                             <span className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Categories</span>
                             <Dialog open={isAddingCategory} onOpenChange={setIsAddingCategory}>
                                 <DialogTrigger asChild>
@@ -305,7 +305,7 @@ const AdminCatalogPro = () => {
                                         <Plus className="h-4 w-4" />
                                     </Button>
                                 </DialogTrigger>
-                                <DialogContent className="bg-slate-950 border-slate-900 text-slate-100">
+                                <DialogContent className="bg-white border-slate-200 text-slate-900">
                                     <DialogHeader>
                                         <DialogTitle>Add New Category</DialogTitle>
                                         <DialogDescription className="text-slate-500">Create a new collection for your store items.</DialogDescription>
@@ -314,7 +314,7 @@ const AdminCatalogPro = () => {
                                         <div className="space-y-2">
                                             <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Category Name</Label>
                                             <Input
-                                                className="bg-slate-900/50 border-slate-800"
+                                                className="bg-white/50 border-slate-200"
                                                 placeholder="e.g. Cleaning Supplies"
                                                 value={newCategory.name}
                                                 onChange={(e) => {
@@ -330,7 +330,7 @@ const AdminCatalogPro = () => {
                                         <div className="space-y-2">
                                             <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Slug</Label>
                                             <Input
-                                                className="bg-slate-900/50 border-slate-800"
+                                                className="bg-white/50 border-slate-200"
                                                 placeholder="cleaning-supplies"
                                                 value={newCategory.slug}
                                                 onChange={(e) => setNewCategory(prev => ({ ...prev, slug: e.target.value }))}
@@ -339,7 +339,7 @@ const AdminCatalogPro = () => {
                                         <div className="space-y-2">
                                             <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Description</Label>
                                             <Textarea
-                                                className="bg-slate-900/50 border-slate-800"
+                                                className="bg-white/50 border-slate-200"
                                                 placeholder="Describe this category..."
                                                 value={newCategory.description}
                                                 onChange={(e) => setNewCategory(prev => ({ ...prev, description: e.target.value }))}
@@ -347,9 +347,9 @@ const AdminCatalogPro = () => {
                                         </div>
                                         <div className="space-y-3">
                                             <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Category Image</Label>
-                                            <div className="flex flex-col gap-4 p-4 rounded-2xl bg-slate-900/30 border border-slate-800/50">
+                                            <div className="flex flex-col gap-4 p-4 rounded-2xl bg-white/30 border border-slate-200/50">
                                                 {newCategory.image_url ? (
-                                                    <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-950 border border-slate-800">
+                                                    <div className="relative aspect-video rounded-xl overflow-hidden bg-white border border-slate-200">
                                                         <img src={newCategory.image_url} className="w-full h-full object-cover" alt="Preview" />
                                                         <Button
                                                             variant="destructive"
@@ -361,12 +361,12 @@ const AdminCatalogPro = () => {
                                                         </Button>
                                                     </div>
                                                 ) : (
-                                                    <div className="aspect-video rounded-xl border-2 border-dashed border-slate-800 flex flex-col items-center justify-center text-slate-500 gap-2">
+                                                    <div className="aspect-video rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-500 gap-2">
                                                         <ImageIcon className="h-8 w-8 opacity-20" />
                                                         <span className="text-[10px] font-medium uppercase tracking-wider opacity-40">No image selected</span>
                                                     </div>
                                                 )}
-                                                <Input type="file" accept="image/*" className="bg-slate-900 border-slate-800 h-11 file:mr-4 file:py-1 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 cursor-pointer"
+                                                <Input type="file" accept="image/*" className="bg-white border-slate-200 h-11 file:mr-4 file:py-1 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 cursor-pointer"
                                                     onChange={(e) => handleImageSelect(e.target.files?.[0], (b64) => setNewCategory(prev => ({ ...prev, image_url: b64 })))}
                                                 />
                                             </div>
@@ -397,18 +397,18 @@ const AdminCatalogPro = () => {
                                     }}
                                     className={cn(
                                         "w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm transition-all",
-                                        activeCategoryId === cat.id ? "bg-slate-900 text-white font-bold" : "text-slate-500 hover:bg-slate-900/50 hover:text-slate-300"
+                                        activeCategoryId === cat.id ? "bg-blue-50 text-blue-900 font-bold ring-1 ring-blue-200" : "text-slate-500 hover:bg-white/50 hover:text-slate-700"
                                     )}
                                 >
                                     <span className="truncate">{cat.name}</span>
-                                    <Badge variant="secondary" className={cn("ml-2 text-[10px] font-black px-1.5 border-none", activeCategoryId === cat.id ? "bg-primary text-primary-foreground" : "bg-slate-800 text-slate-500")}>
+                                    <Badge variant="secondary" className={cn("ml-2 text-[10px] font-black px-1.5 border-none", activeCategoryId === cat.id ? "bg-primary text-primary-foreground" : "bg-slate-100 text-slate-500")}>
                                         {products.filter(p => p.category_id === cat.id).length}
                                     </Badge>
                                 </button>
                             ))}
                         </div>
 
-                        <div className="pt-4 mt-4 border-t border-slate-900">
+                        <div className="pt-4 mt-4 border-t border-slate-200">
                             <button
                                 onClick={() => {
                                     setViewingNewArrivals(!viewingNewArrivals);
@@ -416,14 +416,14 @@ const AdminCatalogPro = () => {
                                 }}
                                 className={cn(
                                     "w-full flex items-center justify-between px-3 py-3 rounded-xl text-sm transition-all",
-                                    viewingNewArrivals ? "bg-primary text-white font-bold" : "text-slate-500 hover:bg-slate-900/50 hover:text-slate-300"
+                                    viewingNewArrivals ? "bg-primary text-white font-bold" : "text-slate-500 hover:bg-white/50 hover:text-slate-300"
                                 )}
                             >
                                 <div className="flex items-center">
                                     <Badge className="mr-2 bg-amber-500/20 text-amber-500 border-none">NEW</Badge>
                                     <span>New Arrivals</span>
                                 </div>
-                                <Badge variant="secondary" className={cn("ml-2 text-[10px] font-black px-1.5 border-none", viewingNewArrivals ? "bg-white text-primary" : "bg-slate-800 text-slate-500")}>
+                                <Badge variant="secondary" className={cn("ml-2 text-[10px] font-black px-1.5 border-none", viewingNewArrivals ? "bg-white text-primary" : "bg-slate-100 text-slate-500")}>
                                     {products.filter(p => p.is_new_arrival).length}
                                 </Badge>
                             </button>
@@ -435,14 +435,14 @@ const AdminCatalogPro = () => {
                                 }}
                                 className={cn(
                                     "w-full flex items-center justify-between px-3 py-3 rounded-xl text-sm transition-all mt-2",
-                                    viewingHotDeals ? "bg-red-600 text-white font-bold" : "text-slate-500 hover:bg-slate-900/50 hover:text-slate-300"
+                                    viewingHotDeals ? "bg-red-600 text-white font-bold" : "text-slate-500 hover:bg-white/50 hover:text-slate-300"
                                 )}
                             >
                                 <div className="flex items-center">
                                     <Badge className="mr-2 bg-red-600/20 text-red-500 border-none">HOT</Badge>
                                     <span>Hot Deals</span>
                                 </div>
-                                <Badge variant="secondary" className={cn("ml-2 text-[10px] font-black px-1.5 border-none", viewingHotDeals ? "bg-white text-red-600" : "bg-slate-800 text-slate-500")}>
+                                <Badge variant="secondary" className={cn("ml-2 text-[10px] font-black px-1.5 border-none", viewingHotDeals ? "bg-white text-red-600" : "bg-slate-100 text-slate-500")}>
                                     {products.filter(p => p.is_hot_deal).length}
                                 </Badge>
                             </button>
@@ -460,9 +460,9 @@ const AdminCatalogPro = () => {
                                     </h2>
                                     <p className="text-slate-500 text-xs mt-1">Manage products featured in the New Arrivals section of the shop.</p>
                                 </div>
-                                <div className="bg-slate-900/40 border border-slate-900 rounded-3xl overflow-hidden p-6 lg:p-8 space-y-6">
+                                <div className="bg-white/40 border border-slate-200 rounded-3xl overflow-hidden p-6 lg:p-8 space-y-6">
                                     {products.filter(p => p.is_new_arrival).length === 0 ? (
-                                        <div className="text-center py-20 bg-slate-950/30 rounded-2xl border-2 border-dashed border-slate-900">
+                                        <div className="text-center py-20 bg-white/30 rounded-2xl border-2 border-dashed border-slate-200">
                                             <Package className="h-12 w-12 text-slate-900 mx-auto mb-4" />
                                             <p className="text-slate-600 font-medium">No products marked as New Arrivals.</p>
                                         </div>
@@ -491,9 +491,9 @@ const AdminCatalogPro = () => {
                                     </h2>
                                     <p className="text-slate-500 text-xs mt-1">Manage products with discounted prices featured in the Hot Deals section.</p>
                                 </div>
-                                <div className="bg-slate-900/40 border border-slate-900 rounded-3xl overflow-hidden p-6 lg:p-8 space-y-6">
+                                <div className="bg-white/40 border border-slate-200 rounded-3xl overflow-hidden p-6 lg:p-8 space-y-6">
                                     {products.filter(p => p.is_hot_deal).length === 0 ? (
-                                        <div className="text-center py-20 bg-slate-950/30 rounded-2xl border-2 border-dashed border-slate-900">
+                                        <div className="text-center py-20 bg-white/30 rounded-2xl border-2 border-dashed border-slate-200">
                                             <Package className="h-12 w-12 text-slate-900 mx-auto mb-4" />
                                             <p className="text-slate-600 font-medium">No products marked as Hot Deals.</p>
                                         </div>
@@ -516,14 +516,14 @@ const AdminCatalogPro = () => {
                         ) : activeCategory ? (
                             <>
                                 {/* Category Details Card */}
-                                <div className="bg-slate-900/40 border border-slate-900 rounded-3xl p-6 lg:p-8 space-y-8">
-                                    <div className="flex items-center justify-between border-b border-slate-900/50 pb-6">
+                                <div className="bg-white/40 border border-slate-200 rounded-3xl p-6 lg:p-8 space-y-8">
+                                    <div className="flex items-center justify-between border-b border-slate-200/50 pb-6">
                                         <div className="flex items-center gap-4">
                                             <div>
-                                                <h2 className="text-xl font-bold text-white">Category Details</h2>
+                                                <h2 className="text-xl font-bold text-blue">Category Details</h2>
                                                 <p className="text-slate-500 text-xs mt-1 font-mono">ID: {activeCategory.id}</p>
                                             </div>
-                                            <div className="w-[1px] h-8 bg-slate-800" />
+                                            <div className="w-[1px] h-8 bg-slate-100" />
                                             <Button
                                                 variant={isEditingCategory ? "default" : "secondary"}
                                                 size="sm"
@@ -532,7 +532,7 @@ const AdminCatalogPro = () => {
                                                     "h-10 px-6 rounded-xl font-bold text-xs uppercase tracking-wider transition-all",
                                                     isEditingCategory
                                                         ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
-                                                        : "bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200"
+                                                        : "bg-slate-100 text-slate-400 hover:bg-slate-700 hover:text-slate-900"
                                                 )}
                                             >
                                                 {isEditingCategory ? (
@@ -553,7 +553,7 @@ const AdminCatalogPro = () => {
                                             <Input
                                                 disabled={!isEditingCategory}
                                                 className={cn(
-                                                    "bg-slate-950/50 border-slate-900 h-12 rounded-xl focus:ring-primary/20 transition-all",
+                                                    "bg-white/50 border-slate-200 h-12 rounded-xl focus:ring-primary/20 transition-all",
                                                     !isEditingCategory && "opacity-60 cursor-not-allowed grayscale border-transparent"
                                                 )}
                                                 value={activeCategory.name}
@@ -574,7 +574,7 @@ const AdminCatalogPro = () => {
                                             <Input
                                                 disabled={!isEditingCategory}
                                                 className={cn(
-                                                    "bg-slate-950/50 border-slate-900 h-12 rounded-xl focus:ring-primary/20 transition-all",
+                                                    "bg-white/50 border-slate-200 h-12 rounded-xl focus:ring-primary/20 transition-all",
                                                     !isEditingCategory && "opacity-60 cursor-not-allowed grayscale border-transparent"
                                                 )}
                                                 value={activeCategory.slug}
@@ -590,7 +590,7 @@ const AdminCatalogPro = () => {
                                             <Textarea
                                                 disabled={!isEditingCategory}
                                                 className={cn(
-                                                    "bg-slate-950/50 border-slate-900 min-h-[80px] rounded-xl focus:ring-primary/20 transition-all",
+                                                    "bg-white/50 border-slate-200 min-h-[80px] rounded-xl focus:ring-primary/20 transition-all",
                                                     !isEditingCategory && "opacity-60 cursor-not-allowed grayscale border-transparent"
                                                 )}
                                                 value={activeCategory.description ?? ""}
@@ -603,12 +603,12 @@ const AdminCatalogPro = () => {
                                         </div>
                                         <div className="space-y-2 md:col-span-2">
                                             <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Category Image</Label>
-                                            <div className="flex gap-4 items-center p-4 rounded-2xl bg-slate-950/30 border border-slate-900">
-                                                <div className="h-20 w-20 rounded-xl overflow-hidden bg-slate-950 border border-slate-800 flex-shrink-0">
+                                            <div className="flex gap-4 items-center p-4 rounded-2xl bg-white/30 border border-slate-200">
+                                                <div className="h-20 w-20 rounded-xl overflow-hidden bg-white border border-slate-200 flex-shrink-0">
                                                     {activeCategory.image_url ? (
                                                         <img src={activeCategory.image_url} alt="Category" className="h-full w-full object-cover" />
                                                     ) : (
-                                                        <div className="h-full w-full flex items-center justify-center bg-slate-900"><ImageIcon className="h-8 w-8 text-slate-800" /></div>
+                                                        <div className="h-full w-full flex items-center justify-center bg-white"><ImageIcon className="h-8 w-8 text-slate-800" /></div>
                                                     )}
                                                 </div>
                                                 <div className="flex-1 space-y-3">
@@ -617,7 +617,7 @@ const AdminCatalogPro = () => {
                                                         accept="image/*"
                                                         disabled={!isEditingCategory}
                                                         className={cn(
-                                                            "bg-slate-950 border-slate-900 h-10 text-xs",
+                                                            "bg-white border-slate-200 h-10 text-xs",
                                                             !isEditingCategory && "hidden"
                                                         )}
                                                         onChange={(e) => handleImageSelect(e.target.files?.[0], (b64) => handleUpdateCategory(activeCategory.id, { image_url: b64 }))}
@@ -631,10 +631,10 @@ const AdminCatalogPro = () => {
                                 </div>
 
                                 {/* Sub-categories Card */}
-                                <div className="bg-slate-900/40 border border-slate-900 rounded-3xl p-6 lg:p-8 space-y-6">
-                                    <div className="flex items-center justify-between border-b border-slate-900/50 pb-6">
+                                <div className="bg-white/40 border border-slate-200 rounded-3xl p-6 lg:p-8 space-y-6">
+                                    <div className="flex items-center justify-between border-b border-slate-200/50 pb-6">
                                         <div>
-                                            <h2 className="text-xl font-bold text-white">Sub-categories</h2>
+                                            <h2 className="text-xl font-bold text-blue">Sub-categories</h2>
                                             <p className="text-slate-500 text-xs mt-1">Refine your category with sub-collections.</p>
                                         </div>
                                         <Dialog open={isAddingSubCategory} onOpenChange={setIsAddingSubCategory}>
@@ -643,7 +643,7 @@ const AdminCatalogPro = () => {
                                                     <Plus className="h-4 w-4 mr-2" /> Add Sub-category
                                                 </Button>
                                             </DialogTrigger>
-                                            <DialogContent className="bg-slate-950 border-slate-900 text-slate-100">
+                                            <DialogContent className="bg-white border-slate-200 text-slate-900">
                                                 <DialogHeader>
                                                     <DialogTitle>Add Sub-category</DialogTitle>
                                                     <DialogDescription className="text-slate-500">Creating sub-collection for {activeCategory.name}.</DialogDescription>
@@ -652,7 +652,7 @@ const AdminCatalogPro = () => {
                                                     <div className="space-y-2">
                                                         <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Name</Label>
                                                         <Input
-                                                            className="bg-slate-900/50 border-slate-800"
+                                                            className="bg-white/50 border-slate-200"
                                                             placeholder="e.g. Floor Chemicals"
                                                             value={newSubCategory.name}
                                                             onChange={(e) => {
@@ -668,7 +668,7 @@ const AdminCatalogPro = () => {
                                                     <div className="space-y-2">
                                                         <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Slug</Label>
                                                         <Input
-                                                            className="bg-slate-900/50 border-slate-800"
+                                                            className="bg-white/50 border-slate-200"
                                                             placeholder="floor-chemicals"
                                                             value={newSubCategory.slug}
                                                             onChange={(e) => setNewSubCategory(prev => ({ ...prev, slug: e.target.value }))}
@@ -688,12 +688,12 @@ const AdminCatalogPro = () => {
 
                                     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                                         {subCategories.filter(s => s.category_id === activeCategory.id).length === 0 ? (
-                                            <div className="col-span-full py-6 text-center text-slate-600 bg-slate-950/20 rounded-2xl border border-dashed border-slate-900">
+                                            <div className="col-span-full py-6 text-center text-slate-600 bg-white/20 rounded-2xl border border-dashed border-slate-200">
                                                 No sub-categories defined.
                                             </div>
                                         ) : (
                                             subCategories.filter(s => s.category_id === activeCategory.id).map((sub) => (
-                                                <div key={sub.id} className="group relative bg-slate-950/50 border border-slate-900 p-4 rounded-xl flex items-center justify-between hover:border-slate-800 transition-colors">
+                                                <div key={sub.id} className="group relative bg-white/50 border border-slate-200 p-4 rounded-xl flex items-center justify-between hover:border-slate-200 transition-colors">
                                                     <div className="flex-1 min-w-0 pr-8">
                                                         <input 
                                                             className="bg-transparent border-none text-sm font-bold text-slate-300 w-full focus:outline-none focus:text-primary"
@@ -718,10 +718,10 @@ const AdminCatalogPro = () => {
                                 </div>
 
                                 {/* Products Card */}
-                                <div className="bg-slate-900/40 border border-slate-900 rounded-3xl overflow-hidden">
-                                    <div className="p-6 lg:p-8 border-b border-slate-900 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/20">
+                                <div className="bg-white/40 border border-slate-200 rounded-3xl overflow-hidden">
+                                    <div className="p-6 lg:p-8 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/20">
                                         <div>
-                                            <h2 className="text-xl font-bold text-white">Product Inventory</h2>
+                                            <h2 className="text-xl font-bold text-blue">Product Inventory</h2>
                                             <p className="text-slate-500 text-xs mt-1">Items under this category, saved to database.</p>
                                         </div>
                                         <Dialog open={isAddingProduct} onOpenChange={setIsAddingProduct}>
@@ -730,7 +730,7 @@ const AdminCatalogPro = () => {
                                                     <Plus className="h-4 w-4 mr-2" /> Add Product
                                                 </Button>
                                             </DialogTrigger>
-                                            <DialogContent className="bg-slate-950 border-slate-900 text-slate-100 max-w-lg">
+                                            <DialogContent className="bg-white border-slate-200 text-slate-900 max-w-lg">
                                                 <DialogHeader>
                                                     <DialogTitle>Add New Product</DialogTitle>
                                                     <DialogDescription className="text-slate-500">
@@ -742,7 +742,7 @@ const AdminCatalogPro = () => {
                                                         <div className="space-y-2">
                                                             <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Product Name</Label>
                                                             <Input
-                                                                className="bg-slate-900/50 border-slate-800"
+                                                                className="bg-white/50 border-slate-200"
                                                                 placeholder="e.g. Premium Floor Cleaner"
                                                                 value={newProduct.name}
                                                                 onChange={(e) => {
@@ -770,10 +770,10 @@ const AdminCatalogPro = () => {
                                                                 value={newProduct.sub_category_id ? String(newProduct.sub_category_id) : "none"} 
                                                                 onValueChange={(val) => setNewProduct(prev => ({ ...prev, sub_category_id: val === "none" ? null : Number(val) }))}
                                                             >
-                                                                <SelectTrigger className="bg-slate-900/50 border-slate-800 h-10">
+                                                                <SelectTrigger className="bg-white/50 border-slate-200 h-10">
                                                                     <SelectValue placeholder="Select Sub-product" />
                                                                 </SelectTrigger>
-                                                                <SelectContent className="bg-slate-950 border-slate-800">
+                                                                <SelectContent className="bg-white border-slate-200">
                                                                     <SelectItem value="none">None</SelectItem>
                                                                     {subCategories.filter(s => s.category_id === activeCategory.id).map(s => (
                                                                         <SelectItem key={s.id} value={String(s.id)}>{s.name}</SelectItem>
@@ -784,7 +784,7 @@ const AdminCatalogPro = () => {
                                                         <div className="space-y-2">
                                                             <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Slug</Label>
                                                             <Input
-                                                                className="bg-slate-900/50 border-slate-800"
+                                                                className="bg-white/50 border-slate-200"
                                                                 placeholder="premium-floor-cleaner"
                                                                 value={newProduct.slug}
                                                                 onChange={(e) => setNewProduct(prev => ({ ...prev, slug: e.target.value }))}
@@ -798,10 +798,10 @@ const AdminCatalogPro = () => {
                                                                 value={newProduct.is_new_arrival ? "yes" : "no"} 
                                                                 onValueChange={(val) => setNewProduct(prev => ({ ...prev, is_new_arrival: val === "yes" }))}
                                                             >
-                                                                <SelectTrigger className="bg-slate-900/50 border-slate-800 h-10">
+                                                                <SelectTrigger className="bg-white/50 border-slate-200 h-10">
                                                                     <SelectValue />
                                                                 </SelectTrigger>
-                                                                <SelectContent className="bg-slate-950 border-slate-800">
+                                                                <SelectContent className="bg-white border-slate-200">
                                                                     <SelectItem value="yes">Yes, show in New Arrivals</SelectItem>
                                                                     <SelectItem value="no">No</SelectItem>
                                                                 </SelectContent>
@@ -813,10 +813,10 @@ const AdminCatalogPro = () => {
                                                                 value={newProduct.is_hot_deal ? "yes" : "no"} 
                                                                 onValueChange={(val) => setNewProduct(prev => ({ ...prev, is_hot_deal: val === "yes" }))}
                                                             >
-                                                                <SelectTrigger className={cn("bg-slate-900/50 border-slate-800 h-10", newProduct.is_hot_deal && "text-red-500")}>
+                                                                <SelectTrigger className={cn("bg-white/50 border-slate-200 h-10", newProduct.is_hot_deal && "text-red-500")}>
                                                                     <SelectValue />
                                                                 </SelectTrigger>
-                                                                <SelectContent className="bg-slate-950 border-slate-800">
+                                                                <SelectContent className="bg-white border-slate-200">
                                                                     <SelectItem value="yes">Yes, show in Hot Deals</SelectItem>
                                                                     <SelectItem value="no">No</SelectItem>
                                                                 </SelectContent>
@@ -829,7 +829,7 @@ const AdminCatalogPro = () => {
                                                             <Input
                                                                 type="number"
                                                                 step="any"
-                                                                className="bg-slate-900/50 border-slate-800"
+                                                                className="bg-white/50 border-slate-200"
                                                                 placeholder="0"
                                                                 value={(newProduct.price !== undefined && newProduct.price !== null) ? Number(newProduct.price).toString() : ""}
                                                                 onChange={(e) => setNewProduct(prev => ({ ...prev, price: parseFloat(e.target.value) }))}
@@ -840,14 +840,14 @@ const AdminCatalogPro = () => {
                                                             <Input
                                                                 type="number"
                                                                 step="any"
-                                                                className={cn("bg-slate-900/50 border-slate-800", newProduct.is_hot_deal && "border-red-900/50 focus:border-red-500")}
+                                                                className={cn("bg-white/50 border-slate-200", newProduct.is_hot_deal && "border-red-900/50 focus:border-red-500")}
                                                                 placeholder="0"
                                                                 value={(newProduct.discount_price !== undefined && newProduct.discount_price !== null) ? Number(newProduct.discount_price).toString() : ""}
                                                                 onChange={(e) => setNewProduct(prev => ({ ...prev, discount_price: parseFloat(e.target.value) }))}
                                                             />
                                                         </div>
                                                     </div>
-                                                    <div className="border-y border-slate-900 py-6 my-2">
+                                                    <div className="border-y border-slate-200 py-6 my-2">
                                                         <VariantsEditor 
                                                             variants={newProduct.variants}
                                                             onChange={(variants) => setNewProduct(prev => ({ ...prev, variants }))}
@@ -857,7 +857,7 @@ const AdminCatalogPro = () => {
                                                     <div className="space-y-2">
                                                         <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Description</Label>
                                                         <Textarea
-                                                            className="bg-slate-900/50 border-slate-800"
+                                                            className="bg-white/50 border-slate-200"
                                                             placeholder="Product description and details..."
                                                             value={newProduct.description}
                                                             onChange={(e) => setNewProduct(prev => ({ ...prev, description: e.target.value }))}
@@ -865,9 +865,9 @@ const AdminCatalogPro = () => {
                                                     </div>
                                                     <div className="space-y-3">
                                                         <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Main Product Image</Label>
-                                                        <div className="flex flex-col gap-4 p-4 rounded-2xl bg-slate-900/30 border border-slate-800/50">
+                                                        <div className="flex flex-col gap-4 p-4 rounded-2xl bg-white/30 border border-slate-200/50">
                                                             {newProduct.image_url ? (
-                                                                <div className="relative aspect-square w-32 mx-auto rounded-xl overflow-hidden bg-slate-950 border border-slate-800">
+                                                                <div className="relative aspect-square w-32 mx-auto rounded-xl overflow-hidden bg-white border border-slate-200">
                                                                     <img src={newProduct.image_url} className="w-full h-full object-cover" alt="Preview" />
                                                                     <Button
                                                                         variant="ghost"
@@ -879,11 +879,11 @@ const AdminCatalogPro = () => {
                                                                     </Button>
                                                                 </div>
                                                             ) : (
-                                                                <div className="aspect-square w-32 mx-auto rounded-xl border-2 border-dashed border-slate-800 flex flex-col items-center justify-center text-slate-500 gap-2">
+                                                                <div className="aspect-square w-32 mx-auto rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-500 gap-2">
                                                                     <ImageIcon className="h-6 w-6 opacity-20" />
                                                                 </div>
                                                             )}
-                                                            <Input type="file" accept="image/*" className="bg-slate-900 border-slate-800 h-10 text-xs"
+                                                            <Input type="file" accept="image/*" className="bg-white border-slate-200 h-10 text-xs"
                                                                 onChange={(e) => handleImageSelect(e.target.files?.[0], (b64) => setNewProduct(prev => ({ ...prev, image_url: b64 })))}
                                                             />
                                                         </div>
@@ -891,28 +891,28 @@ const AdminCatalogPro = () => {
                                                     <div className="grid grid-cols-2 gap-4">
                                                         <div className="space-y-2">
                                                             <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Gallery Image 2</Label>
-                                                            <div className="space-y-3 p-3 rounded-xl bg-slate-900/30 border border-slate-800/50">
+                                                            <div className="space-y-3 p-3 rounded-xl bg-white/30 border border-slate-200/50">
                                                                 {newProduct.image_url_2 && (
-                                                                    <div className="relative aspect-square rounded-lg overflow-hidden border border-slate-800">
+                                                                    <div className="relative aspect-square rounded-lg overflow-hidden border border-slate-200">
                                                                         <img src={newProduct.image_url_2} className="w-full h-full object-cover" />
                                                                         <button onClick={() => setNewProduct(prev => ({ ...prev, image_url_2: "" }))} className="absolute top-1 right-1 p-1 bg-black/60 rounded text-red-400"><Trash2 className="h-3 w-3" /></button>
                                                                     </div>
                                                                 )}
-                                                                <Input type="file" accept="image/*" className="h-8 text-[10px] bg-slate-900 border-slate-800"
+                                                                <Input type="file" accept="image/*" className="h-8 text-[10px] bg-white border-slate-200"
                                                                     onChange={(e) => handleImageSelect(e.target.files?.[0], (b64) => setNewProduct(prev => ({ ...prev, image_url_2: b64 })))}
                                                                 />
                                                             </div>
                                                         </div>
                                                         <div className="space-y-2">
                                                             <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Gallery Image 3</Label>
-                                                            <div className="space-y-3 p-3 rounded-xl bg-slate-900/30 border border-slate-800/50">
+                                                            <div className="space-y-3 p-3 rounded-xl bg-white/30 border border-slate-200/50">
                                                                 {newProduct.image_url_3 && (
-                                                                    <div className="relative aspect-square rounded-lg overflow-hidden border border-slate-800">
+                                                                    <div className="relative aspect-square rounded-lg overflow-hidden border border-slate-200">
                                                                         <img src={newProduct.image_url_3} className="w-full h-full object-cover" />
                                                                         <button onClick={() => setNewProduct(prev => ({ ...prev, image_url_3: "" }))} className="absolute top-1 right-1 p-1 bg-black/60 rounded text-red-400"><Trash2 className="h-3 w-3" /></button>
                                                                     </div>
                                                                 )}
-                                                                <Input type="file" accept="image/*" className="h-8 text-[10px] bg-slate-900 border-slate-800"
+                                                                <Input type="file" accept="image/*" className="h-8 text-[10px] bg-white border-slate-200"
                                                                     onChange={(e) => handleImageSelect(e.target.files?.[0], (b64) => setNewProduct(prev => ({ ...prev, image_url_3: b64 })))}
                                                                 />
                                                             </div>
@@ -935,7 +935,7 @@ const AdminCatalogPro = () => {
                                     </div>
                                     <div className="p-6 lg:p-8 space-y-6">
                                         {activeCategoryProducts.length === 0 ? (
-                                            <div className="text-center py-20 bg-slate-950/30 rounded-2xl border-2 border-dashed border-slate-900">
+                                            <div className="text-center py-20 bg-white/30 rounded-2xl border-2 border-dashed border-slate-200">
                                                 <Package className="h-12 w-12 text-slate-900 mx-auto mb-4" />
                                                 <p className="text-slate-600 font-medium">No products in this category.</p>
                                             </div>
@@ -957,7 +957,7 @@ const AdminCatalogPro = () => {
                                 </div>
                             </>
                         ) : (
-                            <div className="h-[500px] flex flex-col items-center justify-center text-slate-700 bg-slate-900/20 rounded-3xl border border-slate-900 border-dashed">
+                            <div className="h-[500px] flex flex-col items-center justify-center text-slate-700 bg-white/20 rounded-3xl border border-slate-200 border-dashed">
                                 <Package className="h-16 w-16 opacity-10 mb-6" />
                                 <p className="font-bold text-lg">No Categories Yet</p>
                                 <p className="text-sm text-slate-600 mt-1">Click + to add your first category.</p>
@@ -991,7 +991,7 @@ const DeleteConfirmDialog = ({
 }) => {
     return (
         <AlertDialog open={!!item} onOpenChange={onOpenChange}>
-            <AlertDialogContent className="bg-slate-950 border-slate-900 text-slate-100 max-w-md rounded-[2rem]">
+            <AlertDialogContent className="bg-white border-slate-200 text-slate-900 max-w-md rounded-[2rem]">
                 <AlertDialogHeader>
                     <div className="h-12 w-12 rounded-2xl bg-red-500/10 flex items-center justify-center mb-4">
                         <AlertTriangle className="h-6 w-6 text-red-500" />
@@ -1005,7 +1005,7 @@ const DeleteConfirmDialog = ({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter className="mt-6 gap-3">
-                    <AlertDialogCancel className="bg-slate-900 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-white h-11 px-6 rounded-xl font-bold">
+                    <AlertDialogCancel className="bg-white border-slate-200 text-slate-400 hover:bg-slate-100 hover:text-white h-11 px-6 rounded-xl font-bold">
                         Cancel
                     </AlertDialogCancel>
                     <AlertDialogAction
@@ -1053,12 +1053,12 @@ const ProductItem = ({
         <div id={`product-${p.id}`} className={cn(
             "p-6 rounded-2xl border transition-all scroll-mt-20",
             isEditing
-                ? "bg-slate-900 border-primary/50 shadow-2xl shadow-primary/10 ring-1 ring-primary/20"
-                : "border-slate-900 bg-slate-950/30 hover:bg-slate-900/40 hover:border-slate-800"
+                ? "bg-white border-primary/50 shadow-2xl shadow-primary/10 ring-1 ring-primary/20"
+                : "border-slate-200 bg-white/30 hover:bg-white/40 hover:border-slate-200"
         )}>
             <div className="flex flex-col lg:flex-row gap-6">
                 {/* Primary Image */}
-                <div className="relative h-24 w-24 rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 flex-shrink-0">
+                <div className="relative h-24 w-24 rounded-2xl overflow-hidden bg-white border border-slate-200 flex-shrink-0">
                     {p.image_url ? (
                         <img src={p.image_url} alt={p.name} className="h-full w-full object-cover" />
                     ) : (
@@ -1097,7 +1097,7 @@ const ProductItem = ({
                                     }}
                                     placeholder="Product Name"
                                     className={cn(
-                                        "font-bold h-10 text-xl border-none bg-transparent p-0 focus:outline-none w-full text-white placeholder:text-slate-800 transition-all",
+                                        "font-bold h-10 text-xl border-none bg-transparent p-0 focus:outline-none w-full text-blue-900 placeholder:text-slate-800 transition-all",
                                         !isEditing && "opacity-60 cursor-not-allowed"
                                     )}
                                 />
@@ -1121,26 +1121,26 @@ const ProductItem = ({
                                         "h-10 px-4 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all",
                                         isEditing
                                             ? "bg-primary text-primary-foreground"
-                                            : "bg-slate-900 border-slate-800 text-slate-500 hover:text-primary hover:border-primary/50"
+                                            : "bg-white border-slate-200 text-slate-500 hover:text-primary hover:border-primary/50"
                                     )}
                                 >
                                     {isEditing ? <><X className="h-3.5 w-3.5 mr-2" /> Done</> : <><Plus className="h-3.5 w-3.5 mr-2" /> Edit Item</>}
                                 </Button>
                                 <div className={cn(
-                                    "relative flex items-center bg-slate-900/80 border border-slate-800 rounded-xl overflow-hidden transition-all",
+                                    "relative flex items-center bg-white/80 border border-slate-200 rounded-xl overflow-hidden transition-all",
                                     !isEditing && "opacity-40 grayscale"
                                 )}>
                                     <Select value={currency} onValueChange={setCurrency} disabled={!isEditing}>
                                         <SelectTrigger className="h-10 w-16 bg-transparent border-none text-[10px] font-bold text-primary focus:ring-0 px-2 shrink-0">
                                             <SelectValue />
                                         </SelectTrigger>
-                                        <SelectContent className="bg-slate-950 border-slate-800">
+                                        <SelectContent className="bg-white border-slate-200">
                                             {CURRENCIES.map(c => (
                                                 <SelectItem key={c.code} value={c.code} className="text-slate-300 focus:bg-primary focus:text-white">{c.symbol}</SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    <div className="w-[1px] h-4 bg-slate-800 shrink-0" />
+                                    <div className="w-[1px] h-4 bg-slate-100 shrink-0" />
                                     <input
                                         disabled={!isEditing}
                                         type="number"
@@ -1162,7 +1162,7 @@ const ProductItem = ({
                                     />
                                     {(p.is_hot_deal || isEditing) && (
                                         <>
-                                            <div className="w-[1px] h-4 bg-slate-800 shrink-0" />
+                                            <div className="w-[1px] h-4 bg-slate-100 shrink-0" />
                                             <div className="flex items-center bg-red-950/20 px-2 group-hover:bg-red-950/40 transition-colors">
                                                 <span className="text-[10px] font-black text-red-500 mr-1">$</span>
                                                 <input
@@ -1202,10 +1202,10 @@ const ProductItem = ({
                                         onUpdate({ sub_category_id: subId });
                                     }}
                                 >
-                                    <SelectTrigger className="h-8 bg-slate-900 border-slate-800 text-[10px] font-bold">
+                                    <SelectTrigger className="h-8 bg-white border-slate-200 text-[10px] font-bold">
                                         <SelectValue />
                                     </SelectTrigger>
-                                    <SelectContent className="bg-slate-950 border-slate-800">
+                                    <SelectContent className="bg-white border-slate-200">
                                         <SelectItem value="none">None</SelectItem>
                                         {subCats.map(s => (
                                             <SelectItem key={s.id} value={String(s.id)}>{s.name}</SelectItem>
@@ -1224,10 +1224,10 @@ const ProductItem = ({
                                         onUpdate({ is_hot_deal: isHot });
                                     }}
                                 >
-                                    <SelectTrigger className={cn("h-8 bg-slate-900 border-slate-800 text-[10px] font-bold", draft.is_hot_deal && "text-red-500 border-red-900/50")}>
+                                    <SelectTrigger className={cn("h-8 bg-white border-slate-200 text-[10px] font-bold", draft.is_hot_deal && "text-red-500 border-red-900/50")}>
                                         <SelectValue />
                                     </SelectTrigger>
-                                    <SelectContent className="bg-slate-950 border-slate-800">
+                                    <SelectContent className="bg-white border-slate-200">
                                         <SelectItem value="yes">Yes</SelectItem>
                                         <SelectItem value="no">No</SelectItem>
                                     </SelectContent>
@@ -1244,10 +1244,10 @@ const ProductItem = ({
                                         onUpdate({ is_new_arrival: isNew });
                                     }}
                                 >
-                                    <SelectTrigger className="h-8 bg-slate-900 border-slate-800 text-[10px] font-bold">
+                                    <SelectTrigger className="h-8 bg-white border-slate-200 text-[10px] font-bold">
                                         <SelectValue />
                                     </SelectTrigger>
-                                    <SelectContent className="bg-slate-950 border-slate-800">
+                                    <SelectContent className="bg-white border-slate-200">
                                         <SelectItem value="yes">Yes</SelectItem>
                                         <SelectItem value="no">No</SelectItem>
                                     </SelectContent>
@@ -1265,14 +1265,14 @@ const ProductItem = ({
                                     }}
                                     placeholder="product-slug"
                                     className={cn(
-                                        "h-8 text-[11px] font-mono text-slate-500 bg-slate-900 border border-slate-800 rounded px-2 focus:outline-none focus:text-primary transition-colors hover:text-slate-400 w-full",
+                                        "h-8 text-[11px] font-mono text-slate-500 bg-white border border-slate-200 rounded px-2 focus:outline-none focus:text-primary transition-colors hover:text-slate-400 w-full",
                                         !isEditing && "opacity-40"
                                     )}
                                 />
                             </div>
                         </div>
                     </div>
-                        <div className="border-t border-slate-900 pt-6 mt-2">
+                        <div className="border-t border-slate-200 pt-6 mt-2">
                             <VariantsEditor 
                                 variants={draft.variants || []}
                                 isEditing={isEditing}
@@ -1294,7 +1294,7 @@ const ProductItem = ({
                             onBlur={(e) => { if (e.target.value !== p.description) onUpdate({ description: e.target.value }); }}
                             placeholder="Product description..."
                             className={cn(
-                                "bg-slate-900/50 border-slate-800 rounded-xl text-xs text-slate-400 min-h-[80px] focus:ring-primary/20 transition-all",
+                                "bg-white/50 border-slate-200 rounded-xl text-xs text-slate-400 min-h-[80px] focus:ring-primary/20 transition-all",
                                 !isEditing && "opacity-40 grayscale border-transparent cursor-not-allowed"
                             )}
                         />
@@ -1305,8 +1305,8 @@ const ProductItem = ({
                         <Label className="text-[10px] font-black uppercase tracking-widest text-slate-600 ml-1">Gallery Images</Label>
                         <div className="grid gap-4 sm:grid-cols-2">
                             {/* Image 2 */}
-                            <div className="group/it relative h-14 rounded-xl border border-slate-800 bg-slate-900 overflow-hidden flex items-center p-2 gap-3 hover:border-slate-700 transition-colors">
-                                <div className="h-10 w-10 rounded-lg overflow-hidden bg-slate-950 border border-slate-800 shrink-0">
+                            <div className="group/it relative h-14 rounded-xl border border-slate-200 bg-white overflow-hidden flex items-center p-2 gap-3 hover:border-slate-300 transition-colors">
+                                <div className="h-10 w-10 rounded-lg overflow-hidden bg-white border border-slate-200 shrink-0">
                                     {p.image_url_2 ? <img src={p.image_url_2} className="h-full w-full object-cover" /> : <div className="h-full w-full flex items-center justify-center opacity-20"><ImageIcon className="h-5 w-5" /></div>}
                                 </div>
                                 <div className="flex-1 flex items-center gap-2">
@@ -1315,7 +1315,7 @@ const ProductItem = ({
                                         accept="image/*"
                                         disabled={!isEditing}
                                         className={cn(
-                                            "h-8 text-[10px] bg-slate-950 border-slate-800 file:bg-slate-800 file:text-slate-300 file:border-0 file:rounded-md file:mr-2",
+                                            "h-8 text-[10px] bg-white border-slate-200 file:bg-slate-100 file:text-slate-300 file:border-0 file:rounded-md file:mr-2",
                                             !isEditing && "hidden"
                                         )}
                                         onChange={(e) => handleImageSelect(e.target.files?.[0], (b64) => onUpdate({ image_url_2: b64 }))}
@@ -1329,8 +1329,8 @@ const ProductItem = ({
                                 </div>
                             </div>
                             {/* Image 3 */}
-                            <div className="group/it relative h-14 rounded-xl border border-slate-800 bg-slate-900 overflow-hidden flex items-center p-2 gap-3 hover:border-slate-700 transition-colors">
-                                <div className="h-10 w-10 rounded-lg overflow-hidden bg-slate-950 border border-slate-800 shrink-0">
+                            <div className="group/it relative h-14 rounded-xl border border-slate-200 bg-white overflow-hidden flex items-center p-2 gap-3 hover:border-slate-300 transition-colors">
+                                <div className="h-10 w-10 rounded-lg overflow-hidden bg-white border border-slate-200 shrink-0">
                                     {p.image_url_3 ? <img src={p.image_url_3} className="h-full w-full object-cover" /> : <div className="h-full w-full flex items-center justify-center opacity-20"><ImageIcon className="h-5 w-5" /></div>}
                                 </div>
                                 <div className="flex-1 flex items-center gap-2">
@@ -1339,7 +1339,7 @@ const ProductItem = ({
                                         accept="image/*"
                                         disabled={!isEditing}
                                         className={cn(
-                                            "h-8 text-[10px] bg-slate-950 border-slate-800 file:bg-slate-800 file:text-slate-300 file:border-0 file:rounded-md file:mr-2",
+                                            "h-8 text-[10px] bg-white border-slate-200 file:bg-slate-100 file:text-slate-300 file:border-0 file:rounded-md file:mr-2",
                                             !isEditing && "hidden"
                                         )}
                                         onChange={(e) => handleImageSelect(e.target.files?.[0], (b64) => onUpdate({ image_url_3: b64 }))}
@@ -1405,7 +1405,7 @@ const BrandSelect = ({
                     autoFocus
                     className={cn(
                         "bg-transparent border-none p-0 focus:outline-none",
-                        variant === "subtle" ? "text-[10px] font-bold uppercase tracking-widest text-primary h-6" : "bg-slate-900/50 border-slate-800 h-10 text-sm px-3 rounded-md w-full text-white"
+                        variant === "subtle" ? "text-[10px] font-bold uppercase tracking-widest text-primary h-6" : "bg-white/50 border-slate-200 h-10 text-sm px-3 rounded-md w-full text-white"
                     )}
                 />
                 <button 
@@ -1442,18 +1442,18 @@ const BrandSelect = ({
             <SelectTrigger className={cn(
                 variant === "subtle" 
                     ? "h-6 border-none bg-transparent p-0 flex items-center gap-2 text-slate-500 font-bold text-[10px] uppercase tracking-widest focus:ring-0 w-auto" 
-                    : "bg-slate-900/50 border-slate-800 h-10 text-sm text-white",
+                    : "bg-white/50 border-slate-200 h-10 text-sm text-white",
                 !isEditing && variant === "subtle" && "opacity-40",
                 className
             )}>
                 <SelectValue placeholder={placeholder} />
             </SelectTrigger>
-            <SelectContent className="bg-slate-950 border-slate-800">
+            <SelectContent className="bg-white border-slate-200">
                 <SelectItem value="none" className="text-xs uppercase tracking-widest text-slate-400">No Brand</SelectItem>
                 {availableBrands.map(b => (
-                    <SelectItem key={b} value={b} className="text-xs uppercase tracking-widest text-slate-200">{b}</SelectItem>
+                    <SelectItem key={b} value={b} className="text-xs uppercase tracking-widest text-slate-900">{b}</SelectItem>
                 ))}
-                <SelectItem value="other" className="text-xs font-bold uppercase tracking-widest text-primary border-t border-slate-800 mt-1">Other (New Brand)...</SelectItem>
+                <SelectItem value="other" className="text-xs font-bold uppercase tracking-widest text-primary border-t border-slate-200 mt-1">Other (New Brand)...</SelectItem>
             </SelectContent>
         </Select>
     );
@@ -1493,7 +1493,7 @@ const VariantsEditor = ({
                         variant="outline" 
                         size="sm" 
                         onClick={addVariant}
-                        className="h-7 text-[10px] border-slate-800 bg-slate-900/50 hover:bg-primary/10 hover:border-primary/50 text-slate-400 hover:text-primary rounded-lg font-bold uppercase tracking-widest"
+                        className="h-7 text-[10px] border-slate-200 bg-white/50 hover:bg-primary/10 hover:border-primary/50 text-slate-400 hover:text-primary rounded-lg font-bold uppercase tracking-widest"
                     >
                         <Plus className="h-3 w-3 mr-1" /> Add Option
                     </Button>
@@ -1501,18 +1501,18 @@ const VariantsEditor = ({
             </div>
 
             {variants.length === 0 ? (
-                <div className="text-[10px] text-slate-600 italic border border-dashed border-slate-800 rounded-xl p-4 text-center">
+                <div className="text-[10px] text-slate-600 italic border border-dashed border-slate-200 rounded-xl p-4 text-center">
                     No individual options defined. This product will use its base price.
                 </div>
             ) : (
                 <div className="space-y-3">
                     {variants.map((v, idx) => (
-                        <div key={idx} className="bg-slate-900/40 border border-slate-800/50 rounded-xl p-3 relative group">
+                        <div key={idx} className="bg-white/40 border border-slate-200/50 rounded-xl p-3 relative group">
                             {isEditing && (
                                 <button
                                     type="button"
                                     onClick={() => removeVariant(idx)}
-                                    className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-500 hover:text-red-500 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                                    className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-slate-100 border border-slate-300 flex items-center justify-center text-slate-500 hover:text-red-500 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
                                 >
                                     <X className="h-3 w-3" />
                                 </button>
@@ -1525,7 +1525,7 @@ const VariantsEditor = ({
                                         placeholder="e.g. 500ml, 1 Litre, Large"
                                         value={v.name}
                                         onChange={(e) => updateVariant(idx, { name: e.target.value })}
-                                        className="h-8 text-xs bg-slate-950 border-slate-800"
+                                        className="h-8 text-xs bg-white border-slate-200"
                                     />
                                 </div>
                                 <div className="col-span-4 space-y-1">
@@ -1540,7 +1540,7 @@ const VariantsEditor = ({
                                             const val = e.target.value === "" ? 0 : parseFloat(e.target.value);
                                             updateVariant(idx, { price: isNaN(val) ? 0 : val });
                                         }}
-                                        className="h-8 text-xs bg-slate-950 border-slate-800"
+                                        className="h-8 text-xs bg-white border-slate-200"
                                     />
                                 </div>
                             </div>
@@ -1553,3 +1553,4 @@ const VariantsEditor = ({
 };
 
 export default AdminCatalogPro;
+

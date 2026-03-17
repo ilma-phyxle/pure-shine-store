@@ -28,8 +28,10 @@ interface ProductQuickViewProps {
 export const ProductQuickView = ({ handle, children, initialProduct, initialCatalogProduct }: ProductQuickViewProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const { data: fetchedCatalogProduct, isLoading: catalogLoading } = useCatalogProduct(isOpen && !initialCatalogProduct ? handle : null);
+    const [showHotEnabled, setShowHotEnabled] = useState(true);
 
     const product = initialCatalogProduct || fetchedCatalogProduct;
+    const hotAllowed = showHotEnabled && !!product?.is_hot_deal && !!product?.discount_price;
 
     // Shopify Fallback logic
     const s_p = initialProduct?.node;
@@ -83,7 +85,7 @@ export const ProductQuickView = ({ handle, children, initialProduct, initialCata
         if (product) {
             const finalPrice = selectedVariant 
                 ? (selectedVariant.discount_price || selectedVariant.price)
-                : (product.is_hot_deal && product.discount_price ? product.discount_price : product.price);
+                : (hotAllowed ? product.discount_price! : product.price);
             await addItem({
                 type: 'catalog',
                 productId: String(product.id),
@@ -120,12 +122,29 @@ export const ProductQuickView = ({ handle, children, initialProduct, initialCata
         return <div className="hidden">{children}</div>;
     }
 
+    useEffect(() => {
+        const readToggle = (key: string, fallback = true) => {
+            const value = localStorage.getItem(key);
+            if (value === null) return fallback;
+            return value === "true";
+        };
+        const load = () => {
+            setShowHotEnabled(readToggle("shop_show_hot_deals", true));
+        };
+        load();
+        const onStorage = (e: StorageEvent) => {
+            if (e.key === "shop_show_hot_deals") load();
+        };
+        window.addEventListener("storage", onStorage);
+        return () => window.removeEventListener("storage", onStorage);
+    }, []);
+
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
                 {children}
             </DialogTrigger>
-            <DialogContent className="max-w-4xl p-0 overflow-hidden rounded-[2.5rem] border-none shadow-2xl !fixed">
+            <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] p-0 overflow-hidden rounded-[2.5rem] border-none shadow-2xl !fixed">
                 <button 
                   onClick={() => setIsOpen(false)}
                   className="absolute top-6 right-6 z-50 p-2.5 rounded-full bg-white/90 backdrop-blur-md border border-slate-100 text-slate-900 hover:bg-slate-900 hover:text-white transition-all duration-300 shadow-xl active:scale-95"
@@ -139,17 +158,17 @@ export const ProductQuickView = ({ handle, children, initialProduct, initialCata
                     </DialogDescription>
                 </DialogHeader>
                 
-                <div className="md:max-h-[90vh] overflow-y-auto overflow-x-hidden bg-white min-h-[400px] flex flex-col justify-center">
+                <div className="h-[90vh] overflow-y-auto md:overflow-hidden bg-white min-h-[400px] flex flex-col justify-center">
                     {!product ? (
                         <div className="flex flex-col items-center justify-center p-20 text-center animate-in fade-in duration-500">
                              <Loader2 className="h-12 w-12 text-primary animate-spin mb-4" />
                              <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Fetching Details...</p>
                         </div>
                     ) : (
-                        <div className="grid md:grid-cols-2 gap-0">
+                        <div className="grid md:grid-cols-2 gap-0 h-full">
                             {/* Left: Gallery */}
-                            <div className="bg-slate-50 p-6 flex flex-col gap-4">
-                        <div className="aspect-square rounded-2xl overflow-hidden border border-slate-100 bg-white relative group">
+                            <div className="bg-slate-50 p-6 flex flex-col gap-4 md:sticky md:top-0 md:h-full md:self-start">
+                        <div className="aspect-square max-h-[200px] sm:max-h-[240px] md:max-h-none rounded-2xl overflow-hidden border border-slate-100 bg-white relative group">
                             {gallery[selectedImage] ? (
                                 <>
                                     <img
@@ -207,9 +226,45 @@ export const ProductQuickView = ({ handle, children, initialProduct, initialCata
                             </div>
                         )}
                     </div>
+                    <div className="space-y-4 bg-slate-50 p-6 rounded-2xl border border-slate-100/50 md:hidden">
+                        <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Quantity</span>
+                            <div className="flex items-center gap-3 bg-white px-2 py-1 rounded-xl border border-slate-100">
+                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" onClick={() => setQuantity(Math.max(1, quantity - 1))}>
+                                    <Minus className="h-3 w-3" />
+                                </Button>
+                                <span className="w-6 text-center font-bold text-sm">{quantity}</span>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" onClick={() => setQuantity(quantity + 1)}>
+                                    <Plus className="h-3 w-3" />
+                                </Button>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                            <Button
+                                variant="outline"
+                                className="h-12 rounded-xl border-2 border-slate-900 text-slate-900 hover:bg-slate-900 hover:text-white font-bold text-xs uppercase tracking-widest w-full transition-all"
+                                onClick={handleAddToCart}
+                                disabled={cartLoading}
+                            >
+                                {cartLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <ShoppingCart className="h-4 w-4 mr-2" />}
+                                Add to Bag
+                            </Button>
+                            <Button
+                                variant="default"
+                                className="h-12 rounded-xl bg-[#288200] hover:bg-[#237200] text-white font-bold text-xs uppercase tracking-widest w-full shadow-lg shadow-[#288200]/20 transition-all"
+                                onClick={async () => {
+                                    await handleAddToCart();
+                                }}
+                                disabled={cartLoading}
+                            >
+                                Buy Now
+                            </Button>
+                        </div>
+                    </div>
 
                     {/* Right: Info */}
-                    <div className="p-8 flex flex-col gap-6">
+                    <div className="p-8 flex flex-col gap-6 md:h-full">
                         <div className="space-y-4">
                             <div className="flex items-center gap-2">
                                 <Badge variant="secondary" className="bg-slate-100 text-slate-600 border-none px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider w-fit">
@@ -225,14 +280,36 @@ export const ProductQuickView = ({ handle, children, initialProduct, initialCata
                                 {title}
                             </DialogTitle>
                             <div className="flex flex-col gap-1">
-                                {selectedVariant ? (
+                                {(product?.variants && product.variants.length > 1 && selectedVariant) ? (
+                                    <div className="flex flex-col">
+                                        <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest leading-none mb-1">Options</span>
+                                        {selectedVariant.discount_price && selectedVariant.discount_price < selectedVariant.price ? (
+                                            <div className="flex items-baseline gap-3">
+                                                <span className="text-3xl font-display font-black text-red-600">
+                                                    <span className="text-base font-bold text-red-400 mr-0.5">$</span>
+                                                    {selectedVariant.discount_price.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
+                                                </span>
+                                                <span className="text-xl font-bold text-slate-300 line-through">
+                                                    ${selectedVariant.price?.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-baseline gap-2">
+                                                <span className="text-3xl font-display font-black text-primary">
+                                                    <span className="text-base font-bold text-slate-400 mr-0.5">$</span>
+                                                    {selectedVariant.price?.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : selectedVariant ? (
                                     <div className="flex items-baseline gap-2">
                                         <span className="text-3xl font-display font-black text-primary">
                                             <span className="text-base font-bold text-slate-400 mr-0.5">$</span>
                                             {selectedVariant.price?.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
                                         </span>
                                     </div>
-                                ) : (product?.is_hot_deal && product?.discount_price) ? (
+                                ) : (hotAllowed) ? (
                                     <div className="flex items-baseline gap-3">
                                         <span className="text-4xl font-display font-black text-red-600">
                                             <span className="text-base font-bold text-red-400 mr-0.5">$</span>
@@ -260,7 +337,8 @@ export const ProductQuickView = ({ handle, children, initialProduct, initialCata
                             </div>
                         </div>
 
-                        <div className="space-y-6">
+                        <div className="flex-1 overflow-y-auto pr-1">
+                          <div className="space-y-6">
                             <div className="space-y-4">
                                 {product.variants && product.variants.length > 0 && (
                                     <div className="space-y-2">
@@ -288,41 +366,42 @@ export const ProductQuickView = ({ handle, children, initialProduct, initialCata
                                 </p>
                             </div>
 
-                            <div className="space-y-4 bg-slate-50 p-6 rounded-2xl border border-slate-100/50">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Quantity</span>
-                                    <div className="flex items-center gap-3 bg-white px-2 py-1 rounded-xl border border-slate-100">
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" onClick={() => setQuantity(Math.max(1, quantity - 1))}>
-                                            <Minus className="h-3 w-3" />
-                                        </Button>
-                                        <span className="w-6 text-center font-bold text-sm">{quantity}</span>
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" onClick={() => setQuantity(quantity + 1)}>
-                                            <Plus className="h-3 w-3" />
-                                        </Button>
-                                    </div>
+                          </div>
+                        </div>
+                        <div className="space-y-4 bg-slate-50 p-6 rounded-2xl border border-slate-100/50 md:sticky md:bottom-0 hidden md:block">
+                            <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Quantity</span>
+                                <div className="flex items-center gap-3 bg-white px-2 py-1 rounded-xl border border-slate-100">
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" onClick={() => setQuantity(Math.max(1, quantity - 1))}>
+                                        <Minus className="h-3 w-3" />
+                                    </Button>
+                                    <span className="w-6 text-center font-bold text-sm">{quantity}</span>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" onClick={() => setQuantity(quantity + 1)}>
+                                        <Plus className="h-3 w-3" />
+                                    </Button>
                                 </div>
+                            </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                                    <Button
-                                        variant="outline"
-                                        className="h-12 rounded-xl border-2 border-slate-900 text-slate-900 hover:bg-slate-900 hover:text-white font-bold text-xs uppercase tracking-widest w-full transition-all"
-                                        onClick={handleAddToCart}
-                                        disabled={cartLoading}
-                                    >
-                                        {cartLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <ShoppingCart className="h-4 w-4 mr-2" />}
-                                        Add to Bag
-                                    </Button>
-                                    <Button
-                                        variant="default"
-                                        className="h-12 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-xs uppercase tracking-widest w-full shadow-lg shadow-primary/20 transition-all"
-                                        onClick={async () => {
-                                            await handleAddToCart();
-                                        }}
-                                        disabled={cartLoading}
-                                    >
-                                        Buy Now
-                                    </Button>
-                                </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                                <Button
+                                    variant="outline"
+                                    className="h-12 rounded-xl border-2 border-slate-900 text-slate-900 hover:bg-slate-900 hover:text-white font-bold text-xs uppercase tracking-widest w-full transition-all"
+                                    onClick={handleAddToCart}
+                                    disabled={cartLoading}
+                                >
+                                    {cartLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <ShoppingCart className="h-4 w-4 mr-2" />}
+                                    Add to Bag
+                                </Button>
+                                <Button
+                                    variant="default"
+                                    className="h-12 rounded-xl bg-[#288200] hover:bg-[#237200] text-white font-bold text-xs uppercase tracking-widest w-full shadow-lg shadow-[#288200]/20 transition-all"
+                                    onClick={async () => {
+                                        await handleAddToCart();
+                                    }}
+                                    disabled={cartLoading}
+                                >
+                                    Buy Now
+                                </Button>
                             </div>
                         </div>
                     </div>

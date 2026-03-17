@@ -29,6 +29,7 @@ import AdminCustomers from "./pages/AdminCustomers";
 import AdminInventory from "./pages/AdminInventory";
 import AdminLogin from "./pages/AdminLogin";
 import AdminNewArrivals from "@/pages/AdminNewArrivals";
+import AdminSettings from "@/pages/AdminSettings";
 import { ChatbotWidget } from "@/components/ChatbotWidget";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { RouteLoading } from "@/components/RouteLoading";
@@ -64,7 +65,7 @@ const AppContent = () => {
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/admin" element={isAuthed ? <AdminCatalogPro /> : <Navigate to="/admin-login" state={{ from: "/admin" }} replace />} />
+          <Route path="/admin" element={isAuthed ? <AdminHome /> : <Navigate to="/admin-login" state={{ from: "/admin" }} replace />} />
           <Route path="/admin/catalog" element={isAuthed ? <AdminCatalog /> : <Navigate to="/admin-login" state={{ from: "/admin/catalog" }} replace />} />
           <Route path="/admin/catalog-pro" element={isAuthed ? <AdminCatalogPro /> : <Navigate to="/admin-login" state={{ from: "/admin/catalog-pro" }} replace />} />
           <Route path="/admin/products" element={isAuthed ? <AdminProducts /> : <Navigate to="/admin-login" state={{ from: "/admin/products" }} replace />} />
@@ -72,6 +73,7 @@ const AppContent = () => {
           <Route path="/admin/customers" element={isAuthed ? <AdminCustomers /> : <Navigate to="/admin-login" state={{ from: "/admin/customers" }} replace />} />
           <Route path="/admin/inventory" element={isAuthed ? <AdminInventory /> : <Navigate to="/admin-login" state={{ from: "/admin/inventory" }} replace />} />
           <Route path="/admin/new-arrivals" element={isAuthed ? <AdminNewArrivals /> : <Navigate to="/admin-login" state={{ from: "/admin/new-arrivals" }} replace />} />
+          <Route path="/admin/settings" element={isAuthed ? <AdminSettings /> : <Navigate to="/admin-login" state={{ from: "/admin/settings" }} replace />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>

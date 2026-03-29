@@ -14,6 +14,7 @@ import ProductDetail from "./pages/ProductDetail";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import ShippingPolicy from "./pages/ShippingPolicy";
+import CancellationPolicy from "./pages/CancellationPolicy";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import NotFound from "./pages/NotFound";
@@ -60,12 +61,22 @@ const AppContent = () => {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/shipping-policy" element={<ShippingPolicy />} />
+          <Route path="/cancellation-policy" element={<CancellationPolicy />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/admin" element={isAuthed ? <AdminHome /> : <Navigate to="/admin-login" state={{ from: "/admin" }} replace />} />
+          <Route
+            path="/admin"
+            element={
+              isAuthed ? (
+                <Navigate to="/admin/catalog-pro" replace />
+              ) : (
+                <Navigate to="/admin-login" state={{ from: "/admin" }} replace />
+              )
+            }
+          />
           <Route path="/admin/catalog" element={isAuthed ? <AdminCatalog /> : <Navigate to="/admin-login" state={{ from: "/admin/catalog" }} replace />} />
           <Route path="/admin/catalog-pro" element={isAuthed ? <AdminCatalogPro /> : <Navigate to="/admin-login" state={{ from: "/admin/catalog-pro" }} replace />} />
           <Route path="/admin/products" element={isAuthed ? <AdminProducts /> : <Navigate to="/admin-login" state={{ from: "/admin/products" }} replace />} />

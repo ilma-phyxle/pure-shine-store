@@ -301,10 +301,20 @@ const Shop = () => {
 
     const cat = searchParams.get("cat");
     if (!cat) return;
+    if (cat === "all") {
+      setActiveCategoryId(null);
+      setActiveSubcategoryId(null);
+      setAllCategoriesSelected(true);
+      setShowArrivalsOnly(false);
+      setShowHotOnly(false);
+      setShowBrandsOnly(false);
+      return;
+    }
     const match = categories.find((c) => c.slug === cat) || categories.find((c) => String(c.id) === cat);
     if (match && match.id !== activeCategoryId) {
       setActiveCategoryId(match.id);
       setActiveSubcategoryId(null);
+      setAllCategoriesSelected(false);
       setShowArrivalsOnly(false);
       setShowHotOnly(false);
       setShowBrandsOnly(false);
@@ -546,12 +556,8 @@ const Shop = () => {
                     <button
                       type="button"
                       onClick={() => {
-                        if (leftCollapsed) {
-                          setLeftCollapsedManual(false);
-                          handleSubcategoryChange(null);
-                        } else {
-                          setLeftCollapsedManual(true);
-                        }
+                        handleCategoryChange(null);
+                        setLeftCollapsedManual(null);
                       }}
                       className={cn(
                         "rounded-full border border-blue-900/40 bg-blue-900 text-white text-[10px] font-black tracking-[0.2em] uppercase hover:bg-blue-800 transition-all shadow-sm",

@@ -53,6 +53,7 @@ const AdminCatalogPro = () => {
     const [isEditingCategory, setIsEditingCategory] = useState(false);
     const [viewingNewArrivals, setViewingNewArrivals] = useState(false);
     const [viewingHotDeals, setViewingHotDeals] = useState(false);
+    const [pendingScrollProductId, setPendingScrollProductId] = useState<number | null>(null);
 
     // Dialog States
     const [isAddingCategory, setIsAddingCategory] = useState(false);
@@ -105,6 +106,18 @@ const AdminCatalogPro = () => {
             ? products.filter(p => p.is_new_arrival)
             : products.filter(p => p.category_id === activeCategoryId);
     const activeCategory = categories.find(c => c.id === activeCategoryId) ?? null;
+
+    useEffect(() => {
+        if (pendingScrollProductId === null) return;
+        if (viewingNewArrivals || viewingHotDeals) return;
+        const id = pendingScrollProductId;
+        const t = window.setTimeout(() => {
+            const el = document.getElementById(`product-${id}`);
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 0);
+        setPendingScrollProductId(null);
+        return () => window.clearTimeout(t);
+    }, [pendingScrollProductId, viewingNewArrivals, viewingHotDeals, activeCategoryId, products]);
     
     const availableBrands = useMemo(() => {
         const brands = new Set<string>();
@@ -254,6 +267,13 @@ const AdminCatalogPro = () => {
         } catch {
             toast.error("Failed to delete product");
         }
+    };
+
+    const openInAllProducts = (product: ApiProduct) => {
+        setViewingNewArrivals(false);
+        setViewingHotDeals(false);
+        setActiveCategoryId(product.category_id ?? null);
+        setPendingScrollProductId(product.id);
     };
 
     if (loading) {
@@ -477,6 +497,7 @@ const AdminCatalogPro = () => {
                                                 handleImageSelect={handleImageSelect}
                                                 storeCurrency={storeCurrency}
                                                 availableBrands={availableBrands}
+                                                onOpenInAll={() => openInAllProducts(p)}
                                             />
                                         ))
                                     )}
@@ -508,6 +529,7 @@ const AdminCatalogPro = () => {
                                                 handleImageSelect={handleImageSelect}
                                                 storeCurrency={storeCurrency}
                                                 availableBrands={availableBrands}
+                                                onOpenInAll={() => openInAllProducts(p)}
                                             />
                                         ))
                                     )}
@@ -1031,6 +1053,7 @@ const ProductItem = ({
     handleImageSelect,
     storeCurrency,
     availableBrands,
+    onOpenInAll,
 }: {
     product: ApiProduct;
     subCategories: ApiSubCategory[];
@@ -1039,6 +1062,7 @@ const ProductItem = ({
     handleImageSelect: (file: File | undefined, callback: (b64: string) => void) => void;
     storeCurrency: string;
     availableBrands: string[];
+    onOpenInAll?: () => void;
 }) => {
     const [currency, setCurrency] = useState(storeCurrency);
     const [draft, setDraft] = useState(p);
@@ -1050,8 +1074,17 @@ const ProductItem = ({
     }, [p]);
 
     return (
-        <div id={`product-${p.id}`} className={cn(
-            "p-6 rounded-2xl border transition-all scroll-mt-20",
+        <div
+            id={`product-${p.id}`}
+            onClick={(e) => {
+                if (!onOpenInAll || isEditing) return;
+                const target = e.target as HTMLElement;
+                if (target.closest("button, a, input, select, textarea, label, [role='button']")) return;
+                onOpenInAll();
+            }}
+            className={cn(
+                "p-6 rounded-2xl border transition-all scroll-mt-20",
+                onOpenInAll && !isEditing && "cursor-pointer hover:border-primary/40",
             isEditing
                 ? "bg-white border-primary/50 shadow-2xl shadow-primary/10 ring-1 ring-primary/20"
                 : "border-slate-200 bg-white/30 hover:bg-white/40 hover:border-slate-200"

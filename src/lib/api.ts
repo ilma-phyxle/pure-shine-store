@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Detect if we are running locally or on the production server
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-const BASE_URL = isLocal ? 'http://127.0.0.1:8000/api/' : '/api/';
+const BASE_URL = isLocal ? 'http://127.0.0.1:8000/api/' : '/backend/api/';
 
 // Create an Axios instance configured for the Laravel API
 export const api = axios.create({

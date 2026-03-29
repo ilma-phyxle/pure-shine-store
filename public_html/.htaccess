@@ -1,12 +1,14 @@
 <IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteBase /
+    RewriteEngine On
+    RewriteBase /
+    
+    # 1. Skip rewrites for the /backend directory (let Laravel handle itself)
+    RewriteRule ^backend/ - [L]
 
-  # Skip existing files and directories
-  RewriteCond %{REQUEST_FILENAME} -f [OR]
-  RewriteCond %{REQUEST_FILENAME} -d
-  RewriteRule ^ - [L]
-
-  # SPA fallback
-  RewriteRule ^ index.html [L]
+    # 2. Skip existing files and directories (so assets like .js, .css work)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # 3. SPA Fallback: Everything else goes to index.html (React)
+    RewriteRule ^ index.html [L]
 </IfModule>

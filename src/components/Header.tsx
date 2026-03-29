@@ -120,7 +120,7 @@ export const Header = () => {
               <div className="absolute left-0 top-full translate-y-3 w-[720px] rounded-2xl border border-primary bg-primary shadow-xl p-6 z-50">
                 <div className="grid grid-cols-3 gap-3">
                   <Link
-                    to="/shop"
+                    to="/shop?cat=all"
                     onClick={() => setProductsOpen(false)}
                     className="px-3 py-2 rounded-lg text-sm font-semibold text-white hover:bg-white/10 transition-colors"
                   >

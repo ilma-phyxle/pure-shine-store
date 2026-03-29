@@ -58,6 +58,9 @@ const Contact = () => {
                 <p className="text-sm text-primary mt-3">
                   View our <Link to="/shipping-policy" className="font-semibold underline">Shipping Policy</Link>.
                 </p>
+                <p className="text-sm text-primary mt-1">
+                  View our <Link to="/cancellation-policy" className="font-semibold underline">Cancellation Policy</Link>.
+                </p>
                 <p className="text-muted-foreground">Whether you need product advice, bulk pricing, or have a general inquiry — our team is ready to assist.</p>
               </div>
               <div className="space-y-6">
@@ -117,3 +120,4 @@ const Contact = () => {
 };
 
 export default Contact;
+

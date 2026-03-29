@@ -26,6 +26,7 @@ export const Footer = () => {
               <li><Link to="/about" className="hover:text-primary-foreground transition-colors">About Us</Link></li>
               <li><Link to="/contact" className="hover:text-primary-foreground transition-colors">Contact</Link></li>
               <li><Link to="/shipping-policy" className="hover:text-primary-foreground transition-colors">Shipping Policy</Link></li>
+              <li><Link to="/cancellation-policy" className="hover:text-primary-foreground transition-colors">Cancellation Policy</Link></li>
             </ul>
           </div>
 

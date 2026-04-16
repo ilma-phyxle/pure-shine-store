@@ -8,9 +8,11 @@ import { TopBar } from "@/components/TopBar";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useCartSync } from "@/hooks/useCartSync";
+import { CartProvider } from "@/contexts/CartContext";
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
+import ProductQuickViewPage from "./pages/ProductQuickViewPage";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import ShippingPolicy from "./pages/ShippingPolicy";
@@ -58,6 +60,7 @@ const AppContent = () => {
           <Route path="/" element={<Index />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/product/:handle" element={<ProductDetail />} />
+          <Route path="/product-quick/:handle" element={<ProductQuickViewPage />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/shipping-policy" element={<ShippingPolicy />} />
@@ -98,11 +101,13 @@ const AppContent = () => {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AppContent />
-      </BrowserRouter>
+      <CartProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AppContent />
+        </BrowserRouter>
+      </CartProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

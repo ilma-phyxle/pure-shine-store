@@ -3,6 +3,9 @@
     "allow": [
       "Read(//c/xampp/htdocs/GrepC backend/**)",
       "Read(//c/xampp/htdocs/GrepC backend/app/Http/Controllers/**)"
+    ],
+    "additionalDirectories": [
+      "c:\\xampp\\htdocs\\GrepC backend\\app\\Http\\Controllers"
     ]
   }
 }

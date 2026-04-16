@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { ShoppingCart, Minus, Plus, Trash2, CreditCard, Loader2, Package } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Trash2, CreditCard, Loader2, Package, CheckSquare, Square } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { useOrderStore } from "@/stores/orderStore";
 import { createOrder } from "@/lib/api";
@@ -10,29 +10,64 @@ import { toast } from "sonner";
 import { CustomerInfoDialog, CustomerInfo } from "@/components/CustomerInfoDialog";
 import { formatWhatsAppOrder, WHATSAPP_NUMBER } from "@/lib/whatsapp";
 
-export const CartDrawer = () => {
-  const [isOpen, setIsOpen] = useState(false);
+export const CartDrawer = ({ open: externalOpen, onOpenChange: externalOnOpenChange }: { open?: boolean; onOpenChange?: (open: boolean) => void } = {}) => {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isControlled = externalOpen !== undefined;
+  const isOpen = isControlled ? externalOpen : internalOpen;
+  const setIsOpen = isControlled ? externalOnOpenChange || (() => {}) : setInternalOpen;
   const [showInfoDialog, setShowInfoDialog] = useState(false);
+  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const { items, isLoading, isSyncing, updateQuantity, removeItem, clearCart, syncCart } = useCartStore();
   const { addOrder } = useOrderStore();
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
+  const selectedCartItems = items.filter(item => selectedItems.has(item.id));
+  const selectedTotalItems = selectedCartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const selectedTotalPrice = selectedCartItems.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
   const currency = "$";
 
   useEffect(() => { if (isOpen) syncCart(); }, [isOpen, syncCart]);
 
+  // Auto-select all items when cart opens if none are selected
+  useEffect(() => {
+    if (isOpen && items.length > 0 && selectedItems.size === 0) {
+      setSelectedItems(new Set(items.map(item => item.id)));
+    }
+  }, [isOpen, items, selectedItems.size]);
+
+  const toggleItemSelection = (itemId: string) => {
+    const newSelected = new Set(selectedItems);
+    if (newSelected.has(itemId)) {
+      newSelected.delete(itemId);
+    } else {
+      newSelected.add(itemId);
+    }
+    setSelectedItems(newSelected);
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedItems.size === items.length) {
+      setSelectedItems(new Set());
+    } else {
+      setSelectedItems(new Set(items.map(item => item.id)));
+    }
+  };
+
   const handleConfirmOrder = async (customerInfo: CustomerInfo) => {
-    if (items.length === 0) return;
+    if (selectedCartItems.length === 0) {
+      toast.error("Please select at least one item to proceed");
+      return;
+    }
 
     const orderData = {
       customer: customerInfo.name,
       mobile: customerInfo.mobile,
-      total: `${totalPrice.toFixed(2)}`,
+      total: `${selectedTotalPrice.toFixed(2)}`,
       status: 'Processing' as const,
       payment: 'Pending' as const,
-      info: `${totalItems} item${totalItems !== 1 ? 's' : ''}: ${items.map(i => `${i.quantity}x ${i.name}`).join(', ')}`,
-      items: items.map(item => ({
+      info: `${selectedTotalItems} item${selectedTotalItems !== 1 ? 's' : ''}: ${selectedCartItems.map(i => `${i.quantity}x ${i.name}`).join(', ')}`,
+      items: selectedCartItems.map(item => ({
         id: item.productId,
         name: item.name,
         quantity: item.quantity,
@@ -47,7 +82,7 @@ export const CartDrawer = () => {
       .then(result => {
         addOrder({
           ...orderData,
-          total: `${currency} ${totalPrice.toFixed(2)}`,
+          total: `${currency} ${selectedTotalPrice.toFixed(2)}`,
           info: orderData.info,
           items: orderData.items
         });
@@ -59,19 +94,22 @@ export const CartDrawer = () => {
     const tempOrderId = `ORD-${Date.now()}`;
     const message = formatWhatsAppOrder({
       orderId: tempOrderId,
-      items: items.map(i => ({ name: i.name, quantity: i.quantity, price: parseFloat(i.price.amount), currency: i.price.currencyCode })),
-      total: `${currency} ${totalPrice.toFixed(2)}`,
+      items: selectedCartItems.map(i => ({ name: i.name, quantity: i.quantity, price: parseFloat(i.price.amount), currency: i.price.currencyCode })),
+      total: `${currency} ${selectedTotalPrice.toFixed(2)}`,
       customer: customerInfo.name,
       mobile: customerInfo.mobile,
       address: customerInfo.address,
       email: customerInfo.email,
     });
 
-    // 3. Immediately redirect to WhatsApp
+    // 3. Immediately redirect to WhatsApp and remove only selected items
     toast.success("Order Placed! Redirecting to WhatsApp...", { id: "payment" });
     setTimeout(() => {
       window.open(`https://wa.me/${WHATSAPP_NUMBER.replace('+', '')}?text=${message}`, '_blank');
-      clearCart();
+
+      // Remove only selected items from cart
+      selectedCartItems.forEach(item => removeItem(item.id));
+
       setIsOpen(false);
       setShowInfoDialog(false);
     }, 800);
@@ -94,8 +132,23 @@ export const CartDrawer = () => {
           <SheetHeader className="space-y-1">
             <SheetTitle className="text-2xl font-display font-bold text-slate-900">Your Cart</SheetTitle>
             <SheetDescription className="text-slate-500 font-medium">
-              {totalItems === 0 ? "Your cart is empty" : `You have ${totalItems} item${totalItems !== 1 ? 's' : ''} ready for checkout`}
+              {totalItems === 0 ? "Your cart is empty" : `${selectedTotalItems} of ${totalItems} item${totalItems !== 1 ? 's' : ''} selected for checkout`}
             </SheetDescription>
+            {items.length > 0 && (
+              <div className="flex items-center gap-2 pt-2">
+                <button
+                  onClick={toggleSelectAll}
+                  className="flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+                >
+                  {selectedItems.size === items.length ? (
+                    <CheckSquare className="h-4 w-4" />
+                  ) : (
+                    <Square className="h-4 w-4" />
+                  )}
+                  {selectedItems.size === items.length ? 'Deselect All' : 'Select All'}
+                </button>
+              </div>
+            )}
           </SheetHeader>
         </div>
 
@@ -115,7 +168,19 @@ export const CartDrawer = () => {
             <>
               <div className="flex-1 overflow-y-auto p-6 space-y-4">
                 {items.map((item) => (
-                  <div key={item.id} className="flex gap-4 p-4 rounded-2xl border border-slate-100 bg-white hover:border-primary/20 transition-all group">
+                  <div key={item.id} className={`flex gap-4 p-4 rounded-2xl border bg-white hover:border-primary/20 transition-all group ${selectedItems.has(item.id) ? 'border-primary/30 bg-primary/5' : 'border-slate-100'}`}>
+                    <div className="flex items-center">
+                      <button
+                        onClick={() => toggleItemSelection(item.id)}
+                        className="flex items-center justify-center w-5 h-5 rounded border-2 transition-colors mr-3 flex-shrink-0"
+                        style={{
+                          borderColor: selectedItems.has(item.id) ? '#3b82f6' : '#d1d5db',
+                          backgroundColor: selectedItems.has(item.id) ? '#3b82f6' : 'transparent'
+                        }}
+                      >
+                        {selectedItems.has(item.id) && <CheckSquare className="h-3 w-3 text-white" />}
+                      </button>
+                    </div>
                     <div className="w-20 h-20 bg-slate-50 rounded-xl overflow-hidden flex-shrink-0 border border-slate-50">
                       {item.image ? (
                         <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
@@ -164,30 +229,38 @@ export const CartDrawer = () => {
               <div className="p-8 border-t border-slate-100 space-y-6 bg-slate-50/30 backdrop-blur-sm">
                 <div className="space-y-2">
                   <div className="flex justify-between items-center text-slate-500 text-sm">
-                    <span>Subtotal</span>
-                    <span className="font-medium">{currency} {totalPrice.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</span>
+                    <span>Selected Items ({selectedTotalItems})</span>
+                    <span className="font-medium">{currency} {selectedTotalPrice.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</span>
                   </div>
+                  {selectedItems.size < items.length && (
+                    <div className="flex justify-between items-center text-slate-400 text-xs">
+                      <span>Unselected Items ({totalItems - selectedTotalItems})</span>
+                      <span>{currency} {(totalPrice - selectedTotalPrice).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between items-center text-slate-500 text-sm">
                     <span>Shipping</span>
                     <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Calculated at payment</span>
                   </div>
                   <div className="flex justify-between items-center pt-2">
-                    <span className="text-lg font-display font-bold text-slate-900">Total</span>
-                    <span className="text-2xl font-display font-black text-primary">{currency} {totalPrice.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</span>
+                    <span className="text-lg font-display font-bold text-slate-900">Selected Total</span>
+                    <span className="text-2xl font-display font-black text-primary">{currency} {selectedTotalPrice.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</span>
                   </div>
                 </div>
                 <Button
                   onClick={() => setShowInfoDialog(true)}
                   className="w-full h-14 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white shadow-xl shadow-slate-200 transition-all hover:-translate-y-1 active:translate-y-0"
                   size="lg"
-                  disabled={isLoading || isSyncing}
+                  disabled={isLoading || isSyncing || selectedTotalItems === 0}
                 >
                   {isLoading || isSyncing ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
                   ) : (
                     <>
                       <CreditCard className="w-5 h-5 mr-3" />
-                      <span className="font-bold tracking-tight">Pay Now & Place Order</span>
+                      <span className="font-bold tracking-tight">
+                        {selectedTotalItems === 0 ? 'Select Items to Proceed' : `Pay Now (${selectedTotalItems} item${selectedTotalItems !== 1 ? 's' : ''})`}
+                      </span>
                     </>
                   )}
                 </Button>
@@ -201,7 +274,7 @@ export const CartDrawer = () => {
         onOpenChange={setShowInfoDialog}
         onConfirm={handleConfirmOrder}
         title="Your Delivery Details"
-        description={`Complete your order of ${totalItems} item${totalItems !== 1 ? 's' : ''} — tell us where to deliver!`}
+        description={`Complete your order of ${selectedTotalItems} selected item${selectedTotalItems !== 1 ? 's' : ''} — tell us where to deliver!`}
       />
     </Sheet>
   );

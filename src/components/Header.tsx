@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CartDrawer } from "@/components/CartDrawer";
+import { useCartContext } from "@/contexts/CartContext";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/logo.png";
 import { useCatalogApi } from "@/hooks/useCatalogApi";
@@ -27,6 +28,7 @@ export const Header = () => {
   const [showBrandsEnabled, setShowBrandsEnabled] = useState(true);
   const mobileOpenAtRef = useRef(0);
   const mobileOpenScrollRef = useRef(0);
+  const { isOpen: cartIsOpen, openCart, closeCart } = useCartContext();
 
   const SETTINGS_KEYS = {
     arrivals: "shop_show_new_arrivals",
@@ -172,7 +174,7 @@ export const Header = () => {
         </nav>
 
         <div className="flex items-center gap-2">
-          <CartDrawer />
+          <CartDrawer open={cartIsOpen} onOpenChange={(open) => open ? openCart() : closeCart()} />
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
